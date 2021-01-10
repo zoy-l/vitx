@@ -79,7 +79,7 @@ export default class Build {
 
     let isBrowser = target === 'browser'
 
-    if (/\.(t|j)sx$/.test(paths)) {
+    if (/\.(t|j)sx?$/.test(paths)) {
       isBrowser = true
     } else {
       if (isBrowser) {
@@ -88,8 +88,9 @@ export default class Build {
       } else if (
         browserFiles &&
         browserFiles.includes(path.relative(currentDir, paths))
-      )
+      ) {
         isBrowser = true
+      }
     }
 
     if (esBuild) {
