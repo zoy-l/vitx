@@ -11,7 +11,10 @@ if (!args._[0] || args.w || args.watch) {
 
   const build = new Build({ cwd, watch })
 
-  build.step().then(() => null)
+  build.step().catch((e) => {
+    console.error(chalk.red(e))
+    process.exit(1)
+  })
 } else {
   throw new Error(chalk.red(`Unknown command '${args._}'`))
 }
