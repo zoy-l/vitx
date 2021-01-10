@@ -30,26 +30,16 @@ export default function (cwd: string): IBundleOptions {
     fs.existsSync(path.join(cwd, file))
   )
 
+  let config = {}
+
   if (configFile) {
     registerBabel({ cwd, only: configFile })
-    const userConfig = isDefault(
-      require(path.join(cwd, configFile))
-    ) as IBundleOptions
-    const { error } = schema.validate(userConfig)
+    config = isDefault(require(path.join(cwd, configFile)))
+    const { error } = schema.validate(config)
 
     if (error) {
       throw new Error(`Invalid options in ${error.message}`)
     }
-
-    if (!userConfig.entry) {
-      userConfig.entry = 'src'
-    }
-
-    if (!userConfig.output) {
-      userConfig.output = 'lib'
-    }
-
-    return userConfig
   }
-  return { entry: 'src', output: 'lib' }
+  return config
 }

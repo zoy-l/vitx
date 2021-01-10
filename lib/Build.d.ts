@@ -1,6 +1,6 @@
 /// <reference types="node" />
 import { Diagnostic } from 'typescript';
-import type { IBundleOpt } from './types';
+import type { IBundleOpt, IBundleOptions } from './types';
 interface IBuild {
     cwd: string;
     watch?: boolean;
@@ -16,6 +16,7 @@ export default class Build {
         pkg?: string;
         msg: string;
     }): void;
+    addDefaultConfigValue(config: IBundleOptions): IBundleOpt;
     getBundleOpts(cwd: string): IBundleOpt;
     transform(opts: {
         content: string;

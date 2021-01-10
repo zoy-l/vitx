@@ -3,11 +3,10 @@ import { transformSync as esBuildTransformSync } from 'esbuild'
 import { Diagnostic } from 'typescript'
 import gulpPlumber from 'gulp-plumber'
 import glupTs from 'gulp-typescript'
-import gulpLess from 'gulp-less'
+import merge from 'lodash.merge'
 import chokidar from 'chokidar'
 import through from 'through2'
 import vinylFs from 'vinyl-fs'
-import merge from 'lodash.merge'
 import gulpIf from 'gulp-if'
 import rimraf from 'rimraf'
 import assert from 'assert'
@@ -16,8 +15,9 @@ import path from 'path'
 import fs from 'fs'
 
 import { colorLog, conversion, eventColor } from './utils'
+import getEsBuildConfig from './getEsBuildConfig'
 import getBabelConfig from './getBabelConifg'
-import type { IBundleOpt } from './types'
+import type { IBundleOpt, IBundleOptions } from './types'
 import getTSConfig from './getTsConifg'
 import config from './config'
 
@@ -47,31 +47,44 @@ export default class Build {
     console.log(`${pkg ? `${colorLog(pkg)}: ` : ''}${msg}`)
   }
 
+  addDefaultConfigValue(config: IBundleOptions): IBundleOpt {
+    return merge(config, {
+      entry: 'src',
+      output: 'lib',
+      moduleType: 'cjs'
+    } as IBundleOpt)
+  }
+
   getBundleOpts(cwd: string) {
     const userConfig = config(cwd) as IBundleOpt
-    const bundleOpts = merge(userConfig, this.rootConfig)
+
+    const bundleOpts = this.addDefaultConfigValue(
+      merge(userConfig, this.rootConfig)
+    )
 
     return bundleOpts
   }
 
   transform(opts: { content: string; paths: string; bundleOpts: IBundleOpt }) {
     const { content, paths, bundleOpts } = opts
-    const { esBuild, moduleType = 'cjs', nodeVersion } = bundleOpts
+    const { esBuild, target, nodeFiles, browserFiles } = bundleOpts
 
-    if (esBuild) {
-      const target = {
-        esm: 'chrome58',
-        cjs: `node${nodeVersion ?? 8}`
-      }
-      return esBuildTransformSync(content, {
-        loader: path.extname(paths).slice(1) as 'ts' | 'js',
-        target: target[moduleType],
-        format: moduleType,
-        treeShaking: true
-      }).code
+    let isBrowser = target === 'browser'
+
+    if (/\.(t|j)sx$/.test(paths)) {
+      isBrowser = true
+    } else {
+      if (isBrowser) {
+        if (nodeFiles && nodeFiles.includes(paths)) isBrowser = false
+      } else if (browserFiles && browserFiles.includes(paths)) isBrowser = true
     }
 
-    const babelConfig = getBabelConfig(bundleOpts, paths)
+    if (esBuild) {
+      const esBuildConfig = getEsBuildConfig(bundleOpts, isBrowser, paths)
+      return esBuildTransformSync(content, esBuildConfig).code
+    }
+
+    const babelConfig = getBabelConfig(bundleOpts, isBrowser)
     return babelTransformSync(content, {
       ...babelConfig,
       filename: paths,
@@ -91,11 +104,12 @@ export default class Build {
     bundleOpts: IBundleOpt
   }) {
     const {
-      moduleType = 'cjs',
+      moduleType,
       entry,
       output,
-      lessOptions,
-      esBuild
+      esBuild,
+      beforeReadWriteStream,
+      afterReadWriteStream
     } = bundleOpts
 
     const { tsConfig, error } = getTSConfig(this.cwd, this.isLerna ? dir : '')
@@ -120,28 +134,27 @@ export default class Build {
       })
       .pipe(
         gulpIf(
-          () => this.watch,
+          this.watch,
           gulpPlumber(() => {})
         )
+      )
+      .pipe(
+        typeof beforeReadWriteStream === 'function'
+          ? beforeReadWriteStream(through)
+          : through.obj()
       )
       .pipe(
         gulpIf(
           ({ path }) =>
             tsConfig.declaration &&
-            /\.ts$/.test(path) &&
+            /\.tsx?$/.test(path) &&
             !path.endsWith('.d.ts'),
           glupTs(tsConfig)
         )
       )
       .pipe(
         gulpIf(
-          ({ path }) => !!lessOptions && /\.less$/.test(path),
-          gulpLess(lessOptions)
-        )
-      )
-      .pipe(
-        gulpIf(
-          ({ path }) => /\.(t|j)s?$/.test(path) && !path.endsWith('.d.ts'),
+          ({ path }) => /\.(t|j)sx?$/.test(path) && !path.endsWith('.d.ts'),
           through.obj((chunk, _enc, callback) => {
             chunk.contents = Buffer.from(
               this.transform({
@@ -166,6 +179,11 @@ export default class Build {
           }) as NodeJS.ReadWriteStream
         )
       )
+      .pipe(
+        typeof afterReadWriteStream === 'function'
+          ? afterReadWriteStream(through)
+          : through.obj()
+      )
       .pipe(vinylFs.dest(path.join(dir, output)))
   }
 
@@ -177,7 +195,7 @@ export default class Build {
       userPkgs = userConifg.pkgs
     }
 
-    this.rootConfig = userConifg
+    this.rootConfig = this.addDefaultConfigValue(userConifg)
 
     userPkgs = userPkgs.reduce((memo, pkg) => {
       const pkgPath = path.join(this.cwd, 'packages', pkg)

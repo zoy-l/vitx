@@ -2,27 +2,17 @@ import type { IBundleOptions } from './types'
 
 export default function getBabelConfig(
   bundleOpts: Omit<IBundleOptions, 'entry' | 'output'>,
-  path?: string
+  isBrowser?: boolean
 ) {
   const {
-    target,
     nodeVersion,
     moduleType,
     runtimeHelpers,
-    nodeFiles,
-    browserFiles,
     extraBabelPlugins = [],
     extraBabelPresets = [],
-    disableTypes
+    disableTypes,
+    react
   } = bundleOpts
-
-  let isBrowser = target === 'browser'
-
-  if (path) {
-    if (isBrowser) {
-      if (nodeFiles && nodeFiles.includes(path)) isBrowser = false
-    } else if (browserFiles && browserFiles.includes(path)) isBrowser = true
-  }
 
   return {
     presets: [
@@ -31,11 +21,12 @@ export default function getBabelConfig(
         '@babel/preset-env',
         {
           targets: isBrowser
-            ? { browsers: ['>0.2%', 'not ie 11', 'not op_mini all'] }
+            ? { browsers: ['last 2 versions', 'IE 10'] }
             : { node: nodeVersion ?? 6 },
           modules: moduleType === 'esm' ? false : 'auto'
         }
       ],
+      isBrowser && react && '@babel/preset-react',
       ...extraBabelPresets
     ].filter(Boolean) as (string | any[])[],
     plugins: [
