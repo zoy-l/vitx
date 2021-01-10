@@ -22,6 +22,7 @@ export default class Build {
         content: string;
         paths: string;
         bundleOpts: IBundleOpt;
+        currentDir: string;
     }): string | null | undefined;
     createStream({ src, pkg, dir, bundleOpts }: {
         pkg?: string;

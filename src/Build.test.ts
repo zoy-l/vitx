@@ -7,7 +7,7 @@ import rimraf from 'rimraf'
 import Nerd from './Build'
 
 function assertBuildResult(cwd: string) {
-  const actualDir = path.join(cwd, 'dist')
+  const actualDir = path.join(cwd, 'actualed')
   const expectDir = path.join(cwd, 'expected')
 
   if (fs.existsSync(actualDir) && !fs.existsSync(expectDir)) {
@@ -30,7 +30,7 @@ function assertBuildResult(cwd: string) {
 
 function moveEsLibToDist(cwd: string) {
   const absDirPath = path.join(cwd, 'lib')
-  const absDistPath = path.join(cwd, 'dist')
+  const absDistPath = path.join(cwd, 'actualed')
   if (fs.existsSync(absDirPath)) {
     mkdirSync(absDistPath)
     renameSync(absDirPath, path.join(absDistPath, 'lib'))
@@ -41,27 +41,27 @@ describe('nerd build', () => {
   const root = path.join(__dirname, '../__test__')
 
   fs.readdirSync(root).forEach((dir) => {
-    it(dir, async (done) => {
+    it(dir, (done) => {
       const cwd = path.join(root, dir)
       process.chdir(cwd)
-      rimraf.sync(path.join(cwd, 'dist'))
+      rimraf.sync(path.join(cwd, 'actualed'))
 
       const build = new Nerd({ cwd })
 
-      await build.step()
-      // .then(() => {
-      moveEsLibToDist(cwd)
-      // })
-      // .then(() => {
-      // try {
-      try {
-        assertBuildResult(cwd)
-        done()
-      } catch (err) {
-        done(err)
-      }
-
-      // })
+      build
+        .step()
+        .then(() => {
+          moveEsLibToDist(cwd)
+          try {
+            assertBuildResult(cwd)
+            done()
+          } catch (err) {
+            done(err)
+          }
+        })
+        .catch(() => {
+          done()
+        })
     })
   })
 })

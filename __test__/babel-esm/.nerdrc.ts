@@ -1,6 +1,6 @@
 export default {
-  esBuild: true,
   moduleType: 'esm',
   target: 'browser',
-  disableTypes: true
+  disableTypes: true,
+  nodeFiles: ['src/index.ts']
 }

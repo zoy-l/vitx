@@ -48,25 +48,33 @@ export default class Build {
   }
 
   addDefaultConfigValue(config: IBundleOptions): IBundleOpt {
-    return merge(config, {
-      entry: 'src',
-      output: 'lib',
-      moduleType: 'cjs'
-    } as IBundleOpt)
+    return merge(
+      {
+        entry: 'src',
+        output: 'lib',
+        moduleType: 'cjs'
+      },
+      config
+    )
   }
 
   getBundleOpts(cwd: string) {
     const userConfig = config(cwd) as IBundleOpt
 
     const bundleOpts = this.addDefaultConfigValue(
-      merge(userConfig, this.rootConfig)
+      merge(this.rootConfig, userConfig)
     )
 
     return bundleOpts
   }
 
-  transform(opts: { content: string; paths: string; bundleOpts: IBundleOpt }) {
-    const { content, paths, bundleOpts } = opts
+  transform(opts: {
+    content: string
+    paths: string
+    bundleOpts: IBundleOpt
+    currentDir: string
+  }) {
+    const { content, paths, bundleOpts, currentDir } = opts
     const { esBuild, target, nodeFiles, browserFiles } = bundleOpts
 
     let isBrowser = target === 'browser'
@@ -75,8 +83,13 @@ export default class Build {
       isBrowser = true
     } else {
       if (isBrowser) {
-        if (nodeFiles && nodeFiles.includes(paths)) isBrowser = false
-      } else if (browserFiles && browserFiles.includes(paths)) isBrowser = true
+        if (nodeFiles && nodeFiles.includes(path.relative(currentDir, paths)))
+          isBrowser = false
+      } else if (
+        browserFiles &&
+        browserFiles.includes(path.relative(currentDir, paths))
+      )
+        isBrowser = true
     }
 
     if (esBuild) {
@@ -159,8 +172,9 @@ export default class Build {
             chunk.contents = Buffer.from(
               this.transform({
                 content: chunk.contents,
-                paths: chunk.path,
-                bundleOpts
+                paths: conversion(chunk.path),
+                bundleOpts,
+                currentDir: dir
               }) as string
             )
 
