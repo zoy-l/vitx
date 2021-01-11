@@ -3,6 +3,7 @@ import { transformSync as esBuildTransformSync } from 'esbuild'
 import { Diagnostic } from 'typescript'
 import gulpPlumber from 'gulp-plumber'
 import glupTs from 'gulp-typescript'
+import insert from 'gulp-insert'
 import merge from 'lodash.merge'
 import chokidar from 'chokidar'
 import through from 'through2'
@@ -160,6 +161,13 @@ export default class Build {
         typeof beforeReadWriteStream === 'function'
           ? beforeReadWriteStream(through)
           : through.obj()
+      )
+      .pipe(
+        insert.transform((contents, _file) => {
+          console.log(contents)
+
+          return contents
+        })
       )
       .pipe(
         gulpIf(
