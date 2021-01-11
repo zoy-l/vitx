@@ -3,6 +3,7 @@ import { transformSync as esBuildTransformSync } from 'esbuild'
 import { Diagnostic } from 'typescript'
 import gulpPlumber from 'gulp-plumber'
 import glupTs from 'gulp-typescript'
+import alias from 'gulp-path-alias'
 import insert from 'gulp-insert'
 import merge from 'lodash.merge'
 import chokidar from 'chokidar'
@@ -16,9 +17,9 @@ import path from 'path'
 import fs from 'fs'
 
 import { colorLog, conversion, eventColor } from './utils'
+import type { IBundleOpt, IBundleOptions } from './types'
 import getEsBuildConfig from './getEsBuildConfig'
 import getBabelConfig from './getBabelConifg'
-import type { IBundleOpt, IBundleOptions } from './types'
 import getTSConfig from './getTsConifg'
 import config from './config'
 
@@ -127,6 +128,7 @@ export default class Build {
       entry,
       output,
       esBuild,
+      paths,
       beforeReadWriteStream,
       afterReadWriteStream
     } = bundleOpts
@@ -134,9 +136,9 @@ export default class Build {
     const { tsConfig, error } = getTSConfig(this.cwd, this.isLerna ? dir : '')
     const basePath = path.join(dir, entry)
 
-    if (tsConfig.declaration === true) {
+    if (tsConfig.compilerOptions.declaration === true) {
       if (bundleOpts.disableTypes === true) {
-        tsConfig.declaration = false
+        tsConfig.compilerOptions.declaration = false
       }
     } else {
       bundleOpts.disableTypes = true
@@ -157,23 +159,18 @@ export default class Build {
           gulpPlumber(() => {})
         )
       )
+      .pipe(alias({ paths }))
       .pipe(
         typeof beforeReadWriteStream === 'function'
-          ? beforeReadWriteStream(through)
+          ? beforeReadWriteStream(through, insert)
           : through.obj()
-      )
-      .pipe(
-        insert.transform((contents, _file) => {
-          console.log(contents)
-
-          return contents
-        })
       )
       .pipe(
         gulpIf(
           (file) =>
-            tsConfig.declaration && this.isTransform(/\.tsx?$/, file.path),
-          glupTs(tsConfig)
+            tsConfig.compilerOptions.declaration &&
+            this.isTransform(/\.tsx?$/, file.path),
+          glupTs(tsConfig.compilerOptions)
         )
       )
       .pipe(
@@ -206,7 +203,7 @@ export default class Build {
       )
       .pipe(
         typeof afterReadWriteStream === 'function'
-          ? afterReadWriteStream(through)
+          ? afterReadWriteStream(through, insert)
           : through.obj()
       )
       .pipe(vinylFs.dest(path.join(dir, output)))

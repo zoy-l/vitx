@@ -1,4 +1,5 @@
 import through2 from 'through2'
+import gulpInsert from 'gulp-insert'
 
 export interface IBundleOptions {
   esBuild?: true
@@ -12,11 +13,18 @@ export interface IBundleOptions {
   nodeVersion?: number
   runtimeHelpers?: boolean
   disableTypes?: boolean
-  beforeReadWriteStream?: (through?: typeof through2) => NodeJS.ReadWriteStream
-  afterReadWriteStream?: (through?: typeof through2) => NodeJS.ReadWriteStream
+  beforeReadWriteStream?: (
+    through: typeof through2,
+    insert: typeof gulpInsert
+  ) => NodeJS.ReadWriteStream
+  afterReadWriteStream?: (
+    through: typeof through2,
+    insert: typeof gulpInsert
+  ) => NodeJS.ReadWriteStream
   pkgs?: string[]
   entry?: string
   output?: string
+  paths?: Record<string, string>
 }
 
 export interface IBundleOpt extends IBundleOptions {

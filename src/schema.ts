@@ -18,5 +18,6 @@ export default Joi.object({
   disableTypes: Joi.boolean(),
   beforeReadWriteStream: Joi.func(),
   afterReadWriteStream: Joi.func(),
-  react: Joi.boolean()
+  react: Joi.boolean(),
+  paths: Joi.object()
 })

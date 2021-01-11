@@ -33,7 +33,7 @@ export default function getTSConfig(cwd: string, pkgPath: string | undefined) {
   }
 
   return {
-    tsConfig: rootTsConfig.config.compilerOptions,
+    tsConfig: rootTsConfig.config,
     error: rootTsConfig.error
   }
 }

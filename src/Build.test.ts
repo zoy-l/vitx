@@ -46,6 +46,8 @@ describe('nerd build', () => {
       process.chdir(cwd)
       rimraf.sync(path.join(cwd, 'actualed'))
 
+      console.log(cwd)
+
       const build = new Nerd({ cwd })
 
       build
