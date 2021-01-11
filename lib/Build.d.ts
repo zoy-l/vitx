@@ -24,6 +24,7 @@ export default class Build {
         bundleOpts: IBundleOpt;
         currentDir: string;
     }): string | null | undefined;
+    isTransform(regExp: RegExp, filePath: string): boolean;
     createStream({ src, pkg, dir, bundleOpts }: {
         pkg?: string;
         dir: string;

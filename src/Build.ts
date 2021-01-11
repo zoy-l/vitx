@@ -79,16 +79,16 @@ export default class Build {
 
     let isBrowser = target === 'browser'
 
-    if (/\.(t|j)sx?$/.test(paths)) {
+    if (/\.(t|j)sx$/.test(paths)) {
       isBrowser = true
     } else {
-      if (isBrowser) {
-        if (nodeFiles && nodeFiles.includes(path.relative(currentDir, paths)))
-          isBrowser = false
-      } else if (
-        browserFiles &&
-        browserFiles.includes(path.relative(currentDir, paths))
-      ) {
+      const currentPath = path.relative(currentDir, paths)
+
+      if (isBrowser && nodeFiles && nodeFiles.includes(currentPath)) {
+        isBrowser = false
+      }
+
+      if (!isBrowser && browserFiles && browserFiles.includes(currentPath)) {
         isBrowser = true
       }
     }
@@ -104,6 +104,10 @@ export default class Build {
       filename: paths,
       configFile: false
     })?.code
+  }
+
+  isTransform(regExp: RegExp, filePath: string) {
+    return regExp.test(filePath) && !filePath.endsWith('.d.ts')
   }
 
   createStream({
@@ -159,16 +163,14 @@ export default class Build {
       )
       .pipe(
         gulpIf(
-          ({ path }) =>
-            tsConfig.declaration &&
-            /\.tsx?$/.test(path) &&
-            !path.endsWith('.d.ts'),
+          (file) =>
+            tsConfig.declaration && this.isTransform(/\.tsx?$/, file.path),
           glupTs(tsConfig)
         )
       )
       .pipe(
         gulpIf(
-          ({ path }) => /\.(t|j)sx?$/.test(path) && !path.endsWith('.d.ts'),
+          (file) => this.isTransform(/\.(t|j)sx?$/, file.path),
           through.obj((chunk, _enc, callback) => {
             chunk.contents = Buffer.from(
               this.transform({
