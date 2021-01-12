@@ -2,16 +2,16 @@
 
 Simple transform tool
 
-[![lerna](https://img.shields.io/badge/support-lerna-blue)](https://lernajs.io/)
+[![lerna](https://img.shields.io/badge/support-lerna-blue)](https://lernajs.io/) [![GitHub license](https://img.shields.io/github/license/l-zoy/zmi-nerd)](https://github.com/l-zoy/zmi-nerd/blob/master/LICENSE)
 
 ## Features
 
-- ✅  支持 TypeScript
-- ✅  支持 lerna
-- ✅  支持 babel 或 esbuild 打包
-- ✅  支持 cjs 和 esm
-- ✅  支持自定义扩展
-- ✅  支持小程序
+- ✅ 支持 TypeScript
+- ✅ 支持 lerna
+- ✅ 支持 babel 或 esbuild 打包
+- ✅ 支持 cjs 和 esm
+- ✅ 支持自定义扩展
+- ✅ 支持小程序
 
 ## Installation
 
