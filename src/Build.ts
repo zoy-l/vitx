@@ -180,7 +180,7 @@ export default class Build {
       )
       .pipe(
         typeof beforeReadWriteStream === 'function'
-          ? beforeReadWriteStream(through, insert)
+          ? beforeReadWriteStream({ through, insert })
           : through.obj()
       )
       .pipe(
@@ -233,7 +233,7 @@ export default class Build {
       )
       .pipe(
         typeof afterReadWriteStream === 'function'
-          ? afterReadWriteStream(through, insert)
+          ? afterReadWriteStream({ through, insert })
           : through.obj()
       )
       .pipe(vinylFs.dest(path.join(dir, output)))
