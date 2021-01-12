@@ -41,27 +41,30 @@ describe('nerd build', () => {
   const root = path.join(__dirname, '../__test__')
 
   fs.readdirSync(root).forEach((dir) => {
-    it(dir, (done) => {
-      const cwd = path.join(root, dir)
-      process.chdir(cwd)
-      rimraf.sync(path.join(cwd, 'actualed'))
+    const cwd = path.join(root, dir)
 
-      const build = new Nerd({ cwd })
+    if (dir.charAt(0) !== '.') {
+      it(dir, (done) => {
+        process.chdir(cwd)
+        rimraf.sync(path.join(cwd, 'actualed'))
 
-      build
-        .step()
-        .then(() => {
-          moveEsLibToDist(cwd)
-          try {
-            assertBuildResult(cwd)
+        const build = new Nerd({ cwd })
+
+        build
+          .step()
+          .then(() => {
+            moveEsLibToDist(cwd)
+            try {
+              assertBuildResult(cwd)
+              done()
+            } catch (err) {
+              done(err)
+            }
+          })
+          .catch(() => {
             done()
-          } catch (err) {
-            done(err)
-          }
-        })
-        .catch(() => {
-          done()
-        })
-    })
+          })
+      })
+    }
   })
 })
