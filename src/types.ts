@@ -2,7 +2,7 @@ import through2 from 'through2'
 import gulpInsert from 'gulp-insert'
 
 export interface IBundleOptions {
-  esBuild?: true
+  esBuild?: boolean
   moduleType?: 'esm' | 'cjs'
   extraBabelPlugins?: any[]
   extraBabelPresets?: any[]

@@ -55,7 +55,8 @@ export default class Build {
       {
         entry: 'src',
         output: 'lib',
-        moduleType: 'cjs'
+        target: 'browser',
+        moduleType: 'esm'
       },
       config
     )
