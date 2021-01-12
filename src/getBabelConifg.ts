@@ -23,7 +23,7 @@ export default function getBabelConfig(
           targets: isBrowser
             ? { browsers: ['last 2 versions', 'IE 10'] }
             : { node: nodeVersion ?? 6 },
-          modules: moduleType === 'esm' ? false : 'auto'
+          modules: isBrowser ? false : 'auto'
         }
       ],
       isBrowser && react && '@babel/preset-react',

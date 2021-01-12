@@ -14,12 +14,12 @@ export interface IBundleOptions {
   runtimeHelpers?: boolean
   disableTypes?: boolean
   beforeReadWriteStream?: (
-    through: typeof through2,
-    insert: typeof gulpInsert
+    through?: typeof through2,
+    insert?: typeof gulpInsert
   ) => NodeJS.ReadWriteStream
   afterReadWriteStream?: (
-    through: typeof through2,
-    insert: typeof gulpInsert
+    through?: typeof through2,
+    insert?: typeof gulpInsert
   ) => NodeJS.ReadWriteStream
   pkgs?: string[]
   entry?: string

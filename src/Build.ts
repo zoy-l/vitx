@@ -102,6 +102,7 @@ export default class Build {
     }
 
     const babelConfig = getBabelConfig(bundleOpts, isBrowser)
+
     return babelTransformSync(content, {
       ...babelConfig,
       filename: paths,
@@ -215,7 +216,19 @@ export default class Build {
             chunk.path = chunk.path.replace(path.extname(chunk.path), '.js')
 
             callback(null, chunk)
-          }) as NodeJS.ReadWriteStream
+          }) as NodeJS.ReadWriteStream,
+          insert.transform((contents, file) => {
+            if (!file.path.endsWith('.d.ts')) {
+              this.logInfo({
+                pkg,
+                msg: `${chalk.green('➜ Transform')} for ${chalk.blue(
+                  `${output}${file.path.replace(basePath, '')}`
+                )}`
+              })
+            }
+
+            return contents
+          })
         )
       )
       .pipe(
