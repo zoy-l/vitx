@@ -1,6 +1,6 @@
 {
   "name": "zmi-nerd",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -65,5 +65,18 @@
   ],
   "bin": {
     "nerd-build": "./bin/zmi-nerd.js"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/l-zoy/zmi-nerd"
+  },
+  "homepage": "https://github.com/l-zoy/zmi-nerd",
+  "bugs": "https://github.com/l-zoy/zmi-nerd/issues",
+  "keywords": [
+    "zmi-nerd",
+    "gulp",
+    "gulpplugin",
+    "小程序",
+    "打包"
+  ]
 }

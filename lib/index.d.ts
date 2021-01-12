@@ -1,1 +1,1 @@
-export type { IBundleOptions } from './types';
+export { IBundleOptions as IConfig } from './types';
