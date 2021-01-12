@@ -1,6 +1,7 @@
 {
   "name": "zmi-nerd",
   "version": "1.0.1",
+  "description": "library build tool.",
   "license": "MIT",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
