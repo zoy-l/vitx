@@ -142,7 +142,7 @@ target 为 `browser` 时，配置例外文件走 `node` target。
 
 #### disableTypes
 
-是否禁用类型检测。
+是否禁用类型检测, 将不会生成 d.ts
 
 - Type: `boolean`
 - Default: `false`
