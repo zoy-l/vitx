@@ -47,6 +47,10 @@ export default {
 } as IConfig
 ```
 
+### tsconfig.json
+
+会自动读取 `tsconfig.json` 的 `compilerOptions` 的配置进行编译 `ts` or `tsx`, 如果是 `lerna` 项目, 也会集成外部 `tsconfig.json` 的 `compilerOptions` 的配置
+
 ### Options
 
 #### esBuild
@@ -215,7 +219,10 @@ export default {
 }
 ```
 
-注:如果是 lerna 项目,没有传 `pkgs` 全部目录将进行编译
+注:
+
+1. 如果是 lerna 项目,没有传 `pkgs` 全部目录将进行编译
+2. 子目录的配置文件会继承最外层的配置, tsconfig 也会继承
 
 #### entry
 
