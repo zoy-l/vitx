@@ -1,9 +1,9 @@
+import slash from 'slash'
 import path from 'path'
 import fs from 'fs'
 
 import getBabelConfig from './getBabelConifg'
 import { IBundleOptions } from './types'
-import { conversion } from './utils'
 import schema from './schema'
 
 export const CONFIG_FILES = ['.nerdrc.ts', '.nerdrc.js']
@@ -19,7 +19,7 @@ function registerBabel({ cwd, only }: { cwd: string; only: string }) {
   require('@babel/register')({
     ...bebelConifg,
     extensions: ['.js', '.ts'],
-    only: [conversion(path.join(cwd, only))],
+    only: [slash(path.join(cwd, only))],
     babelrc: false,
     cache: false
   })

@@ -3,7 +3,6 @@ import { transformSync as esBuildTransformSync } from 'esbuild'
 import { Diagnostic } from 'typescript'
 import gulpPlumber from 'gulp-plumber'
 import glupTs from 'gulp-typescript'
-import alias from 'gulp-path-alias'
 import insert from 'gulp-insert'
 import merge from 'lodash.merge'
 import chokidar from 'chokidar'
@@ -13,14 +12,16 @@ import gulpIf from 'gulp-if'
 import rimraf from 'rimraf'
 import assert from 'assert'
 import chalk from 'chalk'
+import slash from 'slash'
 import path from 'path'
 import fs from 'fs'
 
-import { colorLog, conversion, eventColor } from './utils'
+import { colorLog, eventColor } from './utils'
 import type { IBundleOpt, IBundleOptions } from './types'
 import getEsBuildConfig from './getEsBuildConfig'
 import getBabelConfig from './getBabelConifg'
 import getTSConfig from './getTsConifg'
+import replaceAll from './replaceAll'
 import config from './config'
 
 interface IBuild {
@@ -159,7 +160,23 @@ export default class Build {
           gulpPlumber(() => {})
         )
       )
-      .pipe(alias({ paths }))
+      .pipe(
+        insert.transform((contents, file) => {
+          const _paths = { ...paths }
+          if (Object.keys(_paths).length) {
+            const dirname = path.dirname(file.path)
+            const ext = path.extname(file.relative)
+            contents = replaceAll({
+              ext,
+              contents,
+              dirname,
+              aliasMap: _paths
+            })
+          }
+
+          return contents
+        })
+      )
       .pipe(
         typeof beforeReadWriteStream === 'function'
           ? beforeReadWriteStream(through, insert)
@@ -180,7 +197,7 @@ export default class Build {
             chunk.contents = Buffer.from(
               this.transform({
                 content: chunk.contents,
-                paths: conversion(chunk.path),
+                paths: slash(chunk.path),
                 bundleOpts,
                 currentDir: dir
               }) as string
@@ -268,7 +285,7 @@ export default class Build {
             pkg,
             msg: chalk.blue(
               `➜ Start watching ${
-                pkg ?? conversion(srcPath).replace(`${this.cwd}/`, '')
+                pkg ?? slash(srcPath).replace(`${this.cwd}/`, '')
               } directory...`
             )
           })
@@ -297,7 +314,7 @@ export default class Build {
             const relPath = fullPath.replace(srcPath, '')
 
             this.logInfo({
-              msg: `${eventColor(event)} ${conversion(
+              msg: `${eventColor(event)} ${slash(
                 path.join(srcPath, relPath)
               ).replace(`${this.cwd}/`, '')}`
             })

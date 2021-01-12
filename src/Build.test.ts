@@ -1,8 +1,8 @@
-import fs from 'fs'
-import path from 'path'
-import glob from 'glob'
 import { copy, renameSync, mkdirSync } from 'fs-extra'
 import rimraf from 'rimraf'
+import glob from 'glob'
+import path from 'path'
+import fs from 'fs'
 
 import Nerd from './Build'
 
@@ -45,8 +45,6 @@ describe('nerd build', () => {
       const cwd = path.join(root, dir)
       process.chdir(cwd)
       rimraf.sync(path.join(cwd, 'actualed'))
-
-      console.log(cwd)
 
       const build = new Nerd({ cwd })
 
