@@ -6,12 +6,12 @@ Simple transform tool
 
 ## Features
 
-- ✅ 支持 TypeScript
-- ✅ 支持 lerna
-- ✅ 支持 babel 或 esbuild 打包
-- ✅ 支持 cjs 和 esm
-- ✅ 支持自定义扩展
-- ✅ 支持小程序
+- ✅  支持 TypeScript
+- ✅  支持 lerna
+- ✅  支持 babel 或 esbuild 打包
+- ✅  支持 cjs 和 esm
+- ✅  支持自定义扩展
+- ✅  支持小程序
 
 ## Installation
 
@@ -49,7 +49,7 @@ export default {
 
 ### tsconfig.json
 
-会自动读取 `tsconfig.json` 的 `compilerOptions` 的配置进行编译 `ts` or `tsx`, 如果是 `lerna` 项目, 也会集成外部 `tsconfig.json` 的 `compilerOptions` 的配置
+会自动读取 `tsconfig.json` 的 `compilerOptions` 的配置进行编译 `ts` or `tsx`, 如果是 `lerna` 项目, 也会继承外部 `tsconfig.json` 的 `compilerOptions` 的配置
 
 ### Options
 
@@ -65,7 +65,7 @@ export default {
 输出格式,打包方式等
 
 - Type: `"cjs" | "esm"`
-- Default: `"cjs"`
+- Default: `"esm"`
 
 #### extraBabelPresets
 
@@ -86,7 +86,7 @@ export default {
 node 库 or browser 库，只作用于语法层。
 
 - Type: `"node" | "browser"`
-- Default: `"node"`
+- Default: `"browser"`
 
 `node`，兼容到 node@6 `browser`，兼容到 `['last 2 versions', 'IE 10']`
 
@@ -161,7 +161,9 @@ target 为 `browser` 时，配置例外文件走 `node` target。
 
 注：
 
-1. 会传入两个参数 `through2` `insert`,
+1. 会传入两个参数
+   - `through2` https://github.com/rvagg/through2
+   - `insert` https://github.com/rschmukler/gulp-insert,
 2. 可以直接使用 `gulp` 插件
 
 ```js
@@ -189,7 +191,9 @@ export default {
 
 注：
 
-1. 会传入两个参数 `through2` `insert`,
+1. 会传入两个参数,
+   - `through2` https://github.com/rvagg/through2
+   - `insert` https://github.com/rschmukler/gulp-insert,
 2. 可以直接使用 `gulp` 插件
 
 ```js
