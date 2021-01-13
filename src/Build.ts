@@ -209,7 +209,7 @@ export default class Build {
               pkg,
               msg: `${chalk.green(
                 `➜ ${esBuild ? 'esBuild' : 'babel'}`
-              )} ${chalk.yellow(moduleType)} for ${chalk.blue(
+              )} ${chalk.yellow(moduleType!)} for ${chalk.blue(
                 `${output}${chunk.path.replace(basePath, '')}`
               )}`
             })
