@@ -8,6 +8,8 @@ jobs:
     environment:
       JOBS: max # https://gist.github.com/ralphtheninja/f7c45bdee00784b41fed
 
+    working_directory: ~/zmi-nerd
+
     steps:
       - run: yarn
       - run: yarn compile
