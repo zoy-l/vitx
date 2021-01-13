@@ -1,0 +1,18 @@
+#
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: circleci/node:latest
+    working_directory: ~/src
+
+    environment:
+      JOBS: max # https://gist.github.com/ralphtheninja/f7c45bdee00784b41fed
+
+    steps:
+      - run: yarn
+      - run: yarn compile
+      - run:
+        command: yarn test --forceExit --detectOpenHandles --runInBand --maxWorkers=2
+        no_output_timeout: 300m
+      # - run: bash <(curl -s https://codecov.io/bash)
