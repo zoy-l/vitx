@@ -26,7 +26,8 @@
   },
   "scripts": {
     "compile": "BABEL_CACHE_PATH='./.cache/babel.cache.json' node -r ./compile.js ./src/cli.ts",
-    "test": "guard-test",
+    "test": "guard-test --coverage",
+    "debug": "guard-test",
     "update:deps": "yarn upgrade-interactive --latest"
   },
   "dependencies": {
