@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: circleci/node:latest-browsers
+      - image: circleci/node:latest
 
     environment:
       JOBS: max # https://gist.github.com/ralphtheninja/f7c45bdee00784b41fed
@@ -14,5 +14,5 @@ jobs:
       - checkout
       - run: yarn
       - run: yarn compile
-      - run: yarn test --forceExit --detectOpenHandles
+      - run: yarn test --forceExit --detectOpenHandles --runInBand --maxWorkers=2
       - run: bash <(curl -s https://codecov.io/bash)
