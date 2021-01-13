@@ -7624,16 +7624,22 @@ yargs@^15.4.1:
     y18n "^4.0.0"
     yargs-parser "^18.1.2"
 
-zmi-guard@^0.0.2:
-  version "0.0.2"
-  resolved "https://registry.yarnpkg.com/zmi-guard/-/zmi-guard-0.0.2.tgz#785bad98e7a4bf4b8167c32b52142cc039d55171"
-  integrity sha512-kZrE6zGLs7Z69OmQRc1feYmLGnVUZt+NqLe07F+5MGqSq5rNJsV8W89g4BITivYrAFOKkyKGAH4RO+VxS6Unow==
+zmi-guard@^0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/zmi-guard/-/zmi-guard-0.0.4.tgz#b71f8eeb57a64cedfc9300deb7ce821109dd1308"
+  integrity sha512-aEkZ5bEWAvGgjswRL8rSmXdhRHb4+zWRY2JVFV0905nlhZZhWucJHwyzqgbEos3po1JdTq6/Gsc07RvWLBxeSQ==
   dependencies:
     "@babel/core" "^7.12.10"
+    "@babel/plugin-proposal-class-properties" "^7.12.1"
+    "@babel/plugin-proposal-decorators" "^7.12.12"
     "@babel/plugin-proposal-export-default-from" "^7.12.1"
     "@babel/plugin-proposal-export-namespace-from" "^7.12.1"
+    "@babel/plugin-proposal-nullish-coalescing-operator" "^7.12.1"
+    "@babel/plugin-proposal-optional-chaining" "^7.12.7"
+    "@babel/plugin-syntax-dynamic-import" "^7.8.3"
     "@babel/plugin-transform-modules-commonjs" "^7.12.1"
     "@babel/preset-env" "^7.12.11"
+    "@babel/preset-react" "^7.12.10"
     "@babel/preset-typescript" "^7.12.7"
     "@types/jest" "^26.0.20"
     "@types/lodash.merge" "^4.6.6"

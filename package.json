@@ -22,12 +22,12 @@
     "@types/yargs-parser": "^20.2.0",
     "fs-extra": "^9.0.1",
     "glob": "^7.1.6",
-    "zmi-guard": "^0.0.2"
+    "zmi-guard": "^0.0.4"
   },
   "scripts": {
     "compile": "node -r ./compile.js ./src/cli.ts build",
-    "test": "umi-test --coverage",
-    "debug": "guard-test",
+    "test": "guard-test --coverage",
+    "debug": "guard-test --coverage",
     "update:deps": "yarn upgrade-interactive --latest"
   },
   "dependencies": {
