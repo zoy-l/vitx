@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: circleci/node:latest
+      - image: circleci/node:latest-browsers
 
     environment:
       JOBS: max # https://gist.github.com/ralphtheninja/f7c45bdee00784b41fed
