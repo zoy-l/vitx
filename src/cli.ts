@@ -4,17 +4,26 @@ import chalk from 'chalk'
 import Build from './Build'
 
 const args = yargsParser(process.argv.slice(2))
+const commands = ['build']
 
-if (!args._[0] || args.w || args.watch) {
-  const watch = args.w ?? args.watch
-  const cwd = process.cwd()
+function logError(err: any) {
+  console.error(chalk.red(err))
+  process.exit(1)
+}
 
-  const build = new Build({ cwd, watch })
+if (commands.includes(args._[0])) {
+  const command = args._[0]
 
-  build.step().catch((e) => {
-    console.error(chalk.red(e))
-    process.exit(1)
-  })
-} else {
-  throw new Error(chalk.red(`Unknown command '${args._}'`))
+  if (command === 'build') {
+    const watch = args.w ?? args.watch
+    const cwd = process.cwd()
+    const build = new Build({ cwd, watch })
+    build.step().catch((err) => {
+      logError(err)
+    })
+  } else if (command === '_') {
+    //
+  } else {
+    throw new Error(chalk.red(`Unknown command '${args._}'`))
+  }
 }

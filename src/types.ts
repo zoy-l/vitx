@@ -1,6 +1,3 @@
-import { options as CliOptions } from 'jest-cli/build/cli/args'
-import { runCLI } from 'jest'
-
 import through2 from 'through2'
 import gulpInsert from 'gulp-insert'
 
@@ -33,26 +30,4 @@ export interface IBundleOptions {
 export interface IBundleOpt extends IBundleOptions {
   entry: string
   output: string
-}
-
-export type ArgsType<T extends (...args: any[]) => any> = T extends (
-  ...args: infer U
-) => any
-  ? U
-  : never
-
-export interface ITestArgs extends Partial<ArgsType<typeof runCLI>['0']> {
-  version?: boolean
-  cwd?: string
-  debug?: boolean
-  e2e?: boolean
-  package?: string
-}
-
-export type PickedJestCliOptions = {
-  [T in keyof typeof CliOptions]?: T extends keyof ITestArgs[T]
-    ? T
-    : typeof CliOptions[T] extends { alias: string | undefined }
-    ? ITestArgs[T]
-    : never
 }

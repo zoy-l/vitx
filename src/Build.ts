@@ -1,4 +1,4 @@
-import { transformSync as babelTransformSync } from '@babel/core'
+import * as babelTransformSync from '@babel/core'
 import { transformSync as esBuildTransformSync } from 'esbuild'
 import { Diagnostic } from 'typescript'
 import gulpPlumber from 'gulp-plumber'
@@ -104,7 +104,7 @@ export default class Build {
 
     const babelConfig = getBabelConfig(bundleOpts, isBrowser)
 
-    return babelTransformSync(content, {
+    return babelTransformSync.transformSync(content, {
       ...babelConfig,
       filename: paths,
       configFile: false
