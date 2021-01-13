@@ -26,7 +26,7 @@
   },
   "scripts": {
     "compile": "node -r ./compile.js ./src/cli.ts build",
-    "test": "guard-tes --coveraget",
+    "test": "guard-test --coveraget",
     "debug": "guard-test",
     "update:deps": "yarn upgrade-interactive --latest"
   },
