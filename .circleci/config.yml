@@ -11,7 +11,5 @@ jobs:
     steps:
       - run: yarn
       - run: yarn compile
-      - run:
-        command: yarn test --forceExit --detectOpenHandles --runInBand --maxWorkers=2
-        no_output_timeout: 300m
+      - run: yarn test --forceExit --detectOpenHandles --runInBand --maxWorkers=2
       # - run: bash <(curl -s https://codecov.io/bash)
