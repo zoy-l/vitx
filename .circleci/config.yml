@@ -11,6 +11,7 @@ jobs:
     working_directory: ~/zmi-nerd
 
     steps:
+      - checkout
       - run: yarn
       - run: ls
       - run: yarn compile
