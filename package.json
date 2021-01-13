@@ -52,7 +52,7 @@
     "gulp-plumber": "^1.2.1",
     "gulp-typescript": "5.0.1",
     "joi": "^17.3.0",
-    "lodash.merge": "^4.6.2",
+    "lodash": "^4.17.20",
     "rimraf": "^3.0.2",
     "slash": "^3.0.0",
     "through2": "^4.0.2",
