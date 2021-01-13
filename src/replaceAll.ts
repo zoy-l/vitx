@@ -66,7 +66,7 @@ export default function replaceAll(options: {
     default:
       reg = getRegExp(
         Object.keys(prefixPattenMap)
-          .map((k) => prefixPattenMap[k as keyof typeof prefixPattenMap])
+          .map((k) => prefixPattenMap[k])
           .join('|')
       )
       break
