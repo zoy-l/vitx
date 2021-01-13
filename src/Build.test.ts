@@ -61,8 +61,8 @@ describe('nerd build', () => {
               done(err)
             }
           })
-          .catch(() => {
-            done()
+          .catch((err) => {
+            done(err)
           })
       })
     }
