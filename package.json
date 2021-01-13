@@ -15,7 +15,7 @@
     "@types/gulp-if": "^0.0.33",
     "@types/gulp-insert": "^0.5.8",
     "@types/gulp-plumber": "^0.0.32",
-    "@types/lodash.merge": "^4.6.6",
+    "@types/lodash": "^4.14.167",
     "@types/rimraf": "^3.0.0",
     "@types/through2": "^2.0.36",
     "@types/vinyl-fs": "^2.4.11",
@@ -25,8 +25,8 @@
     "zmi-guard": "^0.0.2"
   },
   "scripts": {
-    "compile": "node -r ./compile.js ./src/cli.ts build --watch",
-    "test": "guard-test",
+    "compile": "node -r ./compile.js ./src/cli.ts build",
+    "test": "guard-tes --coveraget",
     "debug": "guard-test",
     "update:deps": "yarn upgrade-interactive --latest"
   },
