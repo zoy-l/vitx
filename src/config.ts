@@ -13,8 +13,7 @@ function isDefault(obj: any) {
 }
 
 function registerBabel({ cwd, only }: { cwd: string; only: string }) {
-  const bebelConifg = getBabelConfig({ target: 'node' })
-  bebelConifg.presets.unshift('@babel/preset-typescript')
+  const bebelConifg = getBabelConfig({ target: 'node', disableTypes: true })
 
   require('@babel/register')({
     ...bebelConifg,
