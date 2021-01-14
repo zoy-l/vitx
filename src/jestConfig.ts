@@ -19,6 +19,7 @@ export default function defaultConfig(cwd: string, args: ITestArgs) {
   }
 
   return {
+    // preset: 'ts-jest',
     collectCoverageFrom: [
       'index.{js,jsx,ts,tsx}',
       hasSrc && 'src/**/*.{js,jsx,ts,tsx}',
@@ -51,7 +52,7 @@ export default function defaultConfig(cwd: string, args: ITestArgs) {
     transform: {
       '^.+\\.(j|t)sx?$': require.resolve('./helpers/ecma')
     },
-    verbose: true,
+    verbose: true
     // ...(process.env.MAX_WORKERS
     //   ? { maxWorkers: Number(process.env.MAX_WORKERS) }
     //   : {})
