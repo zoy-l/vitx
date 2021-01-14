@@ -22,8 +22,7 @@
     "@types/yargs-parser": "^20.2.0",
     "fs-extra": "^9.0.1",
     "glob": "^7.1.6",
-    "prettier": "^2.2.1",
-    "umi-test": "^1.9.6"
+    "prettier": "^2.2.1"
   },
   "scripts": {
     "compile": "node -r ./compile.js ./src/cli.ts build",
