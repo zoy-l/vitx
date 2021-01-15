@@ -1,4 +1,4 @@
-import { options as CliOptions } from 'jest-cli/build/cli/args'
+import type { Config } from '@jest/types'
 import gulpInsert from 'gulp-insert'
 import through2 from 'through2'
 import { runCLI } from 'jest'
@@ -66,3 +66,9 @@ export type CalculatedConfig<
   {
     [V in keyof U]: V extends keyof T ? T[V] : U[V]
   }
+
+export type handleConfig<T> = T extends object
+  ? { [key in keyof T]: T[key] | ((value: T[key]) => T[key]) }
+  : T
+
+export type jestConfig = handleConfig<Config.InitialOptions>

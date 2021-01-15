@@ -28,7 +28,7 @@
   "scripts": {
     "compile": "node -r ./compile.js ./src/cli.ts build",
     "test": "node ./lib/cli.js test --coverage",
-    "debug": "nerd ./lib/cli.js test",
+    "debug": "node ./lib/cli.js test",
     "clearCache": "node ./lib/cli.js test --clearCache",
     "update:deps": "yarn upgrade-interactive --latest"
   },

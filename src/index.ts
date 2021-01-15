@@ -1,1 +1,1 @@
-export { IBundleOptions as IConfig } from './types'
+export { IBundleOptions as IConfig, jestConfig } from './types'

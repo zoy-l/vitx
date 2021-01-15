@@ -1,4 +1,5 @@
 /// <reference types="node" />
+import type { Config } from '@jest/types';
 import gulpInsert from 'gulp-insert';
 import through2 from 'through2';
 import { runCLI } from 'jest';
@@ -45,3 +46,7 @@ export declare type AnyConfig<T extends Record<string, any>, U extends Record<st
 export declare type CalculatedConfig<T extends Record<string, any>, U extends Record<string, any>> = T & {
     [V in keyof U]: V extends keyof T ? T[V] : U[V];
 };
+export declare type handleConfig<T> = T extends object ? {
+    [key in keyof T]: T[key] | ((value: T[key]) => T[key]);
+} : T;
+export declare type jestConfig = handleConfig<Config.InitialOptions>;

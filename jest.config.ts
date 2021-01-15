@@ -1,5 +1,7 @@
+import { jestConfig } from './src'
+
 export default {
-  collectCoverageFrom(memo: string[]) {
+  collectCoverageFrom(memo) {
     return memo.concat([
       '!src/test.ts',
       '!src/cli.ts',
@@ -8,4 +10,4 @@ export default {
       '!src/utils.ts'
     ])
   }
-}
+} as jestConfig

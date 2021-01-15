@@ -1,29 +1,8 @@
 import transformer from 'babel-jest'
+import getBabelConifg from './getBabelConifg'
 
-module.exports = transformer.createTransformer!({
-  presets: [
-    [
-      '@babel/preset-typescript',
-      {
-        allowNamespaces: true
-      }
-    ],
-    [
-      '@babel/preset-env',
-      {
-        targets: {
-          node: 'current'
-        },
-        modules: 'commonjs'
-      }
-    ],
-    '@babel/preset-react'
-  ],
-  plugins: [
-    ['@babel/plugin-transform-modules-commonjs', { lazy: true }],
-    '@babel/plugin-proposal-export-default-from',
-    '@babel/plugin-proposal-export-namespace-from'
-  ],
+module.exports = transformer.createTransformer({
+  ...getBabelConifg({ target: 'node', disableTypes: true }),
   babelrc: false,
   configFile: false
 })
