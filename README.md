@@ -2,7 +2,7 @@
 
 Simple transform tool
 
-[![lerna](https://img.shields.io/badge/support-lerna-blue)](https://lernajs.io/) [![GitHub license](https://img.shields.io/github/license/l-zoy/zmi-nerd)](https://github.com/l-zoy/zmi-nerd/blob/master/LICENSE) [![codecov](https://codecov.io/gh/l-zoy/zmi-nerd/branch/master/graph/badge.svg?token=W1ND9EDZEJ)](https://codecov.io/gh/l-zoy/zmi-nerd)
+[![lerna](https://img.shields.io/badge/support-lerna-blue)](https://lernajs.io/) [![GitHub license](https://img.shields.io/github/license/l-zoy/zmi-nerd)](https://github.com/l-zoy/zmi-nerd/blob/master/LICENSE) [![codecov](https://codecov.io/gh/l-zoy/zmi-nerd/branch/master/graph/badge.svg?token=W1ND9EDZEJ)](https://codecov.io/gh/l-zoy/zmi-nerd) [![<ORG_NAME>](https://circleci.com/gh/l-zoy/zmi-nerd.svg?style=svg)](https://app.circleci.com/pipelines/github/l-zoy/zmi-nerd)
 
 ## Features
 
