@@ -1,7 +1,7 @@
 import { options as CliOptions } from 'jest-cli/build/cli/args'
 import yargsParser from 'yargs-parser'
-import { merge } from 'lodash'
 import { runCLI } from 'jest'
+import { merge } from 'lodash'
 import assert from 'assert'
 import path from 'path'
 import fs from 'fs'
@@ -9,37 +9,27 @@ import fs from 'fs'
 import { PickedJestCliOptions } from './types'
 import defaultConfig from './jestConfig'
 
-export default async function (args: yargsParser.Arguments) {  
+export default async function (args: yargsParser.Arguments) {
   process.env.NODE_ENV = 'test'
   const cwd = args.cwd ?? process.cwd()
+
   const userJestConfigFile = path.join(cwd, 'jest.config.js')
 
   const userJestConfig =
     fs.existsSync(userJestConfigFile) && require(userJestConfigFile)
 
-  const packageJSONPath = path.join(cwd, 'package.json')
-  const packageJestConfig =
-    fs.existsSync(packageJSONPath) && require(packageJSONPath).jest
-
-  const config = merge(
-    defaultConfig(cwd, args),
-    packageJestConfig,
-    userJestConfig
-  )
+  const config = merge(defaultConfig(cwd, args), userJestConfig)
 
   const argsConfig = Object.keys(CliOptions).reduce((prev, name) => {
     if (args[name]) prev[name] = args[name]
-
     // Convert alias args into real one
     const { alias } = CliOptions[name]
     if (alias && args[alias]) prev[name] = args[alias]
     return prev
   }, {} as PickedJestCliOptions)
 
-  // Must be a separate `config` configuration,
-  // The value is `string`, otherwise it will not take effect
   // prettier-ignore
-  // Run jest  
+  // Run jest
   const result = await runCLI({
     config: JSON.stringify(config),
     _: args._ ?? [],
