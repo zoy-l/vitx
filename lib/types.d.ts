@@ -1,5 +1,4 @@
 /// <reference types="node" />
-import { options as CliOptions } from 'jest-cli/build/cli/args';
 import gulpInsert from 'gulp-insert';
 import through2 from 'through2';
 import { runCLI } from 'jest';
@@ -40,8 +39,9 @@ export interface ITestArgs extends Partial<ArgsType<typeof runCLI>['0']> {
     e2e?: boolean;
     package?: string;
 }
-export declare type PickedJestCliOptions = {
-    [T in keyof typeof CliOptions]?: T extends keyof ITestArgs[T] ? T : typeof CliOptions[T] extends {
-        alias: string | undefined;
-    } ? ITestArgs[T] : never;
+export declare type AnyConfig<T extends Record<string, any>, U extends Record<string, any>> = {
+    [V in keyof U]: V extends keyof T ? U[V] extends (...args: any[]) => any ? (argv: T[V]) => T[V] : T[V] : U[V];
+};
+export declare type CalculatedConfig<T extends Record<string, any>, U extends Record<string, any>> = T & {
+    [V in keyof U]: V extends keyof T ? T[V] : U[V];
 };

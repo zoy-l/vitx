@@ -12,7 +12,6 @@ export default function defaultConfig(cwd: string, args: ITestArgs) {
   const testMatchPrefix = hasPackage ? `**/packages/${args.package}/` : ''
 
   return {
-    // preset: 'ts-jest',
     collectCoverageFrom: [
       'index.{js,jsx,ts,tsx}',
       hasSrc && 'src/**/*.{js,jsx,ts,tsx}',

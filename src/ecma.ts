@@ -1,6 +1,6 @@
-import babelJest from 'babel-jest'
+import transformer from 'babel-jest'
 
-module.exports = babelJest.createTransformer({
+module.exports = transformer.createTransformer!({
   presets: [
     [
       '@babel/preset-typescript',

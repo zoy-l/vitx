@@ -1,39 +1,31 @@
-import slash from 'slash'
 import path from 'path'
 import fs from 'fs'
 
-import getBabelConfig from './getBabelConifg'
+import { registerBabel, isDefault } from './utils'
 import { IBundleOptions } from './types'
+
 import schema from './schema'
 
 export const CONFIG_FILES = ['.nerdrc.ts', '.nerdrc.js']
 
-function isDefault(obj: any) {
-  return obj.default ?? obj
-}
-
-function registerBabel({ cwd, only }: { cwd: string; only: string }) {
-  const bebelConifg = getBabelConfig({ target: 'node', disableTypes: true })
-
-  require('@babel/register')({
-    ...bebelConifg,
-    extensions: ['.js', '.ts'],
-    only: [slash(path.join(cwd, only))],
-    babelrc: false,
-    cache: false
-  })
-}
-
 export default function (cwd: string): IBundleOptions {
-  const configFile = CONFIG_FILES.find((file) =>
-    fs.existsSync(path.join(cwd, file))
+  const isTest = process.env.NODE_ENV !== 'test'
+  const configFile = CONFIG_FILES.map((configName) =>
+    path.join(cwd, configName)
   )
+
+  const userConfig =
+    configFile.find((configCwd) => {
+      return fs.existsSync(configCwd)
+    }) ?? ''
 
   let config = {}
 
-  if (configFile) {
-    registerBabel({ cwd, only: configFile })
-    config = isDefault(require(path.join(cwd, configFile)))
+  if (userConfig) {
+    // https://github.com/facebook/jest/issues/7864
+    isTest && registerBabel(userConfig)
+    config = isDefault(require(userConfig))
+
     const { error } = schema.validate(config)
 
     if (error) {

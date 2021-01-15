@@ -15,18 +15,14 @@ export interface IBundleOptions {
   nodeVersion?: number
   runtimeHelpers?: boolean
   disableTypes?: boolean
-  beforeReadWriteStream?: (
-    options?: {
-      through: typeof through2
-      insert: typeof gulpInsert
-    }
-  ) => NodeJS.ReadWriteStream
-  afterReadWriteStream?: (
-    options?: {
-      through: typeof through2
-      insert: typeof gulpInsert
-    }
-  ) => NodeJS.ReadWriteStream
+  beforeReadWriteStream?: (options?: {
+    through: typeof through2
+    insert: typeof gulpInsert
+  }) => NodeJS.ReadWriteStream
+  afterReadWriteStream?: (options?: {
+    through: typeof through2
+    insert: typeof gulpInsert
+  }) => NodeJS.ReadWriteStream
   pkgs?: string[]
   entry?: string
   output?: string
@@ -52,10 +48,21 @@ export interface ITestArgs extends Partial<ArgsType<typeof runCLI>['0']> {
   package?: string
 }
 
-export type PickedJestCliOptions = {
-  [T in keyof typeof CliOptions]?: T extends keyof ITestArgs[T]
-    ? T
-    : typeof CliOptions[T] extends { alias: string | undefined }
-    ? ITestArgs[T]
-    : never
+export type AnyConfig<
+  T extends Record<string, any>,
+  U extends Record<string, any>
+> = {
+  [V in keyof U]: V extends keyof T
+    ? U[V] extends (...args: any[]) => any
+      ? (argv: T[V]) => T[V]
+      : T[V]
+    : U[V]
 }
+
+export type CalculatedConfig<
+  T extends Record<string, any>,
+  U extends Record<string, any>
+> = T &
+  {
+    [V in keyof U]: V extends keyof T ? T[V] : U[V]
+  }

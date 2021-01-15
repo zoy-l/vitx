@@ -1,40 +1,40 @@
-import { options as CliOptions } from 'jest-cli/build/cli/args'
 import yargsParser from 'yargs-parser'
 import { runCLI } from 'jest'
-import { merge } from 'lodash'
 import assert from 'assert'
 import path from 'path'
 import fs from 'fs'
 
-import { PickedJestCliOptions } from './types'
 import defaultConfig from './jestConfig'
+import { registerBabel, isDefault, mergeConfig } from './utils'
+
+const jestConfig = ['jest.config.js', 'jest.config.ts']
 
 export default async function (args: yargsParser.Arguments) {
   process.env.NODE_ENV = 'test'
   const cwd = args.cwd ?? process.cwd()
 
-  const userJestConfigFile = path.join(cwd, 'jest.config.js')
+  const userJestConfigFiles = jestConfig.map((configName) =>
+    path.join(cwd, configName)
+  )
 
-  const userJestConfig =
-    fs.existsSync(userJestConfigFile) && require(userJestConfigFile)
+  const userJestConfig = userJestConfigFiles.find((configCwd) => {
+    return fs.existsSync(configCwd)
+  })
 
-  const config = merge(defaultConfig(cwd, args), userJestConfig)
+  if (userJestConfig) {
+    registerBabel(userJestConfig)
+  }
 
-  const argsConfig = Object.keys(CliOptions).reduce((prev, name) => {
-    if (args[name]) prev[name] = args[name]
-    // Convert alias args into real one
-    const { alias } = CliOptions[name]
-    if (alias && args[alias]) prev[name] = args[alias]
-    return prev
-  }, {} as PickedJestCliOptions)
+  const config = mergeConfig(
+    defaultConfig(cwd, args),
+    isDefault(userJestConfig ? require(userJestConfig) : {})
+  )
 
   // prettier-ignore
   // Run jest
   const result = await runCLI({
     config: JSON.stringify(config),
-    _: args._ ?? [],
-    $0: args.$0 ?? '',
-    ...argsConfig
+    ...args
   },[cwd])
 
   assert(result.results.success, `Test with jest failed`)

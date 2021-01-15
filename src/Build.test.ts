@@ -38,7 +38,7 @@ function moveEsLibToDist(cwd: string) {
 }
 
 describe('nerd build', () => {
-  const root = path.join(__dirname, '../__test__')
+  const root = path.join(__dirname, '../fixtures')
 
   fs.readdirSync(root).forEach((dir) => {
     const cwd = path.join(root, dir)
