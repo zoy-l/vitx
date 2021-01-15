@@ -1,5 +1,7 @@
-import through2 from 'through2'
+import { options as CliOptions } from 'jest-cli/build/cli/args'
 import gulpInsert from 'gulp-insert'
+import through2 from 'through2'
+import { runCLI } from 'jest'
 
 export interface IBundleOptions {
   esBuild?: boolean
@@ -31,3 +33,36 @@ export interface IBundleOpt extends IBundleOptions {
   entry: string
   output: string
 }
+
+export type ArgsType<T extends (...args: any[]) => any> = T extends (
+  ...args: infer U
+) => any
+  ? U
+  : never
+
+export interface ITestArgs extends Partial<ArgsType<typeof runCLI>['0']> {
+  version?: boolean
+  cwd?: string
+  debug?: boolean
+  e2e?: boolean
+  package?: string
+}
+
+export type AnyConfig<
+  T extends Record<string, any>,
+  U extends Record<string, any>
+> = {
+  [V in keyof U]: V extends keyof T
+    ? U[V] extends (...args: any[]) => any
+      ? (argv: T[V]) => T[V]
+      : T[V]
+    : U[V]
+}
+
+export type CalculatedConfig<
+  T extends Record<string, any>,
+  U extends Record<string, any>
+> = T &
+  {
+    [V in keyof U]: V extends keyof T ? T[V] : U[V]
+  }
