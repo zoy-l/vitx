@@ -6,8 +6,10 @@ import fs from 'fs'
 
 import Nerd from './Build'
 
+const getPathActualed = (cwd: string) => path.join(cwd, 'actualed')
+
 function assertBuildResult(cwd: string) {
-  const actualDir = path.join(cwd, 'actualed')
+  const actualDir = getPathActualed(cwd)
   const expectDir = path.join(cwd, 'expected')
 
   if (fs.existsSync(actualDir) && !fs.existsSync(expectDir)) {
@@ -30,7 +32,7 @@ function assertBuildResult(cwd: string) {
 
 function moveEsLibToDist(cwd: string) {
   const absDirPath = path.join(cwd, 'lib')
-  const absActualedPath = path.join(cwd, 'actualed')
+  const absActualedPath = getPathActualed(cwd)
   if (fs.existsSync(absDirPath)) {
     mkdirSync(absActualedPath)
     renameSync(absDirPath, path.join(absActualedPath, 'lib'))
@@ -46,7 +48,7 @@ describe('nerd build', () => {
     if (dir.charAt(0) !== '.') {
       it(dir, (done) => {
         process.chdir(cwd)
-        rimraf.sync(path.join(cwd, 'actualed'))
+        rimraf.sync(getPathActualed(cwd))
 
         const build = new Nerd({ cwd })
 
@@ -54,6 +56,26 @@ describe('nerd build', () => {
           .step()
           .then(() => {
             moveEsLibToDist(cwd)
+
+            if (fs.existsSync(path.join(cwd, 'lerna.json'))) {
+              mkdirSync(getPathActualed(cwd))
+              const pkgs = fs.readdirSync(path.join(cwd, 'packages'))
+              for (let pkg of pkgs) {
+                const pkgPath = path.join(cwd, 'packages', pkg)
+                if (fs.statSync(pkgPath).isDirectory()) {
+                  moveEsLibToDist(pkgPath)
+                  renameSync(
+                    getPathActualed(pkgPath),
+                    path.join(
+                      cwd,
+                      'actualed',
+                      pkg.split('/').slice(-1).join('')
+                    )
+                  )
+                }
+              }
+            }
+
             try {
               assertBuildResult(cwd)
               done()

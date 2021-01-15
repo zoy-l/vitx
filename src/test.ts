@@ -4,8 +4,8 @@ import assert from 'assert'
 import path from 'path'
 import fs from 'fs'
 
-import defaultConfig from './jestConfig'
 import { registerBabel, isDefault, mergeConfig } from './utils'
+import defaultConfig from './jestConfig'
 
 const jestConfig = ['jest.config.js', 'jest.config.ts']
 
