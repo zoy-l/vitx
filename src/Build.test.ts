@@ -120,7 +120,6 @@ describe('nerd build', () => {
         moveEsLibToDist(cwd)
         try {
           assertBuildResult(cwd)
-
           process.emit('SIGINT', 'SIGINT')
 
           done()
