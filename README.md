@@ -25,10 +25,10 @@ $ yarn add zmi-nerd
 
 ```bash
 # Bundle library
-$ nerd-build
+$ nerd build
 
 # Watch dev
-$ nerd-build --watch
+$ nerd build --watch
 ```
 
 ## Config
