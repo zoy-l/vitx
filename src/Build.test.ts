@@ -6,6 +6,9 @@ import fs from 'fs'
 
 import Nerd from './Build'
 
+const wait = () => new Promise((resolve) => setTimeout(resolve, 1500))
+jest.setTimeout(30000)
+
 const getPathActualed = (cwd: string) => path.join(cwd, 'actualed')
 
 function assertBuildResult(cwd: string) {
@@ -41,9 +44,11 @@ function moveEsLibToDist(cwd: string) {
 
 describe('nerd build', () => {
   const root = path.join(__dirname, '../fixtures')
+  const buildPath = path.join(root, 'build')
+  const watch = path.join(root, 'watch')
 
-  fs.readdirSync(root).forEach((dir) => {
-    const cwd = path.join(root, dir)
+  fs.readdirSync(buildPath).forEach((dir) => {
+    const cwd = path.join(buildPath, dir)
 
     if (dir.charAt(0) !== '.') {
       it(dir, (done) => {
@@ -86,6 +91,42 @@ describe('nerd build', () => {
           .catch((err) => {
             done(err)
           })
+      })
+    }
+  })
+
+  const file = ['js', 'ts']
+  fs.readdirSync(watch).forEach((dir, index) => {
+    const cwd = path.join(watch, dir)
+
+    if (dir.charAt(0) !== '.') {
+      it(dir, async (done) => {
+        process.chdir(cwd)
+        rimraf.sync(getPathActualed(cwd))
+        const build = new Nerd({ cwd, watch: true })
+
+        await build.step()
+        await wait()
+
+        fs.writeFileSync(`${cwd}/src/foo.${file[index]}`, 'const a = 1')
+        await wait()
+
+        fs.writeFileSync(`${cwd}/src/foo.${file[index]}`, 'const a = 2')
+        await wait()
+
+        rimraf.sync(`${cwd}/src/foo.${file[index]}`)
+        await wait()
+
+        moveEsLibToDist(cwd)
+        try {
+          assertBuildResult(cwd)
+
+          process.emit('SIGINT', 'SIGINT')
+
+          done()
+        } catch (err) {
+          done(err)
+        }
       })
     }
   })
