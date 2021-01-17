@@ -2,3 +2,4 @@ node_modules
 __test__/**/actualed
 .cache
 coverage
+lib
