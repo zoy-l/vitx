@@ -216,8 +216,8 @@ export default class Build {
 
             this.logInfo({
               pkg,
-              msg: `${chalk.green(
-                `➜ [${esBuild ? 'esBuild' : 'babel'}]:`
+              msg: `➜${chalk.yellow(
+                ` [${esBuild ? 'esBuild' : 'babel'}]:`
               )} for ${chalk.blue(
                 `${output}${chunk.path.replace(basePath, '')}`
               )}`
@@ -231,7 +231,7 @@ export default class Build {
             if (!file.path.endsWith('.d.ts')) {
               this.logInfo({
                 pkg,
-                msg: `${chalk.green('➜ Transform')} for ${chalk.blue(
+                msg: `➜${chalk.yellow(' [Copys]:')} for ${chalk.blue(
                   `${output}${file.path.replace(basePath, '')}`
                 )}`
               })
@@ -287,12 +287,15 @@ export default class Build {
 
     this.logInfo({
       pkg,
-      msg: [
-        chalk.gray(`➜ [Clean]: ${output} directory`),
-        chalk.red(`➜ [Target]: ${modeType[bundleOpts.moduleType!]}`)
-      ].join('\n')
+      msg: chalk.gray(`➜ [Clean]: ${output} directory`)
     })
+
     rimraf.sync(path.join(dir, output))
+
+    this.logInfo({
+      pkg,
+      msg: chalk.red(`➜ [Target]: ${modeType[bundleOpts.moduleType!]}`)
+    })
 
     const createStream = (src: string | string[]) =>
       this.createStream({ src, pkg, dir, bundleOpts })
