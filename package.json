@@ -33,6 +33,7 @@
   },
   "scripts": {
     "compile": "node -r ./compile.js ./src/cli.ts build",
+    "compile:watch": "node -r ./compile.js ./src/cli.ts build --watch",
     "test": "node ./lib/cli.js test --coverage",
     "debug": "node ./lib/cli.js test",
     "clearCache": "node ./lib/cli.js test --clearCache",

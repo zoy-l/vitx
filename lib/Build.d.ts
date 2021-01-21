@@ -2,14 +2,16 @@
 import { Diagnostic } from 'typescript';
 import type { IBundleOpt, IBundleOptions } from './types';
 interface IBuild {
-    cwd: string;
+    cwd?: string;
     watch?: boolean;
+    userConfig?: IBundleOptions;
 }
 export default class Build {
     cwd: string;
     isLerna: boolean;
     watch: boolean;
     rootConfig: {};
+    userConfig: IBundleOptions | undefined;
     tsConifgError: Diagnostic | undefined;
     constructor(options: IBuild);
     logInfo({ pkg, msg }: {

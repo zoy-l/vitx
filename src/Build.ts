@@ -1,5 +1,5 @@
-import * as babelTransformSync from '@babel/core'
 import { transformSync as esBuildTransformSync } from 'esbuild'
+import { transformSync as babelTransformSync } from '@babel/core'
 import { Diagnostic } from 'typescript'
 import gulpPlumber from 'gulp-plumber'
 import glupTs from 'gulp-typescript'
@@ -16,17 +16,18 @@ import slash from 'slash'
 import path from 'path'
 import fs from 'fs'
 
-import { colorLog, eventColor } from './utils'
 import type { IBundleOpt, IBundleOptions } from './types'
 import getEsBuildConfig from './getEsBuildConfig'
+import { colorLog, eventColor } from './utils'
 import getBabelConfig from './getBabelConifg'
 import getTSConfig from './getTsConifg'
 import replaceAll from './replaceAll'
 import config from './config'
 
 interface IBuild {
-  cwd: string
+  cwd?: string
   watch?: boolean
+  userConfig?: IBundleOptions
 }
 
 export default class Build {
@@ -38,12 +39,17 @@ export default class Build {
 
   rootConfig = {}
 
+  userConfig: IBundleOptions | undefined
+
   tsConifgError: Diagnostic | undefined
 
   constructor(options: IBuild) {
-    this.cwd = options.cwd
+    this.cwd = options.cwd ?? process.cwd()
+    this.userConfig = options.userConfig
     this.watch = !!options.watch
-    this.isLerna = fs.existsSync(path.join(options.cwd, 'lerna.json'))
+    this.isLerna = !this.userConfig
+      ? fs.existsSync(path.join(this.cwd, 'lerna.json'))
+      : false
   }
 
   logInfo({ pkg, msg }: { pkg?: string; msg: string }) {
@@ -63,8 +69,7 @@ export default class Build {
   }
 
   getBundleOpts(cwd: string) {
-    const userConfig = config(cwd) as IBundleOpt
-
+    const userConfig = this.userConfig ?? (config(cwd) as IBundleOpt)
     const bundleOpts = this.addDefaultConfigValue(
       merge(this.rootConfig, userConfig)
     )
@@ -104,7 +109,7 @@ export default class Build {
 
     const babelConfig = getBabelConfig(bundleOpts, isBrowser)
 
-    return babelTransformSync.transformSync(content, {
+    return babelTransformSync(content, {
       ...babelConfig,
       filename: paths,
       configFile: false
@@ -318,7 +323,7 @@ export default class Build {
           const watcher = chokidar.watch(patterns, {
             ignoreInitial: true,
             awaitWriteFinish: {
-              stabilityThreshold: 800
+              stabilityThreshold: 500
             }
           })
 
