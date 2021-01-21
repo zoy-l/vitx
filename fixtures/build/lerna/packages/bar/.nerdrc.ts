@@ -1,4 +1,5 @@
 export default {
   moduleType: 'esm',
-  target: 'browser'
+  target: 'browser',
+  runtimeHelpers: true
 }

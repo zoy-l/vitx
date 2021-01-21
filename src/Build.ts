@@ -30,6 +30,11 @@ interface IBuild {
   userConfig?: IBundleOptions
 }
 
+const modeType = {
+  cjs: 'Commonjs',
+  esm: 'ES Modules'
+}
+
 export default class Build {
   cwd: string
 
@@ -132,7 +137,6 @@ export default class Build {
     bundleOpts: IBundleOpt
   }) {
     const {
-      moduleType,
       entry,
       output,
       esBuild,
@@ -214,7 +218,7 @@ export default class Build {
               pkg,
               msg: `${chalk.green(
                 `➜ [${esBuild ? 'esBuild' : 'babel'}]:`
-              )} ${chalk.yellow(moduleType!)} for ${chalk.blue(
+              )} for ${chalk.blue(
                 `${output}${chunk.path.replace(basePath, '')}`
               )}`
             })
@@ -257,6 +261,7 @@ export default class Build {
 
     userPkgs = userPkgs.reduce((memo, pkg) => {
       const pkgPath = path.join(this.cwd, 'packages', pkg)
+
       if (fs.statSync(pkgPath).isDirectory()) {
         memo = memo.concat(pkg)
       }
@@ -280,7 +285,13 @@ export default class Build {
 
     const { entry, output } = bundleOpts
 
-    this.logInfo({ pkg, msg: chalk.gray(`➜ Clean ${output} directory`) })
+    this.logInfo({
+      pkg,
+      msg: [
+        chalk.gray(`➜ [Clean]: ${output} directory`),
+        chalk.red(`➜ [Target]: ${modeType[bundleOpts.moduleType!]}`)
+      ].join('\n')
+    })
     rimraf.sync(path.join(dir, output))
 
     const createStream = (src: string | string[]) =>

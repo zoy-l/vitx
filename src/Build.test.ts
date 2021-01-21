@@ -130,3 +130,37 @@ describe('nerd build', () => {
     }
   })
 })
+
+describe('nerd javascript api', () => {
+  const root = path.join(__dirname, '../fixtures')
+  const jsApiPath = path.join(root, 'jsApi')
+
+  fs.readdirSync(jsApiPath).forEach((dir) => {
+    const cwd = path.join(jsApiPath, dir)
+
+    if (dir.charAt(0) !== '.') {
+      it(dir, async (done) => {
+        process.chdir(cwd)
+        rimraf.sync(getPathActualed(cwd))
+
+        const build = new Nerd({
+          userConfig: {
+            moduleType: 'cjs',
+            target: 'node'
+          }
+        })
+
+        await build.step()
+
+        moveEsLibToDist(cwd)
+        try {
+          assertBuildResult(cwd)
+
+          done()
+        } catch (err) {
+          done(err)
+        }
+      })
+    }
+  })
+})
