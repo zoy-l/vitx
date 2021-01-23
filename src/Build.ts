@@ -235,9 +235,9 @@ export default class Build {
             if (!file.path.endsWith('.d.ts')) {
               this.logInfo({
                 pkg,
-                msg: `➜ [${chalk.yellow(
-                  this.customPrefix ?? 'Copys'
-                )}]: for ${chalk.blue(
+                msg: `➜ ${chalk.yellow(
+                  `[${this.customPrefix ?? 'Copys'}]:`
+                )} for ${chalk.blue(
                   `${output}${file.path.replace(basePath, '')}`
                 )}`
               })
