@@ -28,6 +28,7 @@ interface IBuild {
   cwd?: string
   watch?: boolean
   userConfig?: IBundleOptions
+  customPrefix?: string
 }
 
 const modeType = {
@@ -46,11 +47,14 @@ export default class Build {
 
   userConfig: IBundleOptions | undefined
 
+  customPrefix?: string
+
   tsConifgError: Diagnostic | undefined
 
   constructor(options: IBuild) {
     this.cwd = options.cwd ?? process.cwd()
     this.userConfig = options.userConfig
+    this.customPrefix = options.customPrefix
     this.watch = !!options.watch
     this.isLerna = !this.userConfig
       ? fs.existsSync(path.join(this.cwd, 'lerna.json'))
@@ -217,7 +221,7 @@ export default class Build {
             this.logInfo({
               pkg,
               msg: `➜${chalk.yellow(
-                ` [${esBuild ? 'esBuild' : 'babel'}]:`
+                ` [${this.customPrefix ?? (esBuild ? 'esBuild' : 'babel')}]:`
               )} for ${chalk.blue(
                 `${output}${chunk.path.replace(basePath, '')}`
               )}`
@@ -231,7 +235,9 @@ export default class Build {
             if (!file.path.endsWith('.d.ts')) {
               this.logInfo({
                 pkg,
-                msg: `➜${chalk.yellow(' [Copys]:')} for ${chalk.blue(
+                msg: `➜ [${chalk.yellow(
+                  this.customPrefix ?? 'Copys'
+                )}]: for ${chalk.blue(
                   `${output}${file.path.replace(basePath, '')}`
                 )}`
               })
@@ -294,7 +300,9 @@ export default class Build {
 
     this.logInfo({
       pkg,
-      msg: chalk.red(`➜ [Target]: ${modeType[bundleOpts.moduleType!]}`)
+      msg: chalk.red(
+        `➜ [Target]: ${this.customPrefix ?? modeType[bundleOpts.moduleType!]}`
+      )
     })
 
     const createStream = (src: string | string[]) =>

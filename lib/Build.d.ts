@@ -5,6 +5,7 @@ interface IBuild {
     cwd?: string;
     watch?: boolean;
     userConfig?: IBundleOptions;
+    customPrefix?: string;
 }
 export default class Build {
     cwd: string;
@@ -12,6 +13,7 @@ export default class Build {
     watch: boolean;
     rootConfig: {};
     userConfig: IBundleOptions | undefined;
+    customPrefix?: string;
     tsConifgError: Diagnostic | undefined;
     constructor(options: IBuild);
     logInfo({ pkg, msg }: {

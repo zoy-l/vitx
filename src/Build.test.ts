@@ -144,6 +144,7 @@ describe('nerd javascript api', () => {
         rimraf.sync(getPathActualed(cwd))
 
         const build = new Nerd({
+          customPrefix:'miniapp',
           userConfig: {
             moduleType: 'cjs',
             target: 'node'
