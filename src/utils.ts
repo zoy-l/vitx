@@ -11,7 +11,6 @@ const colors = [
   'blue',
   'magenta',
   'cyan',
-  'gray',
   'redBright',
   'greenBright',
   'yellowBright',

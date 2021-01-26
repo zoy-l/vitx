@@ -293,7 +293,7 @@ export default class Build {
 
     this.logInfo({
       pkg,
-      msg: chalk.gray(`➜ [Clean]: ${output} directory`)
+      msg: chalk.redBright(`➜ [Clean]: ${output} directory`)
     })
 
     rimraf.sync(path.join(dir, output))
