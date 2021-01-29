@@ -146,6 +146,7 @@ export default class Build {
       esBuild,
       paths,
       beforeReadWriteStream,
+      mountedReadWriteStream,
       afterReadWriteStream
     } = bundleOpts
 
@@ -170,6 +171,11 @@ export default class Build {
         allowEmpty: true
       })
       .pipe(
+        typeof beforeReadWriteStream === 'function'
+          ? beforeReadWriteStream({ through, insert, gulpIf })
+          : through.obj()
+      )
+      .pipe(
         gulpIf(
           this.watch,
           gulpPlumber(() => {})
@@ -192,11 +198,7 @@ export default class Build {
           return contents
         })
       )
-      .pipe(
-        typeof beforeReadWriteStream === 'function'
-          ? beforeReadWriteStream({ through, insert })
-          : through.obj()
-      )
+
       .pipe(
         gulpIf(
           (file) =>
@@ -204,6 +206,11 @@ export default class Build {
             this.isTransform(/\.tsx?$/, file.path),
           glupTs(tsConfig.compilerOptions)
         )
+      )
+      .pipe(
+        typeof mountedReadWriteStream === 'function'
+          ? mountedReadWriteStream({ through, insert, gulpIf })
+          : through.obj()
       )
       .pipe(
         gulpIf(
@@ -249,7 +256,7 @@ export default class Build {
       )
       .pipe(
         typeof afterReadWriteStream === 'function'
-          ? afterReadWriteStream({ through, insert })
+          ? afterReadWriteStream({ through, insert, gulpIf })
           : through.obj()
       )
       .pipe(vinylFs.dest(path.join(dir, output)))

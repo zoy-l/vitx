@@ -2,6 +2,7 @@ import type { Config } from '@jest/types'
 import gulpInsert from 'gulp-insert'
 import through2 from 'through2'
 import { runCLI } from 'jest'
+import gulpIf from 'gulp-if'
 
 export interface IBundleOptions {
   esBuild?: boolean
@@ -15,13 +16,20 @@ export interface IBundleOptions {
   nodeVersion?: number
   runtimeHelpers?: boolean
   disableTypes?: boolean
+  mountedReadWriteStream?: (options?: {
+    through: typeof through2
+    insert: typeof gulpInsert
+    gulpIf: typeof gulpIf
+  }) => NodeJS.ReadWriteStream
   beforeReadWriteStream?: (options?: {
     through: typeof through2
     insert: typeof gulpInsert
+    gulpIf: typeof gulpIf
   }) => NodeJS.ReadWriteStream
   afterReadWriteStream?: (options?: {
     through: typeof through2
     insert: typeof gulpInsert
+    gulpIf: typeof gulpIf
   }) => NodeJS.ReadWriteStream
   pkgs?: string[]
   entry?: string

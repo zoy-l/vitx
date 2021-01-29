@@ -6,5 +6,8 @@ export default {
   },
   beforeReadWriteStream({ through }) {
     return through.obj()
+  },
+  mountedReadWriteStream({ through }) {
+    return through.obj()
   }
 }
