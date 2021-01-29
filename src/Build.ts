@@ -1,5 +1,5 @@
-import { transformSync as esBuildTransformSync } from 'esbuild'
 import { transformSync as babelTransformSync } from '@babel/core'
+import { transformSync as esBuildTransformSync } from 'esbuild'
 import { Diagnostic } from 'typescript'
 import gulpPlumber from 'gulp-plumber'
 import glupTs from 'gulp-typescript'
@@ -71,7 +71,8 @@ export default class Build {
         entry: 'src',
         output: 'lib',
         target: 'browser',
-        moduleType: 'esm'
+        moduleType: 'esm',
+        sourceMaps: false
       },
       config
     )
@@ -113,7 +114,7 @@ export default class Build {
 
     if (esBuild) {
       const esBuildConfig = getEsBuildConfig(bundleOpts, isBrowser, paths)
-      return esBuildTransformSync(content, esBuildConfig).code
+      return esBuildTransformSync(content, esBuildConfig)
     }
 
     const babelConfig = getBabelConfig(bundleOpts, isBrowser)
@@ -122,7 +123,7 @@ export default class Build {
       ...babelConfig,
       filename: paths,
       configFile: false
-    })?.code
+    })
   }
 
   isTransform(regExp: RegExp, filePath: string) {
@@ -164,6 +165,8 @@ export default class Build {
     if (error) {
       this.tsConifgError = error
     }
+
+    const that = this
 
     return vinylFs
       .src(src, {
@@ -215,26 +218,41 @@ export default class Build {
       .pipe(
         gulpIf(
           (file) => this.isTransform(/\.(t|j)sx?$/, file.path),
-          through.obj((chunk, _enc, callback) => {
-            chunk.contents = Buffer.from(
-              this.transform({
-                content: chunk.contents,
-                paths: slash(chunk.path),
-                bundleOpts,
-                currentDir: dir
-              }) as string
-            )
+          through.obj(function (chunk, _enc, callback) {
+            const res = that.transform({
+              content: chunk.contents,
+              paths: slash(chunk.path),
+              bundleOpts,
+              currentDir: dir
+            })!
 
-            this.logInfo({
+            if (chunk.sourceMap && res.map) {
+              if (typeof res.map !== 'object') {
+                res.map = JSON.parse(res.map)
+              }
+
+              // @ts-expect-error
+              res.map.file = chunk.relative.replace(
+                path.extname(chunk.relative),
+                '.js'
+              )
+
+              require('vinyl-sourcemaps-apply')(chunk, res.map)
+            }
+
+            chunk.contents = Buffer.from(res?.code!)
+
+            that.logInfo({
               pkg,
               msg: `➜${chalk.yellow(
-                ` [${this.customPrefix ?? (esBuild ? 'esBuild' : 'babel')}]:`
+                ` [${that.customPrefix ?? (esBuild ? 'esBuild' : 'babel')}]:`
               )} for ${chalk.blue(
                 `${output}${chunk.path.replace(basePath, '')}`
               )}`
             })
 
             chunk.path = chunk.path.replace(path.extname(chunk.path), '.js')
+            this.push(chunk)
 
             callback(null, chunk)
           }) as NodeJS.ReadWriteStream,

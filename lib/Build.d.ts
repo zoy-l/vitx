@@ -27,7 +27,7 @@ export default class Build {
         paths: string;
         bundleOpts: IBundleOpt;
         currentDir: string;
-    }): string | null | undefined;
+    }): import("esbuild").TransformResult | import("@babel/core").BabelFileResult | null;
     isTransform(regExp: RegExp, filePath: string): boolean;
     createStream({ src, pkg, dir, bundleOpts }: {
         pkg?: string;

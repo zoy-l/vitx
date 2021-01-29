@@ -9,6 +9,7 @@ export interface IBundleOptions {
     moduleType?: 'esm' | 'cjs';
     extraBabelPlugins?: any[];
     extraBabelPresets?: any[];
+    sourceMaps?: boolean | 'inline' | 'external' | 'both';
     target?: 'node' | 'browser';
     react?: boolean;
     browserFiles?: string[];
