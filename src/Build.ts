@@ -1,5 +1,6 @@
 import { transformSync as babelTransformSync } from '@babel/core'
 import { transformSync as esBuildTransformSync } from 'esbuild'
+import gulpSourcemaps from 'gulp-sourcemaps'
 import { Diagnostic } from 'typescript'
 import gulpPlumber from 'gulp-plumber'
 import glupTs from 'gulp-typescript'
@@ -148,7 +149,8 @@ export default class Build {
       paths,
       beforeReadWriteStream,
       mountedReadWriteStream,
-      afterReadWriteStream
+      afterReadWriteStream,
+      sourceMaps
     } = bundleOpts
 
     const { tsConfig, error } = getTSConfig(this.cwd, this.isLerna ? dir : '')
@@ -173,6 +175,7 @@ export default class Build {
         base: basePath,
         allowEmpty: true
       })
+      .pipe(gulpIf(!!sourceMaps, gulpSourcemaps.init()))
       .pipe(
         typeof beforeReadWriteStream === 'function'
           ? beforeReadWriteStream({ through, insert, gulpIf })
@@ -226,16 +229,18 @@ export default class Build {
               currentDir: dir
             })!
 
+            const replaceExtname = (file: string) =>
+              file.replace(path.extname(file), '.js')
+
             if (chunk.sourceMap && res.map) {
               if (typeof res.map !== 'object') {
                 res.map = JSON.parse(res.map)
+                // @ts-expect-error
+                res.map.sources = [chunk.relative]
               }
 
               // @ts-expect-error
-              res.map.file = chunk.relative.replace(
-                path.extname(chunk.relative),
-                '.js'
-              )
+              res.map.file = replaceExtname(chunk.relative)
 
               require('vinyl-sourcemaps-apply')(chunk, res.map)
             }
@@ -251,8 +256,7 @@ export default class Build {
               )}`
             })
 
-            chunk.path = chunk.path.replace(path.extname(chunk.path), '.js')
-            this.push(chunk)
+            chunk.path = replaceExtname(chunk.path)
 
             callback(null, chunk)
           }) as NodeJS.ReadWriteStream,
@@ -276,6 +280,17 @@ export default class Build {
         typeof afterReadWriteStream === 'function'
           ? afterReadWriteStream({ through, insert, gulpIf })
           : through.obj()
+      )
+      .pipe(
+        gulpIf(
+          (file) => !!sourceMaps && this.isTransform(/\.jsx?$/, file.path),
+          sourceMaps !== true
+            ? gulpSourcemaps.write()
+            : gulpSourcemaps.write('.', {
+                includeContent: false,
+                sourceRoot: basePath
+              })
+        )
       )
       .pipe(vinylFs.dest(path.join(dir, output)))
   }

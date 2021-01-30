@@ -4,5 +4,5 @@ export default function getEsBuildConfig(bundleOpts: IBundleOptions, isBrowser: 
     target: string;
     format: 'esm' | 'cjs';
     treeShaking: true;
-    sourceMaps: boolean | 'inline' | 'external' | 'both';
+    sourcemap: boolean | 'inline';
 };

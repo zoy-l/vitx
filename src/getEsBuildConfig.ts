@@ -10,7 +10,7 @@ export default function getEsBuildConfig(
   target: string
   format: 'esm' | 'cjs'
   treeShaking: true
-  sourceMaps: boolean | 'inline' | 'external' | 'both'
+  sourcemap: boolean | 'inline'
 } {
   const { nodeVersion, sourceMaps } = bundleOpts
 
@@ -19,6 +19,6 @@ export default function getEsBuildConfig(
     target: isBrowser ? 'chrome58' : `node${nodeVersion ?? 6}`,
     format: isBrowser ? 'esm' : 'cjs',
     treeShaking: true,
-    sourceMaps: sourceMaps!
+    sourcemap: sourceMaps!
   }
 }

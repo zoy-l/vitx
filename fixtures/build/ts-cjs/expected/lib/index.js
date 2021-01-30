@@ -8,3 +8,4 @@ exports.default = foo;
 function foo(opts) {
   return opts.foo ? 'foo' : 'bar';
 }
+//# sourceMappingURL=index.js.map

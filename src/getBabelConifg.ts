@@ -53,6 +53,6 @@ export default function getBabelConfig(
       ],
       ...extraBabelPlugins
     ].filter(Boolean) as (string | any[])[],
-    sourceMaps: sourceMaps as boolean | 'inline' | 'both'
+    sourceMaps
   }
 }
