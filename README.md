@@ -11,6 +11,7 @@ Simple transform tool
 - 📌 支持 `babel` 或 `esbuild` 打包
 - 📌 支持 `cjs` 和 `esm`
 - 📌 支持 自定义 `Stream` 扩展, 支持 `gulp` 插件
+- 📌 支持 `sourceMaps`
 - 📌 支持 小程序编译
 - 📌 支持 增量编译
 
@@ -242,3 +243,12 @@ export default {
 
 - Type: `string`
 - Default: `lib`
+
+#### sourceMaps
+
+开启 sourceMaps
+
+- Type: `boolean | 'inline'`
+- Default: `false`
+
+注: `true` 会在输出目录同级生成\*.map 文件, 如果自定义添加扩展需要支持 `gulp-sourcemaps`
