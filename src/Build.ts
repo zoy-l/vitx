@@ -288,7 +288,7 @@ export default class Build {
             ? gulpSourcemaps.write()
             : gulpSourcemaps.write('.', {
                 includeContent: false,
-                sourceRoot: basePath
+                sourceRoot: slash(basePath)
               })
         )
       )
