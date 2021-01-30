@@ -1,7 +1,7 @@
 export default {
   moduleType: 'esm',
   target: 'browser',
-  beforeReadWriteStream({ through }) {
-    return through.obj()
-  }
+  disableTypes: true,
+  sourceMaps: true,
+  esBuild: true
 }

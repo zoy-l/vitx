@@ -1,4 +1,3 @@
-/// <reference types="node" />
 import { Diagnostic } from 'typescript';
 import type { IBundleOpt, IBundleOptions } from './types';
 interface IBuild {
@@ -20,6 +19,7 @@ export default class Build {
         pkg?: string;
         msg: string;
     }): void;
+    applyHook(func: any, args: any): any;
     addDefaultConfigValue(config: IBundleOptions): IBundleOpt;
     getBundleOpts(cwd: string): IBundleOpt;
     transform(opts: {
@@ -34,7 +34,7 @@ export default class Build {
         dir: string;
         src: string[] | string;
         bundleOpts: IBundleOpt;
-    }): NodeJS.ReadWriteStream;
+    }): any;
     compileLerna(): Promise<void>;
     compile(dir: string, pkg?: string): Promise<void>;
     step(): Promise<void>;

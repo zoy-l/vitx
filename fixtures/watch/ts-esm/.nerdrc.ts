@@ -1,3 +1,5 @@
+import { IConfig } from '../../../src'
+
 export default {
   moduleType: 'esm',
   target: 'browser',
@@ -9,5 +11,10 @@ export default {
   },
   mountedReadWriteStream({ through }) {
     return through.obj()
+  },
+  mapSources(sourcesMap) {
+    return sourcesMap((path) => {
+      return path
+    })
   }
-}
+} as IConfig

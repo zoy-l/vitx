@@ -21,5 +21,6 @@ export default Joi.object({
   mountedReadWriteStream: Joi.func(),
   react: Joi.boolean(),
   paths: Joi.object(),
-  sourceMaps: Joi.any().valid(true, false, 'inline')
+  sourceMaps: Joi.any().valid(true, false, 'inline'),
+  mapSources: Joi.func()
 })

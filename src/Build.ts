@@ -66,6 +66,10 @@ export default class Build {
     console.log(`${pkg ? `${colorLog(pkg)}: ` : ''}${msg}`)
   }
 
+  applyHook(func: any, args: any) {
+    return typeof func === 'function' ? func(args) : through.obj()
+  }
+
   addDefaultConfigValue(config: IBundleOptions): IBundleOpt {
     return merge(
       {
@@ -150,6 +154,7 @@ export default class Build {
       beforeReadWriteStream,
       mountedReadWriteStream,
       afterReadWriteStream,
+      mapSources,
       sourceMaps
     } = bundleOpts
 
@@ -168,19 +173,13 @@ export default class Build {
       this.tsConifgError = error
     }
 
-    const that = this
-
     return vinylFs
       .src(src, {
         base: basePath,
         allowEmpty: true
       })
       .pipe(gulpIf(!!sourceMaps, gulpSourcemaps.init()))
-      .pipe(
-        typeof beforeReadWriteStream === 'function'
-          ? beforeReadWriteStream({ through, insert, gulpIf })
-          : through.obj()
-      )
+      .pipe(this.applyHook(beforeReadWriteStream, { through, insert, gulpIf }))
       .pipe(
         gulpIf(
           this.watch,
@@ -190,9 +189,11 @@ export default class Build {
       .pipe(
         insert.transform((contents, file) => {
           const _paths = { ...paths }
+
           if (Object.keys(_paths).length) {
             const dirname = path.dirname(file.path)
             const ext = path.extname(file.relative)
+
             contents = replaceAll({
               ext,
               contents,
@@ -204,7 +205,6 @@ export default class Build {
           return contents
         })
       )
-
       .pipe(
         gulpIf(
           (file) =>
@@ -213,16 +213,12 @@ export default class Build {
           glupTs(tsConfig.compilerOptions)
         )
       )
-      .pipe(
-        typeof mountedReadWriteStream === 'function'
-          ? mountedReadWriteStream({ through, insert, gulpIf })
-          : through.obj()
-      )
+      .pipe(this.applyHook(mountedReadWriteStream, { through, insert, gulpIf }))
       .pipe(
         gulpIf(
           (file) => this.isTransform(/\.(t|j)sx?$/, file.path),
-          through.obj(function (chunk, _enc, callback) {
-            const res = that.transform({
+          through.obj((chunk, _enc, callback) => {
+            const res = this.transform({
               content: chunk.contents,
               paths: slash(chunk.path),
               bundleOpts,
@@ -238,22 +234,23 @@ export default class Build {
                 // @ts-expect-error
                 res.map.sources = [chunk.relative]
               }
-
               // @ts-expect-error
               res.map.file = replaceExtname(chunk.relative)
-
               require('vinyl-sourcemaps-apply')(chunk, res.map)
             }
 
             chunk.contents = Buffer.from(res?.code!)
 
-            that.logInfo({
+            const logType = chalk.yellow(
+              `[${this.customPrefix ?? (esBuild ? 'esBuild' : 'babel')}]:`
+            )
+            const logOutput = chalk.blue(
+              output + chunk.path.replace(basePath, '')
+            )
+
+            this.logInfo({
               pkg,
-              msg: `➜${chalk.yellow(
-                ` [${that.customPrefix ?? (esBuild ? 'esBuild' : 'babel')}]:`
-              )} for ${chalk.blue(
-                `${output}${chunk.path.replace(basePath, '')}`
-              )}`
+              msg: `➜ ${logType} for ${logOutput}`
             })
 
             chunk.path = replaceExtname(chunk.path)
@@ -262,13 +259,14 @@ export default class Build {
           }) as NodeJS.ReadWriteStream,
           insert.transform((contents, file) => {
             if (!file.path.endsWith('.d.ts')) {
+              const logType = chalk.yellow(`[${this.customPrefix ?? 'Copys'}]:`)
+              const logOutput = chalk.blue(
+                output + file.path.replace(basePath, '')
+              )
+
               this.logInfo({
                 pkg,
-                msg: `➜ ${chalk.yellow(
-                  `[${this.customPrefix ?? 'Copys'}]:`
-                )} for ${chalk.blue(
-                  `${output}${file.path.replace(basePath, '')}`
-                )}`
+                msg: `➜ ${logType} for ${logOutput}`
               })
             }
 
@@ -281,6 +279,7 @@ export default class Build {
           ? afterReadWriteStream({ through, insert, gulpIf })
           : through.obj()
       )
+      .pipe(this.applyHook(mapSources, gulpSourcemaps.mapSources))
       .pipe(
         gulpIf(
           (file) => !!sourceMaps && this.isTransform(/\.jsx?$/, file.path),
@@ -378,7 +377,7 @@ export default class Build {
                 'Cannot find tsconfig.json, use the default configuration'
             }
             this.logInfo({
-              msg: chalk.yellow(`❗${messageText}\n`)
+              msg: chalk.yellow('❗' + messageText + '\n')
             })
           }
 
@@ -393,11 +392,13 @@ export default class Build {
 
           watcher.on('all', (event, fullPath) => {
             const relPath = fullPath.replace(srcPath, '')
+            const outPath = slash(path.join(srcPath, relPath)).replace(
+              this.cwd + '/',
+              ''
+            )
 
             this.logInfo({
-              msg: `${eventColor(event)} ${slash(
-                path.join(srcPath, relPath)
-              ).replace(`${this.cwd}/`, '')}`
+              msg: `${eventColor(event)} ${outPath}`
             })
 
             if (!fs.existsSync(fullPath)) {

@@ -2,3 +2,5 @@ node_modules
 .cache
 coverage
 lib/*.map
+fixtures/build/ts-cjs/expected
+fixtures/build/ts-esm/expected
