@@ -18,6 +18,7 @@
     "@types/rimraf": "^3.0.0",
     "@types/vinyl-fs": "^2.4.11",
     "@types/yargs-parser": "^20.2.0",
+    "cross-env": "^7.0.3",
     "fs-extra": "^9.1.0",
     "glob": "^7.1.6",
     "husky": "^4.3.8",
@@ -30,11 +31,12 @@
   },
   "scripts": {
     "compile": "node -r ./compile.js ./src/cli.ts build",
+    "compile:debug": "cross-env NODE_ENV=debug node -r ./compile.js ./src/cli.ts build",
     "compile:watch": "node -r ./compile.js ./src/cli.ts build --watch",
     "test": "node ./lib/cli.js test --coverage",
     "clearCache": "node ./lib/cli.js test --clearCache",
     "update:deps": "yarn upgrade-interactive --latest",
-    "debug": "node --inspect-brk bin/zmi-nerd.js build"
+    "debug": "cross-env NODE_ENV=debug node --inspect-brk bin/zmi-nerd.js build"
   },
   "dependencies": {
     "@babel/core": "^7.12.10",
