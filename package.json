@@ -19,6 +19,8 @@
     "@types/vinyl-fs": "^2.4.11",
     "@types/yargs-parser": "^20.2.0",
     "cross-env": "^7.0.3",
+    "eslint": "^7.19.0",
+    "eslint-config-zmi": "^0.0.4",
     "fs-extra": "^9.1.0",
     "glob": "^7.1.6",
     "husky": "^4.3.8",

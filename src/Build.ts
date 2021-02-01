@@ -25,6 +25,8 @@ import getTSConfig from './getTsConifg'
 import replaceAll from './replaceAll'
 import config from './config'
 
+const vinylSourcemapsApply = require('vinyl-sourcemaps-apply')
+
 interface IBuild {
   cwd?: string
   watch?: boolean
@@ -218,7 +220,7 @@ export default class Build {
         gulpIf(
           (file) => this.isTransform(/\.(t|j)sx?$/, file.path),
           through.obj((chunk, _enc, callback) => {
-            const res = this.transform({
+            const res: Record<string, any> = this.transform({
               content: chunk.contents,
               paths: slash(chunk.path),
               bundleOpts,
@@ -231,15 +233,15 @@ export default class Build {
             if (chunk.sourceMap && res.map) {
               if (typeof res.map !== 'object') {
                 res.map = JSON.parse(res.map)
-                // @ts-expect-error
+
                 res.map.sources = [chunk.relative]
               }
-              // @ts-expect-error
+
               res.map.file = replaceExtname(chunk.relative)
-              require('vinyl-sourcemaps-apply')(chunk, res.map)
+              vinylSourcemapsApply(chunk, res.map)
             }
 
-            chunk.contents = Buffer.from(res?.code!)
+            chunk.contents = Buffer.from(res.code)
 
             const logType = chalk.yellow(
               `[${this.customPrefix ?? (esBuild ? 'esBuild' : 'babel')}]:`
@@ -321,6 +323,8 @@ export default class Build {
       )
       process.chdir(pkgPath)
 
+      // here is safe
+      // eslint-disable-next-line no-await-in-loop
       await this.compile(pkgPath, pkg)
     }
   }
