@@ -11,7 +11,6 @@ export default function getBabelConfig(
     extraBabelPlugins = [],
     extraBabelPresets = [],
     disableTypes,
-    sourceMaps,
     react
   } = bundleOpts
 
@@ -55,7 +54,6 @@ export default function getBabelConfig(
         }
       ],
       ...extraBabelPlugins
-    ].filter(Boolean) as (string | any[])[],
-    sourceMaps
+    ].filter(Boolean) as (string | any[])[]
   }
 }

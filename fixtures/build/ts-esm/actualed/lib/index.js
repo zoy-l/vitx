@@ -4,5 +4,3 @@ function foo(opts) {
 export {
   foo as default
 };
-
-//# sourceMappingURL=index.js.map

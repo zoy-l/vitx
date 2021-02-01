@@ -1,1 +1,3 @@
-var b = 1;
+"use strict";
+
+const b = 1;

@@ -1,5 +1,4 @@
 /// <reference types="node" />
-import { mapSources } from 'gulp-sourcemaps';
 import type { Config } from '@jest/types';
 import gulpInsert from 'gulp-insert';
 import through2 from 'through2';
@@ -10,7 +9,6 @@ export interface IBundleOptions {
     moduleType?: 'esm' | 'cjs';
     extraBabelPlugins?: any[];
     extraBabelPresets?: any[];
-    sourceMaps?: boolean | 'inline';
     target?: 'node' | 'browser';
     react?: boolean;
     browserFiles?: string[];
@@ -18,11 +16,6 @@ export interface IBundleOptions {
     nodeVersion?: number;
     runtimeHelpers?: boolean;
     disableTypes?: boolean;
-    mountedReadWriteStream?: (options?: {
-        through: typeof through2;
-        insert: typeof gulpInsert;
-        gulpIf: typeof gulpIf;
-    }) => NodeJS.ReadWriteStream;
     beforeReadWriteStream?: (options?: {
         through: typeof through2;
         insert: typeof gulpInsert;
@@ -33,9 +26,6 @@ export interface IBundleOptions {
         insert: typeof gulpInsert;
         gulpIf: typeof gulpIf;
     }) => NodeJS.ReadWriteStream;
-    mapSources?: {
-        (value: typeof mapSources): NodeJS.ReadWriteStream;
-    };
     pkgs?: string[];
     entry?: string;
     output?: string;

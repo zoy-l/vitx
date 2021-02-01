@@ -10,15 +10,13 @@ export default function getEsBuildConfig(
   target: string
   format: 'esm' | 'cjs'
   treeShaking: true
-  sourcemap: boolean | 'inline'
 } {
-  const { nodeVersion, sourceMaps } = bundleOpts
+  const { nodeVersion } = bundleOpts
 
   return {
     loader: extname(path).slice(1) as 'ts' | 'js' | 'jsx' | 'tsx',
     target: isBrowser ? 'chrome58' : `node${nodeVersion ?? 6}`,
     format: isBrowser ? 'esm' : 'cjs',
-    treeShaking: true,
-    sourcemap: sourceMaps!
+    treeShaking: true
   }
 }
