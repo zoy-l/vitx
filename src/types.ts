@@ -80,7 +80,7 @@ export type CalculatedConfig<
     [V in keyof U]: V extends keyof T ? T[V] : U[V]
   }
 
-export type handleConfig<T> = T extends object
+export type handleConfig<T> = T extends Record<string, any>
   ? { [key in keyof T]: T[key] | ((value: T[key]) => T[key]) }
   : T
 

@@ -15,9 +15,7 @@ export default function (cwd: string): IBundleOptions {
   )
 
   const userConfig =
-    configFile.find((configCwd) => {
-      return fs.existsSync(configCwd)
-    }) ?? ''
+    configFile.find((configCwd) => fs.existsSync(configCwd)) ?? ''
 
   let config = {}
 

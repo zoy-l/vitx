@@ -25,8 +25,6 @@ import getTSConfig from './getTsConifg'
 import replaceAll from './replaceAll'
 import config from './config'
 
-const vinylSourcemapsApply = require('vinyl-sourcemaps-apply')
-
 interface IBuild {
   cwd?: string
   watch?: boolean
@@ -238,7 +236,7 @@ export default class Build {
               }
 
               res.map.file = replaceExtname(chunk.relative)
-              vinylSourcemapsApply(chunk, res.map)
+              require('vinyl-sourcemaps-apply')(chunk, res.map)
             }
 
             chunk.contents = Buffer.from(res.code)

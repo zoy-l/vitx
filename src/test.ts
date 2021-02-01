@@ -17,9 +17,9 @@ export default async function (args: yargsParser.Arguments) {
     path.join(cwd, configName)
   )
 
-  const userJestConfig = userJestConfigFiles.find((configCwd) => {
-    return fs.existsSync(configCwd)
-  })
+  const userJestConfig = userJestConfigFiles.find((configCwd) =>
+    fs.existsSync(configCwd)
+  )
 
   if (userJestConfig) {
     registerBabel(userJestConfig)
