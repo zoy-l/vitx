@@ -179,13 +179,13 @@ export default class Build {
         allowEmpty: true
       })
       .pipe(gulpIf(!!sourceMaps, gulpSourcemaps.init()))
-      .pipe(this.applyHook(beforeReadWriteStream, { through, insert, gulpIf }))
       .pipe(
         gulpIf(
           this.watch,
           gulpPlumber(() => {})
         )
       )
+      .pipe(this.applyHook(beforeReadWriteStream, { through, insert, gulpIf }))
       .pipe(
         insert.transform((contents, file) => {
           const _paths = { ...paths }

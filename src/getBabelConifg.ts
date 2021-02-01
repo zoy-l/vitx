@@ -17,9 +17,9 @@ export default function getBabelConfig(
 
   return {
     presets: [
-      disableTypes && '@babel/preset-typescript',
+      disableTypes && require.resolve('@babel/preset-typescript'),
       [
-        '@babel/preset-env',
+        require.resolve('@babel/preset-env'),
         {
           targets: isBrowser
             ? { browsers: ['last 2 versions', 'IE 10'] }
@@ -33,19 +33,22 @@ export default function getBabelConfig(
     plugins: [
       moduleType === 'cjs' &&
         !isBrowser && [
-          '@babel/plugin-transform-modules-commonjs',
+          require.resolve('@babel/plugin-transform-modules-commonjs'),
           { lazy: true }
         ],
-      '@babel/plugin-proposal-export-default-from',
-      '@babel/plugin-proposal-do-expressions',
-      '@babel/plugin-proposal-export-namespace-from',
-      '@babel/plugin-proposal-nullish-coalescing-operator',
-      '@babel/plugin-proposal-optional-chaining',
-      '@babel/plugin-syntax-dynamic-import',
-      ['@babel/plugin-proposal-decorators', { legacy: true }],
-      ['@babel/plugin-proposal-class-properties', { loose: true }],
+      require.resolve('@babel/plugin-proposal-export-default-from'),
+      require.resolve('@babel/plugin-proposal-do-expressions'),
+      require.resolve('@babel/plugin-proposal-export-namespace-from'),
+      require.resolve('@babel/plugin-proposal-nullish-coalescing-operator'),
+      require.resolve('@babel/plugin-proposal-optional-chaining'),
+      require.resolve('@babel/plugin-syntax-dynamic-import'),
+      [require.resolve('@babel/plugin-proposal-decorators'), { legacy: true }],
+      [
+        require.resolve('@babel/plugin-proposal-class-properties'),
+        { loose: true }
+      ],
       runtimeHelpers && [
-        '@babel/plugin-transform-runtime',
+        require.resolve('@babel/plugin-transform-runtime'),
         {
           useESModules: isBrowser && moduleType === 'esm',
           version: require('@babel/runtime/package.json').version
