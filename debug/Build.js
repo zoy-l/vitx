@@ -246,8 +246,9 @@ class Build {
   getBundleOpts(cwd) {
     var _this$userConfig;
 
-    const userConfig = (_this$userConfig = this.userConfig) !== null && _this$userConfig !== void 0 ? _this$userConfig : (0, _config.default)(cwd);
-    const bundleOpts = this.addDefaultConfigValue((0, _lodash().merge)(this.rootConfig, userConfig));
+    const userConfig = (_this$userConfig = this.userConfig) !== null && _this$userConfig !== void 0 ? _this$userConfig : (0, _config.default)(cwd); // The merge method will change the source object
+
+    const bundleOpts = this.addDefaultConfigValue((0, _lodash().merge)(_objectSpread({}, this.rootConfig), userConfig));
     return bundleOpts;
   }
 
@@ -329,11 +330,11 @@ class Build {
     return _vinylFs().default.src(src, {
       base: basePath,
       allowEmpty: true
-    }).pipe((0, _gulpIf().default)(!!sourceMaps, _gulpSourcemaps().default.init())).pipe(this.applyHook(beforeReadWriteStream, {
+    }).pipe((0, _gulpIf().default)(!!sourceMaps, _gulpSourcemaps().default.init())).pipe((0, _gulpIf().default)(this.watch, (0, _gulpPlumber().default)(() => {}))).pipe(this.applyHook(beforeReadWriteStream, {
       through: _through().default,
       insert: _gulpInsert().default,
       gulpIf: _gulpIf().default
-    })).pipe((0, _gulpIf().default)(this.watch, (0, _gulpPlumber().default)(() => {}))).pipe(_gulpInsert().default.transform((contents, file) => {
+    })).pipe(_gulpInsert().default.transform((contents, file) => {
       const _paths = _objectSpread({}, paths);
 
       if (Object.keys(_paths).length) {
@@ -368,18 +369,16 @@ class Build {
 
       if (chunk.sourceMap && res.map) {
         if (typeof res.map !== 'object') {
-          res.map = JSON.parse(res.map); // @ts-expect-error
-
+          res.map = JSON.parse(res.map);
           res.map.sources = [chunk.relative];
-        } // @ts-expect-error
-
+        }
 
         res.map.file = replaceExtname(chunk.relative);
 
         require('vinyl-sourcemaps-apply')(chunk, res.map);
       }
 
-      chunk.contents = Buffer.from(res === null || res === void 0 ? void 0 : res.code);
+      chunk.contents = Buffer.from(res.code);
 
       const logType = _chalk().default.yellow(`[${(_this$customPrefix = this.customPrefix) !== null && _this$customPrefix !== void 0 ? _this$customPrefix : esBuild ? 'esBuild' : 'babel'}]:`);
 
@@ -412,7 +411,17 @@ class Build {
       gulpIf: _gulpIf().default
     }) : _through().default.obj()).pipe(this.applyHook(mapSources, _gulpSourcemaps().default.mapSources)).pipe((0, _gulpIf().default)(file => !!sourceMaps && this.isTransform(/\.jsx?$/, file.path), sourceMaps !== true ? _gulpSourcemaps().default.write() : _gulpSourcemaps().default.write('.', {
       includeContent: false,
-      sourceRoot: (0, _slash().default)(basePath)
+      sourceRoot: `../${entry}` //  (file) => {
+      //   // @ts-expect-error file library definition type error
+      //   // const fileSep = file.relative.split(path.sep) as string[]
+      //   // // @ts-expect-error file library definition type error
+      //   // console.log(file.sourceMap)
+      //   // // @ts-expect-error same as above
+      //   // prettier-ignore
+      //   // return slash(`${basePath}/${file.relative.replace(fileSep[fileSep.length - 1], '')}`)
+      //   return `../${entry}`
+      // }
+
     }))).pipe(_vinylFs().default.dest(_path().default.join(dir, output)));
   }
 
@@ -449,7 +458,9 @@ class Build {
           const pkgPath = _path().default.join(_this.cwd, 'packages', pkg);
 
           (0, _assert().default)(_fs().default.existsSync(_path().default.join(pkgPath, 'package.json')), `package.json not found in packages/${pkg}`);
-          process.chdir(pkgPath);
+          process.chdir(pkgPath); // here is safe
+          // eslint-disable-next-line no-await-in-loop
+
           yield _this.compile(pkgPath, pkg);
         }
       } catch (err) {
