@@ -65,7 +65,7 @@ describe('nerd build', () => {
             if (fs.existsSync(path.join(cwd, 'lerna.json'))) {
               mkdirSync(getPathActualed(cwd))
               const pkgs = fs.readdirSync(path.join(cwd, 'packages'))
-              for (let pkg of pkgs) {
+              for (const pkg of pkgs) {
                 const pkgPath = path.join(cwd, 'packages', pkg)
                 if (fs.statSync(pkgPath).isDirectory()) {
                   moveEsLibToDist(pkgPath)
@@ -144,7 +144,7 @@ describe('nerd javascript api', () => {
         rimraf.sync(getPathActualed(cwd))
 
         const build = new Nerd({
-          customPrefix:'miniapp',
+          customPrefix: 'miniapp',
           userConfig: {
             moduleType: 'cjs',
             target: 'node'

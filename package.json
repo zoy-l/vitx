@@ -61,7 +61,7 @@
     "@types/through2": "^2.0.36",
     "babel-jest": "^26.6.3",
     "chokidar": "^3.5.1",
-    "esbuild": "^0.8.36",
+    "esbuild": "^0.8.39",
     "gulp-if": "^3.0.0",
     "gulp-insert": "^0.5.0",
     "gulp-plumber": "^1.2.1",

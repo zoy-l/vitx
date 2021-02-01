@@ -85,8 +85,10 @@ export default class Build {
 
   getBundleOpts(cwd: string) {
     const userConfig = this.userConfig ?? (config(cwd) as IBundleOpt)
+
+    // The merge method will change the source object
     const bundleOpts = this.addDefaultConfigValue(
-      merge(this.rootConfig, userConfig)
+      merge({ ...this.rootConfig }, userConfig)
     )
 
     return bundleOpts
