@@ -230,6 +230,8 @@ export default class Build {
             const replaceExtname = (file: string) =>
               file.replace(path.extname(file), '.js')
 
+            chunk.contents = Buffer.from(res.code)
+
             if (chunk.sourceMap && res.map) {
               if (typeof res.map !== 'object') {
                 res.map = JSON.parse(res.map)
@@ -240,8 +242,6 @@ export default class Build {
               res.map.file = replaceExtname(chunk.relative)
               require('vinyl-sourcemaps-apply')(chunk, res.map)
             }
-
-            chunk.contents = Buffer.from(res.code)
 
             const logType = chalk.yellow(
               `[${this.customPrefix ?? (esBuild ? 'esBuild' : 'babel')}]:`
@@ -288,7 +288,6 @@ export default class Build {
           sourceMaps !== true
             ? gulpSourcemaps.write()
             : gulpSourcemaps.write('.', {
-                includeContent: false,
                 sourceRoot: slash(basePath)
               })
         )
