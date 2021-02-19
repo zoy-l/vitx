@@ -243,7 +243,7 @@ export default class Build {
 
             this.logInfo({
               pkg,
-              msg: `➜ ${logType} for ${logOutput}`
+              msg: `➜ ${logType} for ${slash(logOutput)}`
             })
 
             chunk.path = replaceExtname(chunk.path)
@@ -259,7 +259,7 @@ export default class Build {
 
               this.logInfo({
                 pkg,
-                msg: `➜ ${logType} for ${logOutput}`
+                msg: `➜ ${logType} for ${slash(logOutput)}`
               })
             }
 
@@ -344,11 +344,13 @@ export default class Build {
 
       createStream(patterns).on('end', () => {
         if (this.watch) {
+    
+          
           this.logInfo({
             pkg,
             msg: chalk.blue(
               `➜ Start watching ${
-                pkg ?? slash(srcPath).replace(`${this.cwd}/`, '')
+                pkg ?? slash(srcPath).replace(`${slash(this.cwd)}/`, '')
               } directory...`
             )
           })
@@ -376,7 +378,7 @@ export default class Build {
           watcher.on('all', (event, fullPath) => {
             const relPath = fullPath.replace(srcPath, '')
             const outPath = slash(path.join(srcPath, relPath)).replace(
-              this.cwd + '/',
+              slash(this.cwd) + '/',
               ''
             )
 
