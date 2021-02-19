@@ -45,11 +45,13 @@ export default class Build {
 
   rootConfig = {}
 
-  userConfig: IBundleOptions | undefined
+  userConfig?: IBundleOptions
 
   customPrefix?: string
 
-  tsConifgError: Diagnostic | undefined
+  tsConifgError?: Diagnostic
+
+  cache: Record<string, string> = {}
 
   constructor(options: IBuild) {
     this.cwd = options.cwd ?? process.cwd()
@@ -89,7 +91,6 @@ export default class Build {
     const bundleOpts = this.addDefaultConfigValue(
       merge({ ...this.rootConfig }, userConfig)
     )
-    
 
     return bundleOpts
   }
@@ -177,6 +178,12 @@ export default class Build {
         base: basePath,
         allowEmpty: true
       })
+      .pipe(
+        insert.transform((contents, file) => {
+          this.cache[file.path] = contents
+          return contents
+        })
+      )
       .pipe(
         gulpIf(
           this.watch,
@@ -390,6 +397,8 @@ export default class Build {
               return
             }
             if (fs.statSync(fullPath).isFile()) {
+              const data = fs.readFileSync(fullPath, 'utf-8')
+              if (this.cache[fullPath] === data) return
               if (!files.includes(fullPath)) files.push(fullPath)
               while (files.length) {
                 createStream(files.pop()!)
