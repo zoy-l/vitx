@@ -179,16 +179,16 @@ export default class Build {
         allowEmpty: true
       })
       .pipe(
-        insert.transform((contents, file) => {
-          this.cache[file.path] = contents
-          return contents
-        })
-      )
-      .pipe(
         gulpIf(
           this.watch,
           gulpPlumber(() => {})
         )
+      )
+      .pipe(
+        insert.transform((contents, file) => {
+          this.cache[file.path] = contents
+          return contents
+        })
       )
       .pipe(this.applyHook(beforeReadWriteStream, { through, insert, gulpIf }))
       .pipe(
@@ -215,7 +215,11 @@ export default class Build {
           (file) =>
             tsConfig.compilerOptions.declaration &&
             this.isTransform(/\.tsx?$/, file.path),
-          glupTs(tsConfig.compilerOptions)
+          glupTs(tsConfig.compilerOptions, {
+            error: (err) => {
+              console.log(`${chalk.red('➜ [Error]: ')}${err.message}`)
+            }
+          })
         )
       )
       .pipe(
@@ -344,8 +348,6 @@ export default class Build {
 
       createStream(patterns).on('end', () => {
         if (this.watch) {
-    
-          
           this.logInfo({
             pkg,
             msg: chalk.blue(
@@ -411,7 +413,6 @@ export default class Build {
             watcher.close()
           })
         }
-
         resolve()
       })
     })
