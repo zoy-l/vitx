@@ -21,6 +21,7 @@ export default function (cwd: string): IBundleOptions {
 
   if (userConfig) {
     // https://github.com/facebook/jest/issues/7864
+    /* istanbul ignore next */
     isTest && registerBabel(userConfig)
     config = isDefault(require(userConfig))
 

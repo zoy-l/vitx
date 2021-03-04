@@ -65,7 +65,7 @@ export default class Build {
     console.log(`${pkg ? `${colorLog(pkg)}: ` : ''}${msg}`)
   }
 
-  applyHook(func: any, args: any) {
+  applyHook(func: any, args: any): NodeJS.ReadWriteStream {
     return typeof func === 'function' ? func(args) : through.obj()
   }
 
@@ -89,7 +89,6 @@ export default class Build {
     const bundleOpts = this.addDefaultConfigValue(
       merge({ ...this.rootConfig }, userConfig)
     )
-    
 
     return bundleOpts
   }

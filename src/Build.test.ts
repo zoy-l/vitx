@@ -165,3 +165,16 @@ describe('nerd javascript api', () => {
     }
   })
 })
+
+test('config error', async () => {
+  const root = path.join(__dirname, '../fixtures')
+  const errorConfig = path.join(root, 'error')
+
+  rimraf.sync(getPathActualed(errorConfig))
+
+  const build = new Nerd({ cwd: errorConfig })
+
+  await expect(build.step()).rejects.toThrow(
+    'Invalid options in "moduleType" must be one of [esm, cjs]'
+  )
+})
