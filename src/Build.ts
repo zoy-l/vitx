@@ -45,11 +45,13 @@ export default class Build {
 
   rootConfig = {}
 
-  userConfig: IBundleOptions | undefined
+  userConfig?: IBundleOptions
 
   customPrefix?: string
 
-  tsConifgError: Diagnostic | undefined
+  tsConifgError?: Diagnostic
+
+  cache: Record<string, string> = {}
 
   constructor(options: IBuild) {
     this.cwd = options.cwd ?? process.cwd()
@@ -182,6 +184,12 @@ export default class Build {
           gulpPlumber(() => {})
         )
       )
+      .pipe(
+        insert.transform((contents, file) => {
+          this.cache[file.path] = contents
+          return contents
+        })
+      )
       .pipe(this.applyHook(beforeReadWriteStream, { through, insert, gulpIf }))
       .pipe(
         insert.transform((contents, file) => {
@@ -207,7 +215,11 @@ export default class Build {
           (file) =>
             tsConfig.compilerOptions.declaration &&
             this.isTransform(/\.tsx?$/, file.path),
-          glupTs(tsConfig.compilerOptions)
+          glupTs(tsConfig.compilerOptions, {
+            error: (err) => {
+              console.log(`${chalk.red('➜ [Error]: ')}${err.message}`)
+            }
+          })
         )
       )
       .pipe(
@@ -235,7 +247,7 @@ export default class Build {
 
             this.logInfo({
               pkg,
-              msg: `➜ ${logType} for ${logOutput}`
+              msg: `➜ ${logType} for ${slash(logOutput)}`
             })
 
             chunk.path = replaceExtname(chunk.path)
@@ -251,7 +263,7 @@ export default class Build {
 
               this.logInfo({
                 pkg,
-                msg: `➜ ${logType} for ${logOutput}`
+                msg: `➜ ${logType} for ${slash(logOutput)}`
               })
             }
 
@@ -340,7 +352,7 @@ export default class Build {
             pkg,
             msg: chalk.blue(
               `➜ Start watching ${
-                pkg ?? slash(srcPath).replace(`${this.cwd}/`, '')
+                pkg ?? slash(srcPath).replace(`${slash(this.cwd)}/`, '')
               } directory...`
             )
           })
@@ -368,7 +380,7 @@ export default class Build {
           watcher.on('all', (event, fullPath) => {
             const relPath = fullPath.replace(srcPath, '')
             const outPath = slash(path.join(srcPath, relPath)).replace(
-              this.cwd + '/',
+              slash(this.cwd) + '/',
               ''
             )
 
@@ -389,6 +401,8 @@ export default class Build {
               return
             }
             if (fs.statSync(fullPath).isFile()) {
+              const data = fs.readFileSync(fullPath, 'utf-8')
+              if (this.cache[fullPath] === data) return
               if (!files.includes(fullPath)) files.push(fullPath)
               while (files.length) {
                 createStream(files.pop()!)
@@ -399,7 +413,6 @@ export default class Build {
             watcher.close()
           })
         }
-
         resolve()
       })
     })
