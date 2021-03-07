@@ -4,11 +4,12 @@ import { Diagnostic } from 'typescript'
 import gulpPlumber from 'gulp-plumber'
 import glupTs from 'gulp-typescript'
 import insert from 'gulp-insert'
-import { merge } from 'lodash'
 import chokidar from 'chokidar'
+import { merge } from 'lodash'
 import through from 'through2'
 import vinylFs from 'vinyl-fs'
 import gulpIf from 'gulp-if'
+import less from 'gulp-less'
 import rimraf from 'rimraf'
 import assert from 'assert'
 import chalk from 'chalk'
@@ -154,6 +155,7 @@ export default class Build {
       output,
       esBuild,
       paths,
+      lessOptions,
       beforeReadWriteStream,
       afterReadWriteStream
     } = bundleOpts
@@ -190,6 +192,7 @@ export default class Build {
           return contents
         })
       )
+      .pipe(gulpIf((file) => file.path.endsWith('.less'), less(lessOptions)))
       .pipe(this.applyHook(beforeReadWriteStream, { through, insert, gulpIf }))
       .pipe(
         insert.transform((contents, file) => {
@@ -271,11 +274,7 @@ export default class Build {
           })
         )
       )
-      .pipe(
-        typeof afterReadWriteStream === 'function'
-          ? afterReadWriteStream({ through, insert, gulpIf })
-          : through.obj()
-      )
+      .pipe(this.applyHook(afterReadWriteStream, { through, insert, gulpIf }))
       .pipe(vinylFs.dest(path.join(dir, output)))
   }
 

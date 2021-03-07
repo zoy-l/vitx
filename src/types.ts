@@ -30,6 +30,12 @@ export interface IBundleOptions {
   entry?: string
   output?: string
   paths?: Record<string, string>
+  lessOptions?: {
+    modifyVars?: Record<string, any>
+    paths?: string[]
+    plugins?: any[]
+    relativeUrls?: boolean
+  }
 }
 
 export interface IBundleOpt extends IBundleOptions {
