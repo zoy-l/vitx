@@ -314,7 +314,7 @@ export default class Build {
   compile(dir: string, pkg?: string) {
     const bundleOpts = this.getBundleOpts(dir)
 
-    const { entry, output } = bundleOpts
+    const { entry, output, afterHook } = bundleOpts
 
     this.logInfo({
       pkg,
@@ -346,6 +346,7 @@ export default class Build {
       ]
 
       createStream(patterns).on('end', () => {
+        afterHook && afterHook()
         if (this.watch) {
           this.logInfo({
             pkg,

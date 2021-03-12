@@ -21,5 +21,6 @@ export default Joi.object({
   mountedReadWriteStream: Joi.func(),
   react: Joi.boolean(),
   paths: Joi.object(),
-  mapSources: Joi.func()
+  mapSources: Joi.func(),
+  afterHook: Joi.func()
 })

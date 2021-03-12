@@ -26,6 +26,7 @@ export interface IBundleOptions {
     insert: typeof gulpInsert
     gulpIf: typeof gulpIf
   }) => NodeJS.ReadWriteStream
+  afterHook?: () => void
   pkgs?: string[]
   entry?: string
   output?: string
