@@ -22,5 +22,6 @@ export default Joi.object({
   react: Joi.boolean(),
   paths: Joi.object(),
   mapSources: Joi.func(),
-  afterHook: Joi.func()
+  afterHook: Joi.func(),
+  sourcemap: Joi.boolean()
 })

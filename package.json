@@ -34,7 +34,8 @@
     "compile:watch": "node -r ./compile.js ./src/cli.ts build --watch",
     "test": "node ./lib/cli.js test --coverage",
     "clearCache": "node ./lib/cli.js test --clearCache",
-    "update:deps": "yarn upgrade-interactive --latest"
+    "update:deps": "yarn upgrade-interactive --latest",
+    "debug": "node --inspect-brk bin/zmi-nerd.js build"
   },
   "dependencies": {
     "@babel/core": "^7.13.8",
@@ -63,6 +64,7 @@
     "gulp-insert": "^0.5.0",
     "gulp-less": "^4.0.1",
     "gulp-plumber": "^1.2.1",
+    "gulp-sourcemaps": "^3.0.0",
     "gulp-typescript": "5.0.1",
     "jest": "^25.5.4",
     "jest-cli": "^25.5.4",

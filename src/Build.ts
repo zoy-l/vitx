@@ -1,5 +1,6 @@
 import { transformSync as babelTransformSync } from '@babel/core'
 import { transformSync as esBuildTransformSync } from 'esbuild'
+import sourcemaps from 'gulp-sourcemaps'
 import { Diagnostic } from 'typescript'
 import gulpPlumber from 'gulp-plumber'
 import glupTs from 'gulp-typescript'
@@ -103,7 +104,7 @@ export default class Build {
     currentDir: string
   }) {
     const { content, paths, bundleOpts, currentDir } = opts
-    const { esBuild, target, nodeFiles, browserFiles } = bundleOpts
+    const { esBuild, target, nodeFiles, browserFiles, sourcemap } = bundleOpts
 
     let isBrowser = target === 'browser'
 
@@ -131,7 +132,8 @@ export default class Build {
     return babelTransformSync(content, {
       ...babelConfig,
       filename: paths,
-      configFile: false
+      configFile: false,
+      sourceMaps: sourcemap
     })
   }
 
@@ -157,7 +159,8 @@ export default class Build {
       paths,
       lessOptions,
       beforeReadWriteStream,
-      afterReadWriteStream
+      afterReadWriteStream,
+      sourcemap
     } = bundleOpts
 
     const { tsConfig, error } = getTSConfig(this.cwd, this.isLerna ? dir : '')
@@ -180,6 +183,7 @@ export default class Build {
         base: basePath,
         allowEmpty: true
       })
+      .pipe(gulpIf(() => !!sourcemap, sourcemaps.init()))
       .pipe(
         gulpIf(
           this.watch,
@@ -248,6 +252,19 @@ export default class Build {
               output + chunk.path.replace(basePath, '')
             )
 
+            if (chunk.sourceMap && sourcemap) {
+              if (!Object.prototype.hasOwnProperty.call(res.map, 'file')) {
+                if (typeof res.map === 'string') {
+                  res.map = JSON.parse(res.map)
+
+                  res.map.sources = [path.basename(chunk.path)]
+                }
+
+                res.map.file = chunk.sourceMap.file
+              }
+              require('vinyl-sourcemaps-apply')(chunk, res.map)
+            }
+
             this.logInfo({
               pkg,
               msg: `➜ ${logType} for ${slash(logOutput)}`
@@ -275,6 +292,12 @@ export default class Build {
         )
       )
       .pipe(this.applyHook(afterReadWriteStream, { through, insert, gulpIf }))
+      .pipe(
+        gulpIf(
+          (file) => !!sourcemap && !file.path.endsWith('.d.ts'),
+          sourcemaps.write('.')
+        )
+      )
       .pipe(vinylFs.dest(path.join(dir, output)))
   }
 
@@ -419,6 +442,7 @@ export default class Build {
   }
 
   async step() {
+    debugger
     if (this.isLerna) {
       await this.compileLerna()
     } else {

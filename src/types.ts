@@ -37,6 +37,7 @@ export interface IBundleOptions {
     plugins?: any[]
     relativeUrls?: boolean
   }
+  sourcemap?: boolean
 }
 
 export interface IBundleOpt extends IBundleOptions {
