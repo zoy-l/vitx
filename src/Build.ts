@@ -4,9 +4,9 @@ import sourcemaps from 'gulp-sourcemaps'
 import { Diagnostic } from 'typescript'
 import gulpPlumber from 'gulp-plumber'
 import glupTs from 'gulp-typescript'
+import deepmerge from 'deepmerge'
 import insert from 'gulp-insert'
 import chokidar from 'chokidar'
-import { merge } from 'lodash'
 import through from 'through2'
 import vinylFs from 'vinyl-fs'
 import gulpIf from 'gulp-if'
@@ -74,7 +74,7 @@ export default class Build {
   }
 
   addDefaultConfigValue(config: IBundleOptions): IBundleOpt {
-    return merge(
+    return deepmerge(
       {
         entry: 'src',
         output: 'lib',
@@ -91,7 +91,7 @@ export default class Build {
 
     // The merge method will change the source object
     const bundleOpts = this.addDefaultConfigValue(
-      merge({ ...this.rootConfig }, userConfig)
+      deepmerge({ ...this.rootConfig }, userConfig)
     )
 
     return bundleOpts
@@ -124,7 +124,8 @@ export default class Build {
 
     if (esBuild) {
       const esBuildConfig = getEsBuildConfig(bundleOpts, isBrowser, paths)
-      return esBuildTransformSync(content, esBuildConfig)
+
+      return esBuildTransformSync(content.toString(), esBuildConfig)
     }
 
     const babelConfig = getBabelConfig(bundleOpts, isBrowser)
@@ -394,7 +395,7 @@ export default class Build {
           const watcher = chokidar.watch(patterns, {
             ignoreInitial: true,
             awaitWriteFinish: {
-              stabilityThreshold: 500
+              stabilityThreshold: 200
             }
           })
 
@@ -442,7 +443,6 @@ export default class Build {
   }
 
   async step() {
-    debugger
     if (this.isLerna) {
       await this.compileLerna()
     } else {

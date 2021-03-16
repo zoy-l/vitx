@@ -1,4 +1,4 @@
-import { merge } from 'lodash'
+import deepmerge from 'deepmerge'
 import ts from 'typescript'
 import path from 'path'
 import fs from 'fs'
@@ -26,9 +26,9 @@ export default function getTSConfig(cwd: string, pkgPath: string | undefined) {
   }
 
   if (!pkgsConifg.error) {
-    rootTsConfig.config.compilerOptions = merge(
+    rootTsConfig.config.compilerOptions = deepmerge(
       rootTsConfig.config.compilerOptions,
-      pkgsConifg.config.compilerOptions
+      pkgsConifg.config.compilerOptions ?? {}
     )
   }
 
