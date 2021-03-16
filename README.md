@@ -6,13 +6,14 @@ Simple transform tool
 
 ## Features
 
-- 📌 支持 `TypeScript`
-- 📌 支持 `lerna`
-- 📌 支持 `babel` 或 `esbuild` 打包
-- 📌 支持 `cjs` 和 `esm`
-- 📌 支持 自定义 `Stream` 扩展, 支持 `gulp` 插件
-- 📌 支持 小程序编译
-- 📌 支持 增量编译
+- **支持** `TypeScript`
+- **支持** `lerna`
+- **支持** `babel` 或 `esbuild` 打包
+- **支持** `cjs` 和 `esm`
+- **支持** 自定义 `Stream` 扩展, 支持 `gulp` 插件
+- **支持** sourcemap
+- **支持** 小程序编译
+- **支持** 增量编译
 
 ## Installation
 
@@ -242,3 +243,10 @@ export default {
 
 - Type: `string`
 - Default: `lib`
+
+#### sourcemap
+
+- Type: `boolean`
+- Default: `false`
+
+基于 [gulp-sourcemaps](https://github.com/gulp-sourcemaps/gulp-sourcemaps)
