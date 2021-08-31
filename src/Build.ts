@@ -1,5 +1,4 @@
 import { transformSync as babelTransformSync } from '@babel/core'
-import { transformSync as esBuildTransformSync } from 'esbuild'
 import sourcemaps from 'gulp-sourcemaps'
 import { Diagnostic } from 'typescript'
 import gulpPlumber from 'gulp-plumber'
@@ -19,7 +18,7 @@ import path from 'path'
 import fs from 'fs'
 
 import type { IBundleOpt, IBundleOptions } from './types'
-import getEsBuildConfig from './getEsBuildConfig'
+
 import { colorLog, eventColor } from './utils'
 import getBabelConfig from './getBabelConifg'
 import getTSConfig from './getTsConifg'
@@ -104,7 +103,7 @@ export default class Build {
     currentDir: string
   }) {
     const { content, paths, bundleOpts, currentDir } = opts
-    const { esBuild, target, nodeFiles, browserFiles, sourcemap } = bundleOpts
+    const { target, nodeFiles, browserFiles, sourcemap } = bundleOpts
 
     let isBrowser = target === 'browser'
 
@@ -120,12 +119,6 @@ export default class Build {
       if (!isBrowser && browserFiles && browserFiles.includes(currentPath)) {
         isBrowser = true
       }
-    }
-
-    if (esBuild) {
-      const esBuildConfig = getEsBuildConfig(bundleOpts, isBrowser, paths)
-
-      return esBuildTransformSync(content.toString(), esBuildConfig)
     }
 
     const babelConfig = getBabelConfig(bundleOpts, isBrowser)

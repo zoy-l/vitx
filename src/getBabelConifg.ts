@@ -53,15 +53,23 @@ export default function getBabelConfig(
           require.resolve('@babel/plugin-transform-modules-commonjs'), // @babel/preset-env
           { lazy: true }
         ],
+
       require.resolve('@babel/plugin-proposal-export-default-from'),
       require.resolve('@babel/plugin-proposal-do-expressions'),
       require.resolve('@babel/plugin-proposal-export-namespace-from'), // @babel/preset-env
       require.resolve('@babel/plugin-proposal-nullish-coalescing-operator'), // @babel/preset-env
       require.resolve('@babel/plugin-proposal-optional-chaining'), // @babel/preset-env
       require.resolve('@babel/plugin-syntax-dynamic-import'), // @babel/preset-env
-
       [
         require.resolve('@babel/plugin-proposal-class-properties'), // @babel/preset-env
+        { loose: true }
+      ],
+      [
+        require.resolve('@babel/plugin-proposal-private-methods'),
+        { loose: true }
+      ],
+      [
+        require.resolve('@babel/plugin-proposal-private-property-in-object'),
         { loose: true }
       ],
       runtimeHelpers && [
