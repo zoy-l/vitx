@@ -2,5 +2,13 @@
   "name": "nerd",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "compile": "node --trace-deprecation -r ./compile.js ./src/cli.ts build",
+    "compile:watch": "node -r ./compile.js ./src/cli.ts build --watch",
+    "test": "node ./lib/cli.js test --coverage",
+    "clearCache": "node ./lib/cli.js test --clearCache",
+    "update:deps": "yarn upgrade-interactive --latest --registry=https://registry.npm.taobao.org/",
+    "debug": "node --inspect-brk bin/zmi-nerd.js build"
+  }
 }

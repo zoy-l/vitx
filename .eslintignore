@@ -2,3 +2,5 @@
 lib/*
 debug/*
 fixtures/*
+packages/**/lib
+packages/bundles

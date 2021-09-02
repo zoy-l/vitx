@@ -14,7 +14,7 @@
     "suppressImplicitAnyIndexErrors": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["packages"],
+  "include": ["packages/**/src"],
   "exclude": [
     "./node_modules",
     "./packages/**/node_modules",
