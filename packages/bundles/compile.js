@@ -1,8 +1,10 @@
 const { join, basename } = require('path')
 const ncc = require('@vercel/ncc')
+const rimraf = require('rimraf')
 const fs = require('fs-extra')
 const glob = require('glob')
-const rimraf = require('rimraf')
+const chalk = require('chalk')
+
 const revise = require('./revise')
 
 const outDir = 'model'
@@ -28,15 +30,21 @@ function getModelPackageJson(name, sep = '../') {
 
 async function compileBundles(name, options = {}) {
   const defaultOptions = { externals, minify: true }
-  const { code } = await ncc(
+  const { code, assets } = await ncc(
     require.resolve(name),
     Object.assign(defaultOptions, options)
   )
 
-  fs.outputFileSync(
-    join(outDirPath, name, 'index.js'),
-    code.replace(/new Buffer\(/g, 'Buffer.from(')
-  )
+  console.log(chalk.yellow(name))
+  const outPath = join(outDirPath, name, 'index.js')
+
+  fs.outputFileSync(outPath, code.replace(/new Buffer\(/g, 'Buffer.from('))
+
+  if (assets) {
+    Object.keys(assets).forEach((fileName) => {
+      fs.outputFileSync(join(outPath, '..', fileName), assets[fileName].source)
+    })
+  }
 
   externals[name] = `@nerd/bundles/${outDir}/${name}`
 }
@@ -89,8 +97,8 @@ const subPackage = ['through2']
 
 const externals = {
   typescript: 'typescript',
-  'source-map': 'source-map',
-  'node-libs-browser': 'node-libs-browser'
+  'node-libs-browser': 'node-libs-browser',
+  fsevents: 'fsevents'
 }
 
 const dependencies = [

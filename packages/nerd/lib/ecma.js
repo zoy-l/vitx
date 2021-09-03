@@ -1,7 +1,7 @@
 "use strict";
 
 function _babelJest() {
-  const data = _interopRequireDefault(require("babel-jest"));
+  const data = _interopRequireDefault(require("@nerd/bundles/model/babel-jest"));
 
   _babelJest = function _babelJest() {
     return data;
