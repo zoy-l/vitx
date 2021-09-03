@@ -3,4 +3,4 @@ lib/*
 debug/*
 fixtures/*
 packages/**/lib
-packages/bundles
+packages/bundles/model

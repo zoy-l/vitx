@@ -3,8 +3,15 @@ const ncc = require('@vercel/ncc')
 const fs = require('fs-extra')
 const glob = require('glob')
 const rimraf = require('rimraf')
-
 const revise = require('./revise')
+
+const outDir = 'model'
+const indexDts = 'index.d.ts'
+const outDirPath = join(__dirname, outDir)
+
+function isNamespaceNodeModulesPath(modelName) {
+  return modelName[0] === '@' ? '../../../' : '../../'
+}
 
 function getModelPackageJson(name, sep = '../') {
   const dir = join(require.resolve(name), sep)
@@ -13,7 +20,7 @@ function getModelPackageJson(name, sep = '../') {
   if (basename(dir) === (namespace ? basename(name) : name)) {
     const pkg = require(join(dir, 'package.json'))
 
-    return join(dir, pkg.types || 'index.d.ts')
+    return { dir, pkg }
   }
 
   return getModelPackageJson(name, sep + '../')
@@ -27,17 +34,15 @@ async function compileBundles(name, options = {}) {
   )
 
   fs.outputFileSync(
-    join(__dirname, `model/${name}`, 'index.js'),
+    join(outDirPath, name, 'index.js'),
     code.replace(/new Buffer\(/g, 'Buffer.from(')
   )
 
-  externals[name] = `@nerd/bundles/model/${name}`
+  externals[name] = `@nerd/bundles/${outDir}/${name}`
 }
 
-const subPackage = ['through2']
-
 async function run() {
-  rimraf.sync('./model')
+  rimraf.sync(outDirPath)
 
   subPackage.forEach((name) => {
     fs.removeSync(join(__dirname, 'node_modules', name))
@@ -46,38 +51,41 @@ async function run() {
   while (dependencies.length) {
     const describe = dependencies.shift()
 
-    const modelName = describe[0]
+    const [modelName, modelTypeName] = describe
+    // safe
+    // eslint-disable-next-line no-await-in-loop
     await compileBundles(modelName)
     if (describe.length > 1) {
-      let mainDtsPath = getModelPackageJson(modelName)
+      const { dir, pkg } = getModelPackageJson(modelName)
+      let mainDtsPath = join(dir, pkg.types || indexDts)
 
-      if (describe[1] !== 'self') {
-        const namespace = modelName[0] === '@'
-        mainDtsPath =
-          join(mainDtsPath, namespace ? '../../../' : '../../', describe[1]) +
-          '/index.d.ts'
-      } else if (describe[1] === 'manual') {
-        mainDtsPath = describe[1]
+      if (modelTypeName !== 'self') {
+        const absPath = isNamespaceNodeModulesPath(modelName)
+        mainDtsPath = join(mainDtsPath, absPath, modelTypeName, indexDts)
+      } else if (modelTypeName === 'manual') {
+        mainDtsPath = modelTypeName
       }
 
       const mainDtsFileName = basename(mainDtsPath)
-      const dtss = glob.sync(join(mainDtsPath, '..') + '/*.d.ts')
+      const dtss = glob.sync(join(mainDtsPath, '..', '*.d.ts'))
 
       dtss.forEach((path) => {
         let outDtsName = basename(path)
 
-        if (outDtsName === mainDtsFileName && outDtsName !== 'index.d.ts') {
-          outDtsName = 'index.d.ts'
+        if (outDtsName === mainDtsFileName && outDtsName !== indexDts) {
+          outDtsName = indexDts
         }
 
-        const outPath = join(__dirname, `model/${modelName}`, outDtsName)
+        const outPath = join(outDirPath, modelName, outDtsName)
         fs.copyFileSync(path, outPath)
       })
 
-      revise[modelName] && revise[modelName](`model/${modelName}`)
+      revise[modelName] && revise[modelName](`${outDir}/${modelName}`)
     }
   }
 }
+
+const subPackage = ['through2']
 
 const externals = {
   typescript: 'typescript',
