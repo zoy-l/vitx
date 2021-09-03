@@ -1,15 +1,9 @@
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-Object.defineProperty(exports, "index", {
-  enumerable: true,
-  get: function get() {
-    return _.index;
-  }
-});
+exports.__esModule = true;
+exports.index = void 0;
 
 var _ = require(".");
 
+exports.index = _.index;
 const a = 1;

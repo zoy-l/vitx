@@ -2,6 +2,7 @@ const { join, basename } = require('path')
 const ncc = require('@vercel/ncc')
 const fs = require('fs-extra')
 const glob = require('glob')
+const rimraf = require('rimraf')
 
 const revise = require('./revise')
 
@@ -36,6 +37,8 @@ async function compileBundles(name, options = {}) {
 const subPackage = ['through2']
 
 async function run() {
+  rimraf.sync('./model')
+
   subPackage.forEach((name) => {
     fs.removeSync(join(__dirname, 'node_modules', name))
   })
@@ -88,9 +91,9 @@ const dependencies = [
   ['@babel/plugin-proposal-do-expressions'],
   ['@babel/plugin-proposal-export-default-from'],
   ['@babel/plugin-transform-runtime'],
-  ['@babel/preset-env'],
   ['@babel/preset-react'],
   ['@babel/preset-typescript'],
+  ['@babel/preset-env'],
   ['@babel/register'],
   ['chalk', 'self'],
   ['slash', 'self'],

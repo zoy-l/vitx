@@ -8,7 +8,14 @@
     "compile:watch": "node -r ./compile.js ./src/cli.ts build --watch",
     "test": "node ./lib/cli.js test --coverage",
     "clearCache": "node ./lib/cli.js test --clearCache",
-    "update:deps": "yarn upgrade-interactive --latest --registry=https://registry.npm.taobao.org/",
     "debug": "node --inspect-brk bin/zmi-nerd.js build"
+  },
+  "peerDependencies": {
+    "typescript": "4.x"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
   }
 }
