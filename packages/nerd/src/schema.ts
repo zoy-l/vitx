@@ -1,7 +1,7 @@
 import Joi from '@nerd/bundles/model/joi'
 
 export default Joi.object({
-  pkgs: Joi.array(),
+  packages: Joi.array().items(Joi.string()),
   nodeVersion: Joi.number(),
   target: Joi.string().valid('node', 'browser'),
   moduleType: Joi.string().valid('esm', 'cjs'),

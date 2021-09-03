@@ -19,6 +19,9 @@
     "clearCache": "node ./lib/cli.js test --clearCache",
     "debug": "node --inspect-brk bin/zmi-nerd.js build"
   },
+  "dependencies": {
+    "@nerd/bundles": "1.0.0"
+  },
   "peerDependencies": {
     "typescript": "4.x"
   },

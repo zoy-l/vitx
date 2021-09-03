@@ -1,18 +1,13 @@
-import deepmerge from '@nerd/bundles/model/deepmerge'
 import ts from 'typescript'
 import path from 'path'
 import fs from 'fs'
 
-export default function getTSConfig(cwd: string, pkgPath: string | undefined) {
+export default function getTSConfig(cwd: string) {
   const fileName = 'tsconfig.json'
 
   const readFile = (path: string) => fs.readFileSync(path, 'utf-8')
 
   const rootTsConfig = ts.readConfigFile(path.join(cwd, fileName), readFile)
-  const pkgsConifg = ts.readConfigFile(
-    path.join(pkgPath ?? '', fileName),
-    readFile
-  )
 
   if (rootTsConfig.error) {
     rootTsConfig.config.compilerOptions = {
@@ -23,13 +18,6 @@ export default function getTSConfig(cwd: string, pkgPath: string | undefined) {
       target: 'esnext',
       moduleResolution: 'node'
     }
-  }
-
-  if (!pkgsConifg.error) {
-    rootTsConfig.config.compilerOptions = deepmerge(
-      rootTsConfig.config.compilerOptions,
-      pkgsConifg.config.compilerOptions ?? {}
-    )
   }
 
   return {

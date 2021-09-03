@@ -58,10 +58,6 @@ async function compileBundles(name, options = {}) {
 async function run() {
   rimraf.sync(outDirPath)
 
-  subPackage.forEach((name) => {
-    fs.removeSync(join(__dirname, 'node_modules', name))
-  })
-
   while (dependencies.length) {
     const describe = dependencies.shift()
 
@@ -98,8 +94,6 @@ async function run() {
     }
   }
 }
-
-const subPackage = ['through2']
 
 const externals = {
   typescript: 'typescript',

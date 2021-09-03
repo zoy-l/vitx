@@ -9,7 +9,7 @@ import schema from './schema'
 export const CONFIG_FILES = ['.nerdrc.ts', '.nerdrc.js']
 
 export default function (cwd: string): IBundleOptions {
-  const isTest = process.env.NODE_ENV !== 'test'
+  const isTest = process.env.NODE_ENV === 'test'
   const configFile = CONFIG_FILES.map((configName) =>
     path.join(cwd, configName)
   )
@@ -22,7 +22,7 @@ export default function (cwd: string): IBundleOptions {
   if (userConfig) {
     // https://github.com/facebook/jest/issues/7864
     /* istanbul ignore next */
-    isTest && registerBabel(userConfig)
+    !isTest && registerBabel(userConfig)
     config = isDefault(require(userConfig))
 
     const { error } = schema.validate(config)
@@ -31,5 +31,13 @@ export default function (cwd: string): IBundleOptions {
       throw new Error(`Invalid options in ${error.message}`)
     }
   }
-  return config
+
+  return {
+    entry: 'src',
+    output: 'lib',
+    target: 'browser',
+    moduleType: 'esm',
+    sourcemap: false,
+    ...config
+  }
 }

@@ -6,7 +6,7 @@ import { runCLI } from 'jest'
 
 export interface IBundleOptions {
   esBuild?: boolean
-  moduleType?: 'esm' | 'cjs'
+  moduleType?: 'esm' | 'cjs' | 'all'
   extraBabelPlugins?: any[]
   extraBabelPresets?: any[]
   target?: 'node' | 'browser'
@@ -27,9 +27,9 @@ export interface IBundleOptions {
     gulpIf: typeof gulpIf
   }) => NodeJS.ReadWriteStream
   afterHook?: () => void
-  pkgs?: string[]
-  entry?: string
-  output?: string
+  packages?: string[]
+  entry: string
+  output: string
   paths?: Record<string, string>
   lessOptions?: {
     modifyVars?: Record<string, any>
@@ -45,9 +45,7 @@ export interface IBundleOpt extends IBundleOptions {
   output: string
 }
 
-export type ArgsType<T extends (...args: any[]) => any> = T extends (
-  ...args: infer U
-) => any
+export type ArgsType<T extends (...args: any[]) => any> = T extends (...args: infer U) => any
   ? U
   : never
 
@@ -59,10 +57,7 @@ export interface ITestArgs extends Partial<ArgsType<typeof runCLI>['0']> {
   package?: string
 }
 
-export type AnyConfig<
-  T extends Record<string, any>,
-  U extends Record<string, any>
-> = {
+export type AnyConfig<T extends Record<string, any>, U extends Record<string, any>> = {
   [V in keyof U]: V extends keyof T
     ? U[V] extends (...args: any[]) => any
       ? (argv: T[V]) => T[V]
@@ -70,10 +65,7 @@ export type AnyConfig<
     : U[V]
 }
 
-export type CalculatedConfig<
-  T extends Record<string, any>,
-  U extends Record<string, any>
-> = T &
+export type CalculatedConfig<T extends Record<string, any>, U extends Record<string, any>> = T &
   {
     [V in keyof U]: V extends keyof T ? T[V] : U[V]
   }
