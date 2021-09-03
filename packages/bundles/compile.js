@@ -4,6 +4,7 @@ const rimraf = require('rimraf')
 const fs = require('fs-extra')
 const glob = require('glob')
 const chalk = require('chalk')
+const ora = require('ora')
 
 const revise = require('./revise')
 
@@ -29,13 +30,17 @@ function getModelPackageJson(name, sep = '../') {
 }
 
 async function compileBundles(name, options = {}) {
-  const defaultOptions = { externals, minify: true }
+  const spinner = ora({
+    color: 'white',
+    text: `compile: ${chalk.cyan(name)}`
+  }).start()
+
+  const defaultOptions = { externals, minify: true, quiet: true }
   const { code, assets } = await ncc(
     require.resolve(name),
     Object.assign(defaultOptions, options)
   )
 
-  console.log(chalk.yellow(name))
   const outPath = join(outDirPath, name, 'index.js')
 
   fs.outputFileSync(outPath, code.replace(/new Buffer\(/g, 'Buffer.from('))
@@ -47,6 +52,7 @@ async function compileBundles(name, options = {}) {
   }
 
   externals[name] = `@nerd/bundles/${outDir}/${name}`
+  spinner.succeed(chalk.green('success: ') + chalk.yellow(name)).stop()
 }
 
 async function run() {
@@ -127,7 +133,9 @@ const dependencies = [
   ['vinyl-sourcemaps-apply'],
   ['yargs-parser', '@types/yargs-parser'],
   ['less'],
-  ['joi', 'self']
+  ['joi', 'self'],
+  ['figures', 'self'],
+  ['ora', 'self']
 ]
 
 run()

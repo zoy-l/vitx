@@ -1,8 +1,17 @@
 {
   "name": "nerd",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "bin",
+    "lib"
+  ],
+  "bin": {
+    "nerd": "./bin/zmi-nerd.js"
+  },
   "license": "MIT",
+  "description": "library build tool.",
   "scripts": {
     "compile": "node --trace-deprecation -r ./compile.js ./src/cli.ts build",
     "compile:watch": "node -r ./compile.js ./src/cli.ts build --watch",
@@ -17,5 +26,19 @@
     "typescript": {
       "optional": true
     }
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/l-zoy/zmi-nerd"
+  },
+  "homepage": "https://github.com/l-zoy/zmi-nerd",
+  "bugs": "https://github.com/l-zoy/zmi-nerd/issues",
+  "keywords": [
+    "zmi-nerd",
+    "gulp",
+    "gulpplugin",
+    "小程序",
+    "打包",
+    "typescript"
+  ]
 }

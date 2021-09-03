@@ -1,4 +1,4 @@
-import { jestConfig } from './src'
+import { jestConfig } from 'nerd/'
 
 export default {
   collectCoverageFrom(memo) {
