@@ -1,7 +1,7 @@
 "use strict";
 
 function _yargsParser() {
-  const data = _interopRequireDefault(require("yargs-parser"));
+  const data = _interopRequireDefault(require("@nerd/bundles/model/yargs-parser"));
 
   _yargsParser = function _yargsParser() {
     return data;
@@ -11,7 +11,7 @@ function _yargsParser() {
 }
 
 function _chalk() {
-  const data = _interopRequireDefault(require("chalk"));
+  const data = _interopRequireDefault(require("@nerd/bundles/model/chalk"));
 
   _chalk = function _chalk() {
     return data;
@@ -40,7 +40,7 @@ if (commands.includes(args._[0])) {
   if (command === 'build') {
     var _args$w;
 
-    const watch = (_args$w = args.w) !== null && _args$w !== void 0 ? _args$w : args.watch;
+    const watch = (_args$w = args.w) != null ? _args$w : args.watch;
     const cwd = process.cwd();
     const build = new _Build.default({
       cwd,

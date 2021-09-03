@@ -1,14 +1,12 @@
-require('@nerd/bundles/@babel/register')({
+require('@nerd/bundles/model/@babel/register')({
   extensions: ['.js', '.ts'],
   presets: [
-    '@nerd/bundles/@babel/preset-typescript',
-    '@nerd/bundles/@babel/preset-env'
+    '@nerd/bundles/model/@babel/preset-typescript',
+    '@nerd/bundles/model/@babel/preset-env'
   ],
   plugins: [
-    '@nerd/bundles/@babel/plugin-proposal-export-default-from',
-    '@babel/plugin-transform-modules-commonjs',
-    '@babel/plugin-proposal-export-namespace-from',
-    '@babel/plugin-proposal-class-properties',
-    '@nerd/bundles/@babel/plugin-transform-runtime'
+    '@nerd/bundles/model/@babel/plugin-proposal-export-default-from',
+    '@nerd/bundles/model/@babel/plugin-transform-modules-commonjs',
+    '@nerd/bundles/model/@babel/plugin-transform-runtime'
   ]
 })

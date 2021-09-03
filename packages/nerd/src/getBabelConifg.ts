@@ -15,6 +15,7 @@ export default function getBabelConfig(
   } = bundleOpts
 
   const defaultEnvConfig = {
+    loose: true,
     exclude: [
       'transform-member-expression-literals',
       'transform-reserved-words',
@@ -33,9 +34,10 @@ export default function getBabelConfig(
 
   return {
     presets: [
-      disableTypes && require.resolve('@babel/preset-typescript'),
+      disableTypes &&
+        require.resolve('@nerd/bundles/model/@babel/preset-typescript'),
       [
-        require.resolve('@babel/preset-env'),
+        require.resolve('@nerd/bundles/model/@babel/preset-env'),
         {
           targets: isBrowser
             ? { browsers: ['last 2 versions', 'IE 10'] }
@@ -44,36 +46,27 @@ export default function getBabelConfig(
           ...defaultEnvConfig
         }
       ],
-      isBrowser && react && '@babel/preset-react',
+      isBrowser && react && '@nerd/bundles/model/@babel/preset-react',
       ...extraBabelPresets
     ].filter(Boolean) as (string | any[])[],
     plugins: [
       moduleType === 'cjs' &&
         !isBrowser && [
-          require.resolve('@babel/plugin-transform-modules-commonjs'), // @babel/preset-env
+          require.resolve(
+            '@nerd/bundles/model/@babel/plugin-transform-modules-commonjs'
+          ),
           { lazy: true }
         ],
 
-      require.resolve('@babel/plugin-proposal-export-default-from'),
-      require.resolve('@babel/plugin-proposal-do-expressions'),
-      require.resolve('@babel/plugin-proposal-export-namespace-from'), // @babel/preset-env
-      require.resolve('@babel/plugin-proposal-nullish-coalescing-operator'), // @babel/preset-env
-      require.resolve('@babel/plugin-proposal-optional-chaining'), // @babel/preset-env
-      require.resolve('@babel/plugin-syntax-dynamic-import'), // @babel/preset-env
-      [
-        require.resolve('@babel/plugin-proposal-class-properties'), // @babel/preset-env
-        { loose: true }
-      ],
-      [
-        require.resolve('@babel/plugin-proposal-private-methods'),
-        { loose: true }
-      ],
-      [
-        require.resolve('@babel/plugin-proposal-private-property-in-object'),
-        { loose: true }
-      ],
+      require.resolve(
+        '@nerd/bundles/model/@babel/plugin-proposal-export-default-from'
+      ),
+      require.resolve(
+        '@nerd/bundles/model/@babel/plugin-proposal-do-expressions'
+      ),
+
       runtimeHelpers && [
-        require.resolve('@babel/plugin-transform-runtime'),
+        require.resolve('@nerd/bundles/model/@babel/plugin-transform-runtime'),
         {
           useESModules: isBrowser && moduleType === 'esm',
           version: require('@babel/runtime/package.json').version

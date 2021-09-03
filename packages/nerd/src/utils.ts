@@ -1,5 +1,5 @@
-import chalk from 'chalk'
-import slash from 'slash'
+import chalk from '@nerd/bundles/model/chalk'
+import slash from '@nerd/bundles/model/slash'
 
 import { AnyConfig, CalculatedConfig } from './types'
 import getBabelConfig from './getBabelConifg'

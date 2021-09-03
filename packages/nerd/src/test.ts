@@ -1,4 +1,4 @@
-import yargsParser from 'yargs-parser'
+import yargsParser from '@nerd/bundles/model/yargs-parser'
 import { runCLI } from 'jest'
 import assert from 'assert'
 import path from 'path'

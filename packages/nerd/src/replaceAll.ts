@@ -1,8 +1,8 @@
 // The main part comes from the link below, with appropriate modifications
 // https://github.com/CryUshio/gulp-path-alias#readme
 
+import slash from '@nerd/bundles/model/slash'
 import path from 'path'
-import slash from 'slash'
 
 type AliasMapType = Record<string, string>
 type GetRegExpReturn = (name: string) => RegExp

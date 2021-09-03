@@ -29,14 +29,14 @@ export default class Build {
         paths: string;
         bundleOpts: IBundleOpt;
         currentDir: string;
-    }): import("@nerd/bundles/@babel/core").BabelFileResult;
+    }): import("@nerd/bundles/model/@babel/core").BabelFileResult;
     isTransform(regExp: RegExp, filePath: string): boolean;
     createStream({ src, pkg, dir, bundleOpts }: {
         pkg?: string;
         dir: string;
         src: string[] | string;
         bundleOpts: IBundleOpt;
-    }): any;
+    }): NodeJS.ReadWriteStream;
     compileLerna(): Promise<void>;
     compile(dir: string, pkg?: string): Promise<void>;
     step(): Promise<void>;

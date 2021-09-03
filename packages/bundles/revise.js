@@ -2,7 +2,7 @@ const fs = require('fs-extra')
 const path = require('path')
 
 function reviseGulpInsert(name) {
-  const file = fs.writeFileSync(
+  fs.writeFileSync(
     path.join(__dirname, name, 'index.d.ts'),
     `import File = require('vinyl')
   declare namespace Insert {

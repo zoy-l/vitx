@@ -1,5 +1,5 @@
-import yargsParser from 'yargs-parser'
-import chalk from 'chalk'
+import yargsParser from '@nerd/bundles/model/yargs-parser'
+import chalk from '@nerd/bundles/model/chalk'
 
 import Build from './Build'
 import test from './test'
@@ -15,7 +15,6 @@ function logError(err: any) {
 if (commands.includes(args._[0])) {
   const command = args._[0]
 
-
   if (command === 'build') {
     const watch = args.w ?? args.watch
     const cwd = process.cwd()
@@ -24,7 +23,7 @@ if (commands.includes(args._[0])) {
       logError(err)
     })
   } else if (command === 'test') {
-    test(args).catch((err)=>{
+    test(args).catch((err) => {
       logError(err)
     })
   } else {

@@ -5,20 +5,20 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = replaceAll;
 
-function _path() {
-  const data = _interopRequireDefault(require("path"));
+function _slash() {
+  const data = _interopRequireDefault(require("@nerd/bundles/model/slash"));
 
-  _path = function _path() {
+  _slash = function _slash() {
     return data;
   };
 
   return data;
 }
 
-function _slash() {
-  const data = _interopRequireDefault(require("slash"));
+function _path() {
+  const data = _interopRequireDefault(require("path"));
 
-  _slash = function _slash() {
+  _path = function _path() {
     return data;
   };
 

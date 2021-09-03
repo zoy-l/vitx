@@ -1,4 +1,4 @@
-import Joi from 'joi'
+import Joi from '@nerd/bundles/model/joi'
 
 export default Joi.object({
   pkgs: Joi.array(),

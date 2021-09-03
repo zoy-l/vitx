@@ -1,4 +1,4 @@
-import deepmerge from 'deepmerge'
+import deepmerge from '@nerd/bundles/model/deepmerge'
 import ts from 'typescript'
 import path from 'path'
 import fs from 'fs'

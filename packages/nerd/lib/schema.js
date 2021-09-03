@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 
 function _joi() {
-  const data = _interopRequireDefault(require("joi"));
+  const data = _interopRequireDefault(require("@nerd/bundles/model/joi"));
 
   _joi = function _joi() {
     return data;

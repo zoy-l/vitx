@@ -12,16 +12,10 @@ function getModelPackageJson(name, sep = '../') {
   if (basename(dir) === (namespace ? basename(name) : name)) {
     const pkg = require(join(dir, 'package.json'))
 
-    return join(dir, pkg.typings || 'index.d.ts')
+    return join(dir, pkg.types || 'index.d.ts')
   }
 
   return getModelPackageJson(name, sep + '../')
-}
-
-const externals = {
-  typescript: 'typescript',
-  'source-map': 'source-map',
-  'node-libs-browser': 'node-libs-browser'
 }
 
 async function compileBundles(name, options = {}) {
@@ -32,15 +26,65 @@ async function compileBundles(name, options = {}) {
   )
 
   fs.outputFileSync(
-    join(__dirname, name, 'index.js'),
+    join(__dirname, `model/${name}`, 'index.js'),
     code.replace(/new Buffer\(/g, 'Buffer.from(')
   )
 
-  externals[name] = `@nerd/bundles/${name}`
+  externals[name] = `@nerd/bundles/model/${name}`
+}
+
+const subPackage = ['through2']
+
+async function run() {
+  subPackage.forEach((name) => {
+    fs.removeSync(join(__dirname, 'node_modules', name))
+  })
+
+  while (dependencies.length) {
+    const describe = dependencies.shift()
+
+    const modelName = describe[0]
+    await compileBundles(modelName)
+    if (describe.length > 1) {
+      let mainDtsPath = getModelPackageJson(modelName)
+
+      if (describe[1] !== 'self') {
+        const namespace = modelName[0] === '@'
+        mainDtsPath =
+          join(mainDtsPath, namespace ? '../../../' : '../../', describe[1]) +
+          '/index.d.ts'
+      } else if (describe[1] === 'manual') {
+        mainDtsPath = describe[1]
+      }
+
+      const mainDtsFileName = basename(mainDtsPath)
+      const dtss = glob.sync(join(mainDtsPath, '..') + '/*.d.ts')
+
+      dtss.forEach((path) => {
+        let outDtsName = basename(path)
+
+        if (outDtsName === mainDtsFileName && outDtsName !== 'index.d.ts') {
+          outDtsName = 'index.d.ts'
+        }
+
+        const outPath = join(__dirname, `model/${modelName}`, outDtsName)
+        fs.copyFileSync(path, outPath)
+      })
+
+      revise[modelName] && revise[modelName](`model/${modelName}`)
+    }
+  }
+}
+
+const externals = {
+  typescript: 'typescript',
+  'source-map': 'source-map',
+  'node-libs-browser': 'node-libs-browser'
 }
 
 const dependencies = [
   ['@babel/core', '@types/babel__core'],
+  ['@babel/plugin-transform-modules-commonjs'],
   ['@babel/plugin-proposal-do-expressions'],
   ['@babel/plugin-proposal-export-default-from'],
   ['@babel/plugin-transform-runtime'],
@@ -64,50 +108,7 @@ const dependencies = [
   ['vinyl-sourcemaps-apply'],
   ['yargs-parser', '@types/yargs-parser'],
   ['less'],
-  ['joi']
+  ['joi', 'self']
 ]
-
-const subPackage = ['through2']
-
-async function run() {
-  subPackage.forEach((name) => {
-    fs.removeSync(join(__dirname, 'node_modules', name))
-  })
-
-  while (dependencies.length) {
-    const describe = dependencies.shift()
-
-    const modelName = describe[0]
-    await compileBundles(modelName)
-    if (describe.length > 1) {
-      let mainDtsPath = getModelPackageJson(modelName)
-
-      if (describe[1] !== 'self') {
-        const namespace = modelName[0] === '@'
-        mainDtsPath =
-          join(mainDtsPath, namespace ? '../../../' : '../../', describe[1]) +
-          '/index.d.ts'
-      }
-
-      const mainDtsFileName = basename(mainDtsPath)
-
-      const dtss = glob.sync(join(mainDtsPath, '..') + '/*.d.ts')
-
-      dtss.forEach((path) => {
-        let outDtsName = basename(path)
-
-        if (outDtsName === mainDtsFileName && outDtsName !== 'index.d.ts') {
-          outDtsName = 'index.d.ts'
-        }
-
-        const outPath = join(__dirname, describe[0], outDtsName)
-
-        fs.copyFileSync(path, outPath)
-      })
-
-      revise[modelName] && revise[modelName](modelName)
-    }
-  }
-}
 
 run()

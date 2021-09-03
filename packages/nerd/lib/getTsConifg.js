@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = getTSConfig;
 
 function _deepmerge() {
-  const data = _interopRequireDefault(require("deepmerge"));
+  const data = _interopRequireDefault(require("@nerd/bundles/model/deepmerge"));
 
   _deepmerge = function _deepmerge() {
     return data;
@@ -54,7 +54,7 @@ function getTSConfig(cwd, pkgPath) {
 
   const rootTsConfig = _typescript().default.readConfigFile(_path().default.join(cwd, fileName), readFile);
 
-  const pkgsConifg = _typescript().default.readConfigFile(_path().default.join(pkgPath !== null && pkgPath !== void 0 ? pkgPath : '', fileName), readFile);
+  const pkgsConifg = _typescript().default.readConfigFile(_path().default.join(pkgPath != null ? pkgPath : '', fileName), readFile);
 
   if (rootTsConfig.error) {
     rootTsConfig.config.compilerOptions = {
@@ -70,7 +70,7 @@ function getTSConfig(cwd, pkgPath) {
   if (!pkgsConifg.error) {
     var _pkgsConifg$config$co;
 
-    rootTsConfig.config.compilerOptions = (0, _deepmerge().default)(rootTsConfig.config.compilerOptions, (_pkgsConifg$config$co = pkgsConifg.config.compilerOptions) !== null && _pkgsConifg$config$co !== void 0 ? _pkgsConifg$config$co : {});
+    rootTsConfig.config.compilerOptions = (0, _deepmerge().default)(rootTsConfig.config.compilerOptions, (_pkgsConifg$config$co = pkgsConifg.config.compilerOptions) != null ? _pkgsConifg$config$co : {});
   }
 
   return {

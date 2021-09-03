@@ -40,7 +40,7 @@ function _default(cwd) {
 
   const isTest = process.env.NODE_ENV !== 'test';
   const configFile = CONFIG_FILES.map(configName => _path().default.join(cwd, configName));
-  const userConfig = (_configFile$find = configFile.find(configCwd => _fs().default.existsSync(configCwd))) !== null && _configFile$find !== void 0 ? _configFile$find : '';
+  const userConfig = (_configFile$find = configFile.find(configCwd => _fs().default.existsSync(configCwd))) != null ? _configFile$find : '';
   let config = {};
 
   if (userConfig) {

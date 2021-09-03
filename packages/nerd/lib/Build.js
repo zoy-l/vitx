@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = void 0;
 
 function _core() {
-  const data = require("@nerd/bundles/@babel/core");
+  const data = require("@nerd/bundles/model/@babel/core");
 
   _core = function _core() {
     return data;
@@ -16,7 +16,7 @@ function _core() {
 }
 
 function _gulpSourcemaps() {
-  const data = _interopRequireDefault(require("@nerd/bundles/gulp-sourcemaps"));
+  const data = _interopRequireDefault(require("@nerd/bundles/model/gulp-sourcemaps"));
 
   _gulpSourcemaps = function _gulpSourcemaps() {
     return data;
@@ -26,7 +26,7 @@ function _gulpSourcemaps() {
 }
 
 function _gulpPlumber() {
-  const data = _interopRequireDefault(require("@nerd/bundles/gulp-plumber"));
+  const data = _interopRequireDefault(require("@nerd/bundles/model/gulp-plumber"));
 
   _gulpPlumber = function _gulpPlumber() {
     return data;
@@ -36,7 +36,7 @@ function _gulpPlumber() {
 }
 
 function _gulpTypescript() {
-  const data = _interopRequireDefault(require("@nerd/bundles/gulp-typescript"));
+  const data = _interopRequireDefault(require("@nerd/bundles/model/gulp-typescript"));
 
   _gulpTypescript = function _gulpTypescript() {
     return data;
@@ -46,7 +46,7 @@ function _gulpTypescript() {
 }
 
 function _deepmerge() {
-  const data = _interopRequireDefault(require("@nerd/bundles/deepmerge"));
+  const data = _interopRequireDefault(require("@nerd/bundles/model/deepmerge"));
 
   _deepmerge = function _deepmerge() {
     return data;
@@ -56,7 +56,7 @@ function _deepmerge() {
 }
 
 function _gulpInsert() {
-  const data = _interopRequireDefault(require("@nerd/bundles/gulp-insert"));
+  const data = _interopRequireDefault(require("@nerd/bundles/model/gulp-insert"));
 
   _gulpInsert = function _gulpInsert() {
     return data;
@@ -65,8 +65,18 @@ function _gulpInsert() {
   return data;
 }
 
+function _chokidar() {
+  const data = _interopRequireDefault(require("@nerd/bundles/model/chokidar"));
+
+  _chokidar = function _chokidar() {
+    return data;
+  };
+
+  return data;
+}
+
 function _through() {
-  const data = _interopRequireDefault(require("@nerd/bundles/through2"));
+  const data = _interopRequireDefault(require("@nerd/bundles/model/through2"));
 
   _through = function _through() {
     return data;
@@ -76,7 +86,7 @@ function _through() {
 }
 
 function _vinylFs() {
-  const data = _interopRequireDefault(require("@nerd/bundles/vinyl-fs"));
+  const data = _interopRequireDefault(require("@nerd/bundles/model/vinyl-fs"));
 
   _vinylFs = function _vinylFs() {
     return data;
@@ -86,7 +96,7 @@ function _vinylFs() {
 }
 
 function _gulpIf() {
-  const data = _interopRequireDefault(require("@nerd/bundles/gulp-if"));
+  const data = _interopRequireDefault(require("@nerd/bundles/model/gulp-if"));
 
   _gulpIf = function _gulpIf() {
     return data;
@@ -96,7 +106,7 @@ function _gulpIf() {
 }
 
 function _gulpLess() {
-  const data = _interopRequireDefault(require("@nerd/bundles/gulp-less"));
+  const data = _interopRequireDefault(require("@nerd/bundles/model/gulp-less"));
 
   _gulpLess = function _gulpLess() {
     return data;
@@ -106,7 +116,7 @@ function _gulpLess() {
 }
 
 function _rimraf() {
-  const data = _interopRequireDefault(require("@nerd/bundles/rimraf"));
+  const data = _interopRequireDefault(require("@nerd/bundles/model/rimraf"));
 
   _rimraf = function _rimraf() {
     return data;
@@ -116,7 +126,7 @@ function _rimraf() {
 }
 
 function _chalk() {
-  const data = _interopRequireDefault(require("@nerd/bundles/chalk"));
+  const data = _interopRequireDefault(require("@nerd/bundles/model/chalk"));
 
   _chalk = function _chalk() {
     return data;
@@ -126,19 +136,9 @@ function _chalk() {
 }
 
 function _slash() {
-  const data = _interopRequireDefault(require("@nerd/bundles/slash"));
+  const data = _interopRequireDefault(require("@nerd/bundles/model/slash"));
 
   _slash = function _slash() {
-    return data;
-  };
-
-  return data;
-}
-
-function _chokidar() {
-  const data = _interopRequireDefault(require("chokidar"));
-
-  _chokidar = function _chokidar() {
     return data;
   };
 
@@ -187,7 +187,7 @@ var _config = _interopRequireDefault(require("./config"));
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it.return != null) it.return(); } finally { if (didErr) throw err; } } }; }
+function _createForOfIteratorHelperLoose(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (it) return (it = it.call(o)).next.bind(it); if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; return function () { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
@@ -197,11 +197,7 @@ function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try
 
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
 const modeType = {
   cjs: 'Commonjs',
@@ -220,7 +216,7 @@ class Build {
     this.customPrefix = void 0;
     this.tsConifgError = void 0;
     this.cache = {};
-    this.cwd = (_options$cwd = options.cwd) !== null && _options$cwd !== void 0 ? _options$cwd : process.cwd();
+    this.cwd = (_options$cwd = options.cwd) != null ? _options$cwd : process.cwd();
     this.userConfig = options.userConfig;
     this.customPrefix = options.customPrefix;
     this.watch = !!options.watch;
@@ -251,9 +247,9 @@ class Build {
   getBundleOpts(cwd) {
     var _this$userConfig;
 
-    const userConfig = (_this$userConfig = this.userConfig) !== null && _this$userConfig !== void 0 ? _this$userConfig : (0, _config.default)(cwd); // The merge method will change the source object
+    const userConfig = (_this$userConfig = this.userConfig) != null ? _this$userConfig : (0, _config.default)(cwd); // The merge method will change the source object
 
-    const bundleOpts = this.addDefaultConfigValue((0, _deepmerge().default)(_objectSpread({}, this.rootConfig), userConfig));
+    const bundleOpts = this.addDefaultConfigValue((0, _deepmerge().default)(_extends({}, this.rootConfig), userConfig));
     return bundleOpts;
   }
 
@@ -283,7 +279,7 @@ class Build {
     }
 
     const babelConfig = (0, _getBabelConifg.default)(bundleOpts, isBrowser);
-    return (0, _core().transformSync)(content, _objectSpread(_objectSpread({}, babelConfig), {}, {
+    return (0, _core().transformSync)(content, _extends({}, babelConfig, {
       filename: paths,
       configFile: false,
       sourceMaps: sourcemap
@@ -338,7 +334,7 @@ class Build {
       insert: _gulpInsert().default,
       gulpIf: _gulpIf().default
     })).pipe(_gulpInsert().default.transform((contents, file) => {
-      const _paths = _objectSpread({}, paths);
+      const _paths = _extends({}, paths);
 
       if (Object.keys(_paths).length) {
         const dirname = _path().default.dirname(file.path);
@@ -372,7 +368,7 @@ class Build {
 
       chunk.contents = Buffer.from(res.code);
 
-      const logType = _chalk().default.yellow(`[${(_this$customPrefix = this.customPrefix) !== null && _this$customPrefix !== void 0 ? _this$customPrefix : esBuild ? 'esBuild' : 'babel'}]:`);
+      const logType = _chalk().default.yellow(`[${(_this$customPrefix = this.customPrefix) != null ? _this$customPrefix : esBuild ? 'esBuild' : 'babel'}]:`);
 
       const logOutput = _chalk().default.blue(output + chunk.path.replace(basePath, ''));
 
@@ -399,7 +395,7 @@ class Build {
       if (!file.path.endsWith('.d.ts')) {
         var _this$customPrefix2;
 
-        const logType = _chalk().default.yellow(`[${(_this$customPrefix2 = this.customPrefix) !== null && _this$customPrefix2 !== void 0 ? _this$customPrefix2 : 'Copys'}]:`);
+        const logType = _chalk().default.yellow(`[${(_this$customPrefix2 = this.customPrefix) != null ? _this$customPrefix2 : 'Copys'}]:`);
 
         const logOutput = _chalk().default.blue(output + file.path.replace(basePath, ''));
 
@@ -440,25 +436,16 @@ class Build {
         return memo;
       }, []);
 
-      var _iterator = _createForOfIteratorHelper(userPkgs),
-          _step;
+      for (var _iterator = _createForOfIteratorHelperLoose(userPkgs), _step; !(_step = _iterator()).done;) {
+        const pkg = _step.value;
 
-      try {
-        for (_iterator.s(); !(_step = _iterator.n()).done;) {
-          const pkg = _step.value;
+        const pkgPath = _path().default.join(_this.cwd, 'packages', pkg);
 
-          const pkgPath = _path().default.join(_this.cwd, 'packages', pkg);
+        (0, _assert().default)(_fs().default.existsSync(_path().default.join(pkgPath, 'package.json')), `package.json not found in packages/${pkg}`);
+        process.chdir(pkgPath); // here is safe
+        // eslint-disable-next-line no-await-in-loop
 
-          (0, _assert().default)(_fs().default.existsSync(_path().default.join(pkgPath, 'package.json')), `package.json not found in packages/${pkg}`);
-          process.chdir(pkgPath); // here is safe
-          // eslint-disable-next-line no-await-in-loop
-
-          yield _this.compile(pkgPath, pkg);
-        }
-      } catch (err) {
-        _iterator.e(err);
-      } finally {
-        _iterator.f();
+        yield _this.compile(pkgPath, pkg);
       }
     })();
   }
@@ -479,7 +466,7 @@ class Build {
 
     this.logInfo({
       pkg,
-      msg: _chalk().default.red(`➜ [Target]: ${(_this$customPrefix3 = this.customPrefix) !== null && _this$customPrefix3 !== void 0 ? _this$customPrefix3 : modeType[bundleOpts.moduleType]}`)
+      msg: _chalk().default.red(`➜ [Target]: ${(_this$customPrefix3 = this.customPrefix) != null ? _this$customPrefix3 : modeType[bundleOpts.moduleType]}`)
     });
 
     const createStream = src => this.createStream({
@@ -499,7 +486,7 @@ class Build {
         if (this.watch) {
           this.logInfo({
             pkg,
-            msg: _chalk().default.blue(`➜ Start watching ${pkg !== null && pkg !== void 0 ? pkg : (0, _slash().default)(srcPath).replace(`${(0, _slash().default)(this.cwd)}/`, '')} directory...`)
+            msg: _chalk().default.blue(`➜ Start watching ${pkg != null ? pkg : (0, _slash().default)(srcPath).replace(`${(0, _slash().default)(this.cwd)}/`, '')} directory...`)
           });
 
           if (this.tsConifgError) {

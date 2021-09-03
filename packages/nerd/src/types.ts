@@ -1,8 +1,8 @@
+import gulpInsert from '@nerd/bundles/model/gulp-insert'
+import through2 from '@nerd/bundles/model/through2'
+import gulpIf from '@nerd/bundles/model/gulp-if'
 import type { Config } from '@jest/types'
-import gulpInsert from 'gulp-insert'
-import through2 from 'through2'
 import { runCLI } from 'jest'
-import gulpIf from 'gulp-if'
 
 export interface IBundleOptions {
   esBuild?: boolean
