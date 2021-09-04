@@ -1,4 +1,4 @@
-import Build from './Build'
+import { build } from './Build'
 
 export { IBundleOptions as IConfig, jestConfig } from './types'
-export default Build
+export default build

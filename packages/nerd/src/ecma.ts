@@ -1,4 +1,4 @@
-import transformer from '@nerd/bundles/model/babel-jest'
+import transformer from 'babel-jest'
 import getBabelConifg from './getBabelConifg'
 
 module.exports = transformer.createTransformer({

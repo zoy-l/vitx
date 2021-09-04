@@ -13,13 +13,9 @@ export default async function (args: yargsParser.Arguments) {
   process.env.NODE_ENV = 'test'
   const cwd = args.cwd ?? process.cwd()
 
-  const userJestConfigFiles = jestConfig.map((configName) =>
-    path.join(cwd, configName)
-  )
+  const userJestConfigFiles = jestConfig.map((configName) => path.join(cwd, configName))
 
-  const userJestConfig = userJestConfigFiles.find((configCwd) =>
-    fs.existsSync(configCwd)
-  )
+  const userJestConfig = userJestConfigFiles.find((configCwd) => fs.existsSync(configCwd))
 
   if (userJestConfig) {
     registerBabel(userJestConfig)

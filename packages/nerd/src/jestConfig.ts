@@ -16,9 +16,7 @@ export default function defaultConfig(cwd: string, args: ITestArgs) {
       'index.{js,jsx,ts,tsx}',
       hasSrc && 'src/**/*.{js,jsx,ts,tsx}',
       isLerna && !args.package && 'packages/*/src/**/*.{js,jsx,ts,tsx}',
-      isLerna &&
-        args.package &&
-        `packages/${args.package}/src/**/*.{js,jsx,ts,tsx}`,
+      isLerna && args.package && `packages/${args.package}/src/**/*.{js,jsx,ts,tsx}`,
       '!**/node_modules/**',
       '!**/fixtures/**',
       '!**/__test__/**',
@@ -29,9 +27,7 @@ export default function defaultConfig(cwd: string, args: ITestArgs) {
     ].filter(Boolean),
     testPathIgnorePatterns: ['/node_modules/'],
     moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
-    testMatch: [
-      `${testMatchPrefix}**/?*.(${testMatchTypes.join('|')}).(j|t)s?(x)`
-    ],
+    testMatch: [`${testMatchPrefix}**/?*.(${testMatchTypes.join('|')}).(j|t)s?(x)`],
     transform: {
       '^.+\\.(j|t)sx?$': require.resolve('./ecma')
     },

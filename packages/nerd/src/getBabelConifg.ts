@@ -34,8 +34,7 @@ export default function getBabelConfig(
 
   return {
     presets: [
-      disableTypes &&
-        require.resolve('@nerd/bundles/model/@babel/preset-typescript'),
+      disableTypes && require.resolve('@nerd/bundles/model/@babel/preset-typescript'),
       [
         require.resolve('@nerd/bundles/model/@babel/preset-env'),
         {
@@ -52,18 +51,12 @@ export default function getBabelConfig(
     plugins: [
       moduleType === 'cjs' &&
         !isBrowser && [
-          require.resolve(
-            '@nerd/bundles/model/@babel/plugin-transform-modules-commonjs'
-          ),
+          require.resolve('@nerd/bundles/model/@babel/plugin-transform-modules-commonjs'),
           { lazy: true }
         ],
 
-      require.resolve(
-        '@nerd/bundles/model/@babel/plugin-proposal-export-default-from'
-      ),
-      require.resolve(
-        '@nerd/bundles/model/@babel/plugin-proposal-do-expressions'
-      ),
+      require.resolve('@nerd/bundles/model/@babel/plugin-proposal-export-default-from'),
+      require.resolve('@nerd/bundles/model/@babel/plugin-proposal-do-expressions'),
 
       runtimeHelpers && [
         require.resolve('@nerd/bundles/model/@babel/plugin-transform-runtime'),

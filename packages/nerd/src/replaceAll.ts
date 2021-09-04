@@ -26,10 +26,7 @@ function relative(from: string, to: string) {
 
 function getRegExp(prefixPatten: string): GetRegExpReturn {
   return function (aliasName) {
-    return new RegExp(
-      `(?:(${prefixPatten})\\s*['"]?\\s*)${aliasName}(${suffixPatten})`,
-      'gm'
-    )
+    return new RegExp(`(?:(${prefixPatten})\\s*['"]?\\s*)${aliasName}(${suffixPatten})`, 'gm')
   }
 }
 
@@ -77,9 +74,7 @@ export default function replaceAll(options: {
     const subReg = new RegExp(`${alias}(${suffixPatten})`)
     const replacer = `${relative(dirname, aliasMap[alias])}$1`
 
-    contents = contents.replace(regExp, (match) =>
-      match.replace(subReg, replacer)
-    )
+    contents = contents.replace(regExp, (match) => match.replace(subReg, replacer))
   })
 
   return contents

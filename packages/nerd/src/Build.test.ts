@@ -71,11 +71,7 @@ describe('nerd build', () => {
                   moveEsLibToDist(pkgPath)
                   renameSync(
                     getPathActualed(pkgPath),
-                    path.join(
-                      cwd,
-                      'actualed',
-                      pkg.split('/').slice(-1).join('')
-                    )
+                    path.join(cwd, 'actualed', pkg.split('/').slice(-1).join(''))
                   )
                 }
               }

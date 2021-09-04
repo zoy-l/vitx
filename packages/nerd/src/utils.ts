@@ -36,9 +36,7 @@ export function colorLog(pkg: string) {
   return cache[pkg]
 }
 
-export function eventColor(
-  eventType: 'unlink' | 'add' | 'change' | 'addDir' | 'unlinkDir'
-) {
+export function eventColor(eventType: 'unlink' | 'add' | 'change' | 'addDir' | 'unlinkDir') {
   const { black } = chalk
   return {
     unlink: black.bgRed,
@@ -65,10 +63,10 @@ export function isDefault(obj: any) {
   return obj.default ?? obj
 }
 
-export function mergeConfig<
-  T extends Record<string, any>,
-  U extends Record<string, any>
->(defaultConfig: T, ...configs: (AnyConfig<T, U> | null | undefined)[]) {
+export function mergeConfig<T extends Record<string, any>, U extends Record<string, any>>(
+  defaultConfig: T,
+  ...configs: (AnyConfig<T, U> | null | undefined)[]
+) {
   const ret = { ...defaultConfig } as Partial<CalculatedConfig<T, U>>
   configs.forEach((config) => {
     if (!config) return
