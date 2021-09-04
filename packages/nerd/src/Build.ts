@@ -13,7 +13,8 @@ import {
   enablefileCache,
   applyBeforeHook,
   applyAfterHook,
-  modifySourcemap
+  modifySourcemap,
+  logger
 } from './compiles'
 import type { IBundleOptions } from './types'
 // import { colorLog, eventColor } from './utils'
@@ -86,6 +87,7 @@ export async function build(options: IBuildOptions) {
       .pipe(compileJsOrTs(config, { currentEntryPath, customPrefix }))
       .pipe(applyAfterHook(afterReadWriteStream))
       .pipe(modifySourcemap(sourcemap))
+      .pipe(logger(output))
       .pipe(vinylFs.dest(currentOutputPath))
   }
 

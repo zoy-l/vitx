@@ -2,6 +2,9 @@ node_modules
 .cache
 coverage
 lib
+
 fixtures/build/ts-cjs/expected
 fixtures/build/ts-esm/expected
+
 /packages/bundles/model
+/packages/nerd/lib

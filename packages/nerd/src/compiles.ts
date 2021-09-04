@@ -7,9 +7,11 @@ import gulpPlumber from '@nerd/bundles/model/gulp-plumber'
 import glupTs from '@nerd/bundles/model/gulp-typescript'
 import insert from '@nerd/bundles/model/gulp-insert'
 import through from '@nerd/bundles/model/through2'
+import figures from '@nerd/bundles/model/figures'
 import gulpIf from '@nerd/bundles/model/gulp-if'
 import less from '@nerd/bundles/model/gulp-less'
 import chalk from '@nerd/bundles/model/chalk'
+
 import path from 'path'
 
 import type { IBundleOptions } from './types'
@@ -19,6 +21,13 @@ import replaceAll from './replaceAll'
 const cache = {}
 
 const empty = () => {}
+
+export function logger(output: string) {
+  return insert.transform((contents, file) => {
+    console.log(chalk.green(`${figures.tick} success:`), `${output}/${path.basename(file.path)}`)
+    return contents
+  })
+}
 
 function isTransform(regExp: RegExp, filePath: string) {
   return regExp.test(filePath) && !filePath.endsWith('.d.ts')
