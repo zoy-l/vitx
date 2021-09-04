@@ -2,7 +2,7 @@ import sourcemaps from '@nerd/bundles/model/gulp-sourcemaps'
 import gulpPlumber from '@nerd/bundles/model/gulp-plumber'
 
 import insert from '@nerd/bundles/model/gulp-insert'
-import chokidar from '@nerd/bundles/model/chokidar'
+// import chokidar from '@nerd/bundles/model/chokidar'
 import through from '@nerd/bundles/model/through2'
 import vinylFs from '@nerd/bundles/model/vinyl-fs'
 import gulpIf from '@nerd/bundles/model/gulp-if'
@@ -36,7 +36,7 @@ function clearDir(dirPath: string) {
   rimraf.sync(dirPath)
 }
 
-export function build(options: IBuildOptions) {
+export async function build(options: IBuildOptions) {
   const {
     /**
      * @description Root path
@@ -56,7 +56,8 @@ export function build(options: IBuildOptions) {
   const {
     beforeReadWriteStream,
     afterReadWriteStream,
-    packages,
+    afterHook,
+    // packages,
     entry,
     output,
     sourcemap,
@@ -67,13 +68,25 @@ export function build(options: IBuildOptions) {
   clearDir(output)
 
   function createStream(currentDirPath: string) {
-    const { tsConfig, error } = getTSConfig(cwd)
-    const currentPath = path.join(currentDirPath, entry)
-
+    const { tsConfig } = getTSConfig(cwd)
+    const currentEntryPath = path.join(currentDirPath, entry)
+    const currentOutputPath = path.join(currentDirPath, output)
     const isReadSourcemap = (filePath: string) => !!sourcemap && !filePath.endsWith('.d.ts')
 
+    const patterns = [
+      path.join(currentEntryPath, '**/*'),
+      `!${path.join(currentEntryPath, '**/*.mdx')}`,
+      `!${path.join(currentEntryPath, '**/*.md')}`,
+      `!${path.join(currentEntryPath, '**/demos{,/**}')}`,
+      `!${path.join(currentEntryPath, '**/fixtures{,/**}')}`,
+      `!${path.join(currentEntryPath, '**/__test__{,/**}')}`,
+      `!${path.join(currentEntryPath, '**/*.+(test|e2e|spec).+(js|jsx|ts|tsx)')}`
+    ]
+
+    rimraf.sync(currentOutputPath)
+
     return vinylFs
-      .src(currentDirPath, { base: currentPath, allowEmpty: true })
+      .src(patterns, { base: currentEntryPath, allowEmpty: true })
       .pipe(gulpIf(() => !!sourcemap, sourcemaps.init()))
       .pipe(gulpIf(watch, gulpPlumber(empty)))
       .pipe(fileCache())
@@ -81,13 +94,22 @@ export function build(options: IBuildOptions) {
       .pipe(applyHook(beforeReadWriteStream, { through, insert, gulpIf }))
       .pipe(compileAlias(paths))
       .pipe(compileDeclaration(tsConfig))
-      .pipe(compileJsOrTs(config, { currentDirPath, customPrefix }))
+      .pipe(compileJsOrTs(config, { currentEntryPath, customPrefix }))
       .pipe(applyHook(afterReadWriteStream, { through, insert, gulpIf }))
       .pipe(gulpIf((file) => isReadSourcemap(file.path), sourcemaps.write('.')))
       .pipe(vinylFs.dest(path.join(currentDirPath, output)))
   }
 
-  function compile(currentDirPath: string) {}
+  function compile(currentDirPath: string) {
+    return new Promise<void>((resolve) => {
+      createStream(currentDirPath).on('end', () => {
+        afterHook && afterHook()
+        resolve()
+      })
+    })
+  }
+
+  await compile(cwd)
 }
 
 // const modeType = {

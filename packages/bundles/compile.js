@@ -36,10 +36,7 @@ async function compileBundles(name, options = {}) {
   }).start()
 
   const defaultOptions = { externals, minify: true, quiet: true }
-  const { code, assets } = await ncc(
-    require.resolve(name),
-    Object.assign(defaultOptions, options)
-  )
+  const { code, assets } = await ncc(require.resolve(name), Object.assign(defaultOptions, options))
 
   const outPath = join(outDirPath, name, 'index.js')
 
@@ -115,6 +112,7 @@ const dependencies = [
   ['slash', 'self'],
   ['deepmerge', 'self'],
   ['through2', '@types/through2'],
+  ['vinyl'],
   ['gulp-if', '@types/gulp-if'],
   ['gulp-insert', '@types/gulp-insert'],
   ['gulp-less', '@types/gulp-less'],
