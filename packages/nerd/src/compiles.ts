@@ -24,10 +24,13 @@ const empty = () => {}
 
 export function logger(output: string, mode: 'cjs' | 'esm') {
   return insert.transform((contents, file) => {
-    console.log(
-      chalk.green(`${figures.tick} success ${mode}:`),
-      `${output}/${path.basename(file.path)}`
-    )
+    if (!/d.ts/.test(file.path)) {
+      console.log(
+        chalk.green(`${figures.tick} success ${mode}:`),
+        `${output}/${path.basename(file.path)}`
+      )
+    }
+
     return contents
   })
 }
