@@ -4,7 +4,7 @@ export default Joi.object({
   packages: Joi.array().items(Joi.string()),
   nodeVersion: Joi.number(),
   target: Joi.string().valid('node', 'browser'),
-  moduleType: Joi.string().valid('esm', 'cjs'),
+  moduleType: Joi.string().valid('esm', 'cjs', 'all'),
   runtimeHelpers: Joi.boolean(),
   extraBabelPlugins: Joi.array().items(Joi.any()),
   extraBabelPresets: Joi.array().items(Joi.any()),

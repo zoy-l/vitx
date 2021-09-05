@@ -17,8 +17,6 @@ import {
   logger
 } from './compiles'
 import type { IBundleOptions } from './types'
-// import { colorLog, eventColor } from './utils'
-
 import getTSConfig from './getTsConifg'
 import getConfig from './config'
 
@@ -26,7 +24,6 @@ interface IBuildOptions {
   cwd: string
   watch?: boolean
   userConfig?: IBundleOptions
-  customPrefix?: string
 }
 
 export async function build(options: IBuildOptions) {
@@ -38,11 +35,7 @@ export async function build(options: IBuildOptions) {
     /**
      * @description Turn on watch
      */
-    watch = false,
-    /**
-     * @description Custom log output prefix
-     */
-    customPrefix
+    watch = false
   } = options
 
   const config = getConfig(cwd)
@@ -55,13 +48,20 @@ export async function build(options: IBuildOptions) {
     output,
     sourcemap,
     lessOptions,
+    moduleType,
     paths
   } = config
 
-  function createStream(currentDirPath: string) {
+  function createStream(currentDirPath: string, mode: any) {
     const { tsConfig } = getTSConfig(cwd)
     const currentEntryPath = path.join(currentDirPath, entry)
-    const currentOutputPath = path.join(currentDirPath, output)
+    let currentOutputPath = path.join(currentDirPath, output)
+
+    if (moduleType === 'all') {
+      currentOutputPath = path.join(currentOutputPath, mode)
+    }
+
+    rimraf.sync(currentOutputPath)
 
     const patterns = [
       path.join(currentEntryPath, '**/*'),
@@ -73,8 +73,6 @@ export async function build(options: IBuildOptions) {
       `!${path.join(currentEntryPath, '**/*.+(test|e2e|spec).+(js|jsx|ts|tsx)')}`
     ]
 
-    rimraf.sync(currentOutputPath)
-
     return vinylFs
       .src(patterns, { base: currentEntryPath, allowEmpty: true })
       .pipe(enableSourcemap(sourcemap))
@@ -84,71 +82,28 @@ export async function build(options: IBuildOptions) {
       .pipe(applyBeforeHook(beforeReadWriteStream))
       .pipe(compileAlias(paths))
       .pipe(compileDeclaration(tsConfig))
-      .pipe(compileJsOrTs(config, { currentEntryPath, customPrefix }))
+      .pipe(compileJsOrTs(config, { currentEntryPath, mode }))
       .pipe(applyAfterHook(afterReadWriteStream))
       .pipe(modifySourcemap(sourcemap))
-      .pipe(logger(output))
+      .pipe(logger(output, mode))
       .pipe(vinylFs.dest(currentOutputPath))
   }
 
-  function compile(currentDirPath: string) {
+  function compile(currentDirPath: string, mode: any) {
     return new Promise<void>((resolve) => {
-      createStream(currentDirPath).on('end', () => {
+      createStream(currentDirPath, mode).on('end', () => {
         afterHook && afterHook()
         resolve()
       })
     })
   }
 
-  await compile(cwd)
+  const modes = moduleType === 'all' ? ['cjs', 'esm'] : [moduleType]
+
+  while (modes.length) {
+    const mode = modes.shift()
+    // safe
+    // eslint-disable-next-line no-await-in-loop
+    await compile(cwd, mode)
+  }
 }
-
-// const modeType = {
-//   cjs: 'Commonjs',
-//   esm: 'ES Modules'
-// }
-
-// export default class Build {
-
-//   cwd: string
-
-//   /**
-//    * @description Turn on watch
-//    */
-//   watch: boolean
-
-//   /**
-//    * @description Change directory configuration file
-//    */
-//   rootConfig = {}
-
-//   /**
-//    * @description Api call configuration file
-//    */
-//   userConfig?: IBundleOptions
-
-//   /**
-//    * @description Custom log output prefix
-//    */
-//   customPrefix?: string
-
-//   /**
-//    * @description typescript related
-//    */
-//   tsConifgError?: Diagnostic
-
-//   /**
-//    * @description File content cache in watch mode
-//    */
-//   cache: Record<string, string> = {}
-
-//   constructor(options: IBuild) {
-//     this.cwd = options.cwd ?? process.cwd()
-
-//     this.userConfig = options.userConfig
-
-//     this.customPrefix = options.customPrefix
-
-//     this.watch = !!options.watch
-//   }
-// }

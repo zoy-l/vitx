@@ -22,9 +22,12 @@ const cache = {}
 
 const empty = () => {}
 
-export function logger(output: string) {
+export function logger(output: string, mode: 'cjs' | 'esm') {
   return insert.transform((contents, file) => {
-    console.log(chalk.green(`${figures.tick} success:`), `${output}/${path.basename(file.path)}`)
+    console.log(
+      chalk.green(`${figures.tick} success ${mode}:`),
+      `${output}/${path.basename(file.path)}`
+    )
     return contents
   })
 }
@@ -101,14 +104,14 @@ export function compileAlias(paths: IBundleOptions['paths']) {
 
 export function compileJsOrTs(
   config: IBundleOptions,
-  options: { currentEntryPath: string; customPrefix?: string }
+  options: { currentEntryPath: string; mode: any }
 ) {
   const { sourcemap, target, nodeFiles, browserFiles } = config
-  const { currentEntryPath } = options
+  const { currentEntryPath, mode } = options
 
   let isBrowser = target === 'browser'
 
-  const babelConfig = getBabelConfig(config, isBrowser)
+  const babelConfig = getBabelConfig(config, isBrowser, mode)
 
   return gulpIf(
     (file: { path: string }) => isTransform(/\.(t|j)sx?$/, file.path),

@@ -48,7 +48,7 @@ export function eventColor(eventType: 'unlink' | 'add' | 'change' | 'addDir' | '
 }
 
 export function registerBabel(only: string) {
-  const bebelConifg = getBabelConfig({ target: 'node', disableTypes: true })
+  const bebelConifg = getBabelConfig({ target: 'node', disableTypes: true }, false, 'cjs')
 
   require('@babel/register')({
     ...bebelConifg,

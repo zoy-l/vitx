@@ -2,11 +2,11 @@ import type { IBundleOptions } from './types'
 
 export default function getBabelConfig(
   bundleOpts: Omit<IBundleOptions, 'entry' | 'output'>,
-  isBrowser?: boolean
+  isBrowser: boolean,
+  moduleType: 'cjs' | 'esm'
 ) {
   const {
     nodeVersion,
-    moduleType,
     runtimeHelpers,
     extraBabelPlugins = [],
     extraBabelPresets = [],

@@ -10,12 +10,9 @@ export const CONFIG_FILES = ['.nerdrc.ts', '.nerdrc.js']
 
 export default function (cwd: string): IBundleOptions {
   const isTest = process.env.NODE_ENV === 'test'
-  const configFile = CONFIG_FILES.map((configName) =>
-    path.join(cwd, configName)
-  )
+  const configFile = CONFIG_FILES.map((configName) => path.join(cwd, configName))
 
-  const userConfig =
-    configFile.find((configCwd) => fs.existsSync(configCwd)) ?? ''
+  const userConfig = configFile.find((configCwd) => fs.existsSync(configCwd)) ?? ''
 
   let config = {}
 

@@ -7,19 +7,8 @@ const fs = require('fs')
 fs.readdirSync('./packages')
   .filter((dirName) => dirName[0] !== '.')
   .forEach((dirName) => {
-    const nodeModules = path.join(
-      __dirname,
-      '..',
-      'packages',
-      dirName,
-      'node_modules'
-    )
+    const nodeModules = path.join(__dirname, '..', 'packages', dirName, 'node_modules')
 
-    console.log(
-      chalk.green(figures.tick),
-      chalk.yellow('remove package node_modules:'),
-      dirName
-    )
-
+    console.log(chalk.green(figures.tick), chalk.yellow('remove package node_modules:'), dirName)
     rmrf.sync(nodeModules)
   })
