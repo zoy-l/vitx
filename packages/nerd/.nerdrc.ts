@@ -1,4 +1,4 @@
 export default {
-  moduleType: 'cjs',
+  moduleType: 'all',
   target: 'node'
 }

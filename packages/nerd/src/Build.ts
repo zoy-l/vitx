@@ -1,7 +1,10 @@
-// import chokidar from '@nerd/bundles/model/chokidar'
+import chokidar from '@nerd/bundles/model/chokidar'
 import vinylFs from '@nerd/bundles/model/vinyl-fs'
+import figures from '@nerd/bundles/model/figures'
 import rimraf from '@nerd/bundles/model/rimraf'
+import chalk from '@nerd/bundles/model/chalk'
 import path from 'path'
+import fs from 'fs'
 
 import {
   compileDeclaration,
@@ -52,8 +55,32 @@ export async function build(options: IBuildOptions) {
     paths
   } = config
 
-  function createStream(currentDirPath: string, mode: any) {
+  function createStream(options: {
+    patterns: string | string[]
+    currentEntryPath: string
+    currentOutputPath: string
+    mode: 'cjs' | 'esm'
+  }) {
+    const { patterns, currentEntryPath, currentOutputPath, mode } = options
     const { tsConfig } = getTSConfig(cwd)
+
+    return vinylFs
+      .src(patterns, { base: currentEntryPath, allowEmpty: true })
+      .pipe(enableSourcemap(sourcemap))
+      .pipe(enablePlumber(watch))
+      .pipe(enablefileCache())
+      .pipe(compileLess(lessOptions))
+      .pipe(applyBeforeHook(beforeReadWriteStream))
+      .pipe(compileAlias(paths))
+      .pipe(compileDeclaration(tsConfig))
+      .pipe(compileJsOrTs(config, { currentEntryPath, mode }))
+      .pipe(applyAfterHook(afterReadWriteStream))
+      .pipe(modifySourcemap(sourcemap))
+      .pipe(logger(output, mode))
+      .pipe(vinylFs.dest(currentOutputPath))
+  }
+
+  function compile(currentDirPath: string, mode: any) {
     const currentEntryPath = path.join(currentDirPath, entry)
     let currentOutputPath = path.join(currentDirPath, output)
 
@@ -73,32 +100,54 @@ export async function build(options: IBuildOptions) {
       `!${path.join(currentEntryPath, '**/*.+(test|e2e|spec).+(js|jsx|ts|tsx)')}`
     ]
 
-    return vinylFs
-      .src(patterns, { base: currentEntryPath, allowEmpty: true })
-      .pipe(enableSourcemap(sourcemap))
-      .pipe(enablePlumber(watch))
-      .pipe(enablefileCache())
-      .pipe(compileLess(lessOptions))
-      .pipe(applyBeforeHook(beforeReadWriteStream))
-      .pipe(compileAlias(paths))
-      .pipe(compileDeclaration(tsConfig))
-      .pipe(compileJsOrTs(config, { currentEntryPath, mode }))
-      .pipe(applyAfterHook(afterReadWriteStream))
-      .pipe(modifySourcemap(sourcemap))
-      .pipe(logger(output, mode))
-      .pipe(vinylFs.dest(currentOutputPath))
-  }
-
-  function compile(currentDirPath: string, mode: any) {
     return new Promise<void>((resolve) => {
-      createStream(currentDirPath, mode).on('end', () => {
+      const streamOptions = { patterns, currentEntryPath, currentOutputPath, mode }
+      createStream(streamOptions).on('end', () => {
         afterHook && afterHook()
+
+        if (watch) {
+          console.log(`${chalk.blue(figures.info)} ${chalk.green('Start watching directory!')}`)
+
+          const watcher = chokidar.watch(patterns, {
+            ignoreInitial: true,
+            awaitWriteFinish: {
+              stabilityThreshold: 200
+            }
+          })
+
+          const cache = {}
+
+          watcher.on('all', (_, fullEnterPath) => {
+            if (!fs.existsSync(fullEnterPath)) {
+              rimraf.sync(fullEnterPath.replace('.ts', '.js'))
+              rimraf.sync(fullEnterPath.replace('.ts', '.d.ts'))
+              return
+            }
+
+            if (fs.statSync(fullEnterPath).isFile()) {
+              const content = fs.readFileSync(fullEnterPath, 'utf-8')
+              if (cache[fullEnterPath] !== content) {
+                cache[fullEnterPath] = content
+                createStream({ ...streamOptions, patterns: fullEnterPath })
+              }
+            }
+          })
+        }
+
         resolve()
       })
     })
   }
 
-  const modes = moduleType === 'all' ? ['cjs', 'esm'] : [moduleType]
+  let modes = [moduleType]
+
+  if (moduleType === 'all') {
+    rimraf.sync(output)
+    modes = ['cjs', 'esm']
+  }
+
+  // if (packages) {
+  // }
 
   while (modes.length) {
     const mode = modes.shift()

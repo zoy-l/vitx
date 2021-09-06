@@ -11,7 +11,6 @@ import figures from '@nerd/bundles/model/figures'
 import gulpIf from '@nerd/bundles/model/gulp-if'
 import less from '@nerd/bundles/model/gulp-less'
 import chalk from '@nerd/bundles/model/chalk'
-
 import path from 'path'
 
 import type { IBundleOptions } from './types'
@@ -26,7 +25,8 @@ export function logger(output: string, mode: 'cjs' | 'esm') {
   return insert.transform((contents, file) => {
     if (!/d.ts/.test(file.path)) {
       console.log(
-        chalk.green(`${figures.tick} success ${mode}:`),
+        chalk.green(figures.tick),
+        chalk.yellow(`Success ${mode.toUpperCase()}:`),
         `${output}/${path.basename(file.path)}`
       )
     }
