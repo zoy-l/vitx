@@ -46,7 +46,8 @@ export async function build(options: IBuildOptions) {
     beforeReadWriteStream,
     afterReadWriteStream,
     afterHook,
-    // packages,
+    packages,
+    packageDirName,
     entry,
     output,
     sourcemap,
@@ -139,20 +140,32 @@ export async function build(options: IBuildOptions) {
     })
   }
 
-  let modes = [moduleType]
+  async function run() {
+    let modes = [moduleType]
 
-  if (moduleType === 'all') {
-    rimraf.sync(output)
-    modes = ['cjs', 'esm']
+    if (moduleType === 'all') {
+      rimraf.sync(output)
+      modes = ['cjs', 'esm']
+    }
+    while (modes.length) {
+      const mode = modes.shift()
+      // safe
+      // eslint-disable-next-line no-await-in-loop
+      await compile(cwd, mode)
+    }
   }
 
-  // if (packages) {
-  // }
+  if (packages) {
+    const pkgs = packages
+      .map((dir) => path.join(cwd, packageDirName!, dir))
+      .filter((dir) => fs.statSync(dir).isDirectory())
 
-  while (modes.length) {
-    const mode = modes.shift()
-    // safe
-    // eslint-disable-next-line no-await-in-loop
-    await compile(cwd, mode)
+    while (pkgs.length) {
+      const pkg = pkgs.shift()!
+      process.chdir(pkg)
+      run()
+    }
+  } else {
+    run()
   }
 }

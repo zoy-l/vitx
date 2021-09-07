@@ -1,4 +1,5 @@
 export default {
   moduleType: 'all',
-  target: 'node'
+  target: 'node',
+  packages: ['hell', 'tsx']
 }

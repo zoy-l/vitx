@@ -35,6 +35,7 @@ export default function (cwd: string): IBundleOptions {
     target: 'browser',
     moduleType: 'esm',
     sourcemap: false,
+    packageDirName: 'packages',
     ...config
   }
 }
