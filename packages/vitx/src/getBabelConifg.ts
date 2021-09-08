@@ -34,9 +34,9 @@ export default function getBabelConfig(
 
   return {
     presets: [
-      disableTypes && require.resolve('@znos/bundles/model/@babel/preset-typescript'),
+      disableTypes && require.resolve('@vitx/bundles/model/@babel/preset-typescript'),
       [
-        require.resolve('@znos/bundles/model/@babel/preset-env'),
+        require.resolve('@vitx/bundles/model/@babel/preset-env'),
         {
           targets: isBrowser
             ? { browsers: ['last 2 versions', 'IE 10'] }
@@ -45,21 +45,21 @@ export default function getBabelConfig(
           ...defaultEnvConfig
         }
       ],
-      isBrowser && react && '@znos/bundles/model/@babel/preset-react',
+      isBrowser && react && '@vitx/bundles/model/@babel/preset-react',
       ...extraBabelPresets
     ].filter(Boolean) as (string | any[])[],
     plugins: [
       moduleType === 'cjs' &&
         !isBrowser && [
-          require.resolve('@znos/bundles/model/@babel/plugin-transform-modules-commonjs'),
+          require.resolve('@vitx/bundles/model/@babel/plugin-transform-modules-commonjs'),
           { lazy: true }
         ],
 
-      require.resolve('@znos/bundles/model/@babel/plugin-proposal-export-default-from'),
-      require.resolve('@znos/bundles/model/@babel/plugin-proposal-do-expressions'),
+      require.resolve('@vitx/bundles/model/@babel/plugin-proposal-export-default-from'),
+      require.resolve('@vitx/bundles/model/@babel/plugin-proposal-do-expressions'),
 
       runtimeHelpers && [
-        require.resolve('@znos/bundles/model/@babel/plugin-transform-runtime'),
+        require.resolve('@vitx/bundles/model/@babel/plugin-transform-runtime'),
         {
           useESModules: isBrowser && moduleType === 'esm',
           version: require('@babel/runtime/package.json').version

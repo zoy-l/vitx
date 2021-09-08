@@ -1,5 +1,5 @@
 {
-  "name": "znos",
+  "name": "vitx",
   "version": "2.0.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -8,7 +8,7 @@
     "lib"
   ],
   "bin": {
-    "znos": "./bin/znos.js"
+    "vitx": "./bin/vitx.js"
   },
   "license": "MIT",
   "description": "library build tool.",
@@ -17,10 +17,10 @@
     "compile:watch": "node -r ./compile.js ./src/cli.ts build --watch",
     "test": "node ./lib/cli.js test --coverage",
     "clearCache": "node ./lib/cli.js test --clearCache",
-    "debug": "node --inspect-brk bin/znos.js build"
+    "debug": "node --inspect-brk bin/vitx.js build"
   },
   "dependencies": {
-    "@znos/bundles": "2.0.0"
+    "@vitx/bundles": "2.0.0"
   },
   "peerDependencies": {
     "typescript": "4.x"
@@ -32,12 +32,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/l-zoy/znos"
+    "url": "https://github.com/l-zoy/vitx"
   },
-  "homepage": "https://github.com/l-zoy/znos",
-  "bugs": "https://github.com/l-zoy/znos/issues",
+  "homepage": "https://github.com/l-zoy/vitx",
+  "bugs": "https://github.com/l-zoy/vitx/issues",
   "keywords": [
-    "znos",
+    "vitx",
     "gulp",
     "gulpplugin",
     "小程序",

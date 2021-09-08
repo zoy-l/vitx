@@ -1,8 +1,8 @@
-import chokidar from '@znos/bundles/model/chokidar'
-import vinylFs from '@znos/bundles/model/vinyl-fs'
-import figures from '@znos/bundles/model/figures'
-import rimraf from '@znos/bundles/model/rimraf'
-import chalk from '@znos/bundles/model/chalk'
+import chokidar from '@vitx/bundles/model/chokidar'
+import vinylFs from '@vitx/bundles/model/vinyl-fs'
+import figures from '@vitx/bundles/model/figures'
+import rimraf from '@vitx/bundles/model/rimraf'
+import chalk from '@vitx/bundles/model/chalk'
 import path from 'path'
 import fs from 'fs'
 

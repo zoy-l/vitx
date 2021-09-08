@@ -48,7 +48,7 @@ async function compileBundles(name, options = {}) {
     })
   }
 
-  externals[name] = `@znos/bundles/${outDir}/${name}`
+  externals[name] = `@vitx/bundles/${outDir}/${name}`
   spinner.succeed(chalk.green('success: ') + chalk.yellow(name)).stop()
 }
 
