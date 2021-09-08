@@ -1,0 +1,47 @@
+{
+  "name": "zno",
+  "version": "1.0.0",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "files": [
+    "bin",
+    "lib"
+  ],
+  "bin": {
+    "zno": "./bin/zno.js"
+  },
+  "license": "MIT",
+  "description": "library build tool.",
+  "scripts": {
+    "compile": "node --trace-deprecation -r ./compile.js ./src/cli.ts build",
+    "compile:watch": "node -r ./compile.js ./src/cli.ts build --watch",
+    "test": "node ./lib/cli.js test --coverage",
+    "clearCache": "node ./lib/cli.js test --clearCache",
+    "debug": "node --inspect-brk bin/zno.js build"
+  },
+  "dependencies": {
+    "@zno/bundles": "1.0.0"
+  },
+  "peerDependencies": {
+    "typescript": "4.x"
+  },
+  "peerDependenciesMeta": {
+    "typescript": {
+      "optional": true
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/l-zoy/zno"
+  },
+  "homepage": "https://github.com/l-zoy/zno",
+  "bugs": "https://github.com/l-zoy/zno/issues",
+  "keywords": [
+    "zno",
+    "gulp",
+    "gulpplugin",
+    "小程序",
+    "打包",
+    "typescript"
+  ]
+}

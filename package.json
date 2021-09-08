@@ -1,5 +1,5 @@
 {
-  "name": "zmi-nerd",
+  "name": "root",
   "private": true,
   "version": "1.2.2-3",
   "description": "library build tool.",
