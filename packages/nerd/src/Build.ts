@@ -19,22 +19,19 @@ import {
   modifySourcemap,
   logger
 } from './compiles'
-import type { IBundleOptions } from './types'
+import type { INerdConfig } from './types'
 import getTSConfig from './getTsConifg'
 import getConfig from './config'
 
 interface IBuildOptions {
   cwd: string
   watch?: boolean
-  userConfig?: IBundleOptions
+  userConfig?: INerdConfig
 }
 
-function compile(
-  watch: boolean,
-  currentDirPath: string,
-  mode: 'cjs' | 'esm',
-  currentConfig: IBundleOptions
-) {
+type IModes = 'cjs' | 'esm'
+
+function compile(watch: boolean, currentDirPath: string, mode: IModes, currentConfig: INerdConfig) {
   const {
     entry,
     output,
@@ -70,7 +67,7 @@ function compile(
     patterns: string | string[]
     currentEntryPath: string
     currentOutputPath: string
-    mode: 'cjs' | 'esm'
+    mode: IModes
   }) {
     const { patterns, currentEntryPath, currentOutputPath, mode } = options
     const { tsConfig } = getTSConfig(currentEntryPath)
@@ -108,10 +105,14 @@ function compile(
 
         const cache = {}
 
-        watcher.on('all', (_, fullEnterPath) => {
+        watcher.on('all', (evnet, fullEnterPath) => {
+          console.log(`${chalk.blue(figures.info, evnet.charAt(0).toUpperCase() + evnet.slice(1))}`)
+
           if (!fs.existsSync(fullEnterPath)) {
-            rimraf.sync(fullEnterPath.replace('.ts', '.js'))
-            rimraf.sync(fullEnterPath.replace('.ts', '.d.ts'))
+            const fullOutputPath = fullEnterPath.replace(entry, output)
+
+            rimraf.sync(fullOutputPath.replace('.ts', '.js'))
+            rimraf.sync(fullOutputPath.replace('.ts', '.d.ts'))
             return
           }
 
@@ -133,7 +134,7 @@ function compile(
 export async function build(options: IBuildOptions) {
   const config = getConfig(options.cwd)
 
-  async function run(currentPath: string, currentConfig: IBundleOptions) {
+  async function run(currentPath: string, currentConfig: INerdConfig) {
     let modes = [currentConfig.moduleType]
 
     if (currentConfig.moduleType === 'all') {
@@ -143,9 +144,8 @@ export async function build(options: IBuildOptions) {
 
     while (modes.length) {
       const mode = modes.shift()
-      // safe
-      // eslint-disable-next-line no-await-in-loop
-      await compile(!!options.watch, currentPath, mode as 'cjs' | 'esm', currentConfig)
+
+      await compile(!!options.watch, currentPath, mode as IModes, currentConfig)
     }
   }
 
@@ -158,7 +158,12 @@ export async function build(options: IBuildOptions) {
       const packagePath = packagesPaths.shift()!
       const packageConfig = getConfig(packagePath, false)
       process.chdir(packagePath)
-      run(packagePath, { ...config, ...packageConfig })
+
+      console.log(
+        `${chalk.blue(figures.info, 'Package:')} ${chalk.red(path.basename(packagePath))}`
+      )
+
+      await run(packagePath, { ...config, ...packageConfig })
     }
   } else {
     run(options.cwd, config)

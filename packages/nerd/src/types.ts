@@ -4,7 +4,7 @@ import gulpIf from '@nerd/bundles/model/gulp-if'
 import type { Config } from '@jest/types'
 import { runCLI } from 'jest'
 
-export interface IBundleOptions {
+export interface INerdConfig {
   packageDirName?: string
   esBuild?: boolean
   moduleType?: 'esm' | 'cjs' | 'all'
@@ -41,7 +41,7 @@ export interface IBundleOptions {
   sourcemap?: boolean
 }
 
-export interface IBundleOpt extends IBundleOptions {
+export interface IBundleOpt extends INerdConfig {
   entry: string
   output: string
 }

@@ -99,6 +99,7 @@ const externals = {
 }
 
 const dependencies = [
+  ['@babel/types'],
   ['@babel/core', '@types/babel__core'],
   ['@babel/plugin-transform-modules-commonjs'],
   ['@babel/plugin-proposal-do-expressions'],

@@ -1,7 +1,7 @@
-import type { IBundleOptions } from './types'
+import type { INerdConfig } from './types'
 
 export default function getBabelConfig(
-  bundleOpts: Omit<IBundleOptions, 'entry' | 'output'>,
+  bundleOpts: Omit<INerdConfig, 'entry' | 'output'>,
   isBrowser: boolean,
   moduleType: 'cjs' | 'esm'
 ) {

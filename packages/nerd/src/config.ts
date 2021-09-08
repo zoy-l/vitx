@@ -2,13 +2,13 @@ import path from 'path'
 import fs from 'fs'
 
 import { registerBabel, isDefault } from './utils'
-import { IBundleOptions } from './types'
+import { INerdConfig } from './types'
 
 import schema from './schema'
 
 export const CONFIG_FILES = ['.nerdrc.ts', '.nerdrc.js']
 
-export default function (cwd: string, isMergeDefault = true): IBundleOptions {
+export default function (cwd: string, isMergeDefault = true): INerdConfig {
   const isTest = process.env.NODE_ENV === 'test'
   const configFile = CONFIG_FILES.map((configName) => path.join(cwd, configName))
 
@@ -39,5 +39,5 @@ export default function (cwd: string, isMergeDefault = true): IBundleOptions {
         packageDirName: 'packages',
         ...config
       }
-    : (config as IBundleOptions)
+    : (config as INerdConfig)
 }
