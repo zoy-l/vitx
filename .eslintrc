@@ -4,6 +4,7 @@
   "rules": {
     "no-restricted-syntax": "off",
     "global-require": "off",
-    "import/no-dynamic-require": "off"
+    "import/no-dynamic-require": "off",
+    "no-await-in-loop": "off"
   }
 }
