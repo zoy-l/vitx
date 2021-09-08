@@ -1,8 +1,8 @@
-# 🔨 zmi-nerd
+# 🔨 zno
 
 Simple transform tool
 
-[![lerna](https://img.shields.io/badge/support-lerna-blue)](https://lernajs.io/) [![GitHub license](https://img.shields.io/github/license/l-zoy/zmi-nerd)](https://github.com/l-zoy/zmi-nerd/blob/master/LICENSE) [![codecov](https://codecov.io/gh/l-zoy/zmi-nerd/branch/master/graph/badge.svg?token=W1ND9EDZEJ)](https://codecov.io/gh/l-zoy/zmi-nerd) [![<ORG_NAME>](https://circleci.com/gh/l-zoy/zmi-nerd.svg?style=svg)](https://app.circleci.com/pipelines/github/l-zoy/zmi-nerd)
+[![lerna](https://img.shields.io/badge/support-lerna-blue)](https://lernajs.io/) [![GitHub license](https://img.shields.io/github/license/l-zoy/zno)](https://github.com/l-zoy/zno/blob/master/LICENSE) [![codecov](https://codecov.io/gh/l-zoy/zno/branch/master/graph/badge.svg?token=W1ND9EDZEJ)](https://codecov.io/gh/l-zoy/zno) [![<ORG_NAME>](https://circleci.com/gh/l-zoy/zno.svg?style=svg)](https://app.circleci.com/pipelines/github/l-zoy/zno)
 
 ## Features
 
@@ -17,10 +17,10 @@ Simple transform tool
 
 ## Installation
 
-Install `zmi-nerd` via yarn or npm.
+Install `zno` via yarn or npm.
 
 ```bash
-$ yarn add zmi-nerd
+$ yarn add zno
 ```
 
 ## Usage
@@ -38,7 +38,7 @@ $ nerd build --watch
 新建 `.nerdrc.js` or `.nerdrc.ts` 文件进行配置。
 
 ```js
-import { IConfig } from 'zmi-nerd'
+import { IConfig } from 'zno'
 
 export default {
   moduleType: 'cjs',
