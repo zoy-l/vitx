@@ -8,7 +8,7 @@ import schema from './schema'
 
 export const CONFIG_FILES = ['.nerdrc.ts', '.nerdrc.js']
 
-export default function (cwd: string): IBundleOptions {
+export default function (cwd: string, isMergeDefault = true): IBundleOptions {
   const isTest = process.env.NODE_ENV === 'test'
   const configFile = CONFIG_FILES.map((configName) => path.join(cwd, configName))
 
@@ -29,13 +29,15 @@ export default function (cwd: string): IBundleOptions {
     }
   }
 
-  return {
-    entry: 'src',
-    output: 'lib',
-    target: 'browser',
-    moduleType: 'esm',
-    sourcemap: false,
-    packageDirName: 'packages',
-    ...config
-  }
+  return isMergeDefault
+    ? {
+        entry: 'src',
+        output: 'lib',
+        target: 'browser',
+        moduleType: 'esm',
+        sourcemap: false,
+        packageDirName: 'packages',
+        ...config
+      }
+    : (config as IBundleOptions)
 }
