@@ -1,8 +1,8 @@
-# 🔨 zno
+# 🔨 znos
 
 Simple transform tool
 
-[![lerna](https://img.shields.io/badge/support-lerna-blue)](https://lernajs.io/) [![GitHub license](https://img.shields.io/github/license/l-zoy/zno)](https://github.com/l-zoy/zno/blob/master/LICENSE) [![codecov](https://codecov.io/gh/l-zoy/zno/branch/master/graph/badge.svg?token=W1ND9EDZEJ)](https://codecov.io/gh/l-zoy/zno) [![<ORG_NAME>](https://circleci.com/gh/l-zoy/zno.svg?style=svg)](https://app.circleci.com/pipelines/github/l-zoy/zno)
+[![lerna](https://img.shields.io/badge/support-lerna-blue)](https://lernajs.io/) [![GitHub license](https://img.shields.io/github/license/l-zoy/znos)](https://github.com/l-zoy/znos/blob/master/LICENSE) [![codecov](https://codecov.io/gh/l-zoy/znos/branch/master/graph/badge.svg?token=W1ND9EDZEJ)](https://codecov.io/gh/l-zoy/znos) [![<ORG_NAME>](https://circleci.com/gh/l-zoy/znos.svg?style=svg)](https://app.circleci.com/pipelines/github/l-zoy/znos)
 
 ## Features
 
@@ -17,10 +17,10 @@ Simple transform tool
 
 ## Installation
 
-Install `zno` via yarn or npm.
+Install `znos` via yarn or npm.
 
 ```bash
-$ yarn add zno
+$ yarn add znos
 ```
 
 ## Usage
@@ -38,7 +38,7 @@ $ nerd build --watch
 新建 `.nerdrc.js` or `.nerdrc.ts` 文件进行配置。
 
 ```js
-import { IConfig } from 'zno'
+import { IConfig } from 'znos'
 
 export default {
   moduleType: 'cjs',

@@ -1,5 +1,5 @@
-import yargsParser from '@zno/bundles/model/yargs-parser'
-import chalk from '@zno/bundles/model/chalk'
+import yargsParser from '@znos/bundles/model/yargs-parser'
+import chalk from '@znos/bundles/model/chalk'
 
 import { build } from './Build'
 import test from './test'

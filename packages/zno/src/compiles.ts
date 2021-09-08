@@ -1,16 +1,16 @@
 import {
   BabelFileResult,
   transformSync as babelTransformSync
-} from '@zno/bundles/model/@babel/core'
-import sourcemaps from '@zno/bundles/model/gulp-sourcemaps'
-import gulpPlumber from '@zno/bundles/model/gulp-plumber'
-import glupTs from '@zno/bundles/model/gulp-typescript'
-import insert from '@zno/bundles/model/gulp-insert'
-import through from '@zno/bundles/model/through2'
-import figures from '@zno/bundles/model/figures'
-import gulpIf from '@zno/bundles/model/gulp-if'
-import less from '@zno/bundles/model/gulp-less'
-import chalk from '@zno/bundles/model/chalk'
+} from '@znos/bundles/model/@babel/core'
+import sourcemaps from '@znos/bundles/model/gulp-sourcemaps'
+import gulpPlumber from '@znos/bundles/model/gulp-plumber'
+import glupTs from '@znos/bundles/model/gulp-typescript'
+import insert from '@znos/bundles/model/gulp-insert'
+import through from '@znos/bundles/model/through2'
+import figures from '@znos/bundles/model/figures'
+import gulpIf from '@znos/bundles/model/gulp-if'
+import less from '@znos/bundles/model/gulp-less'
+import chalk from '@znos/bundles/model/chalk'
 import path from 'path'
 
 import getBabelConfig from './getBabelConifg'
@@ -152,7 +152,7 @@ export function compileJsOrTs(
 
           babelFileResult.map!.file = chunk.sourceMap.file
         }
-        require('@zno/bundles/model/vinyl-sourcemaps-apply')(chunk, babelFileResult.map)
+        require('@znos/bundles/model/vinyl-sourcemaps-apply')(chunk, babelFileResult.map)
       }
 
       chunk.path = replaceExtname(chunk.path)

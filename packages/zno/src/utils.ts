@@ -1,5 +1,5 @@
-import chalk from '@zno/bundles/model/chalk'
-import slash from '@zno/bundles/model/slash'
+import chalk from '@znos/bundles/model/chalk'
+import slash from '@znos/bundles/model/slash'
 
 import { AnyConfig, CalculatedConfig } from './types'
 import getBabelConfig from './getBabelConifg'

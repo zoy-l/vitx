@@ -1,4 +1,4 @@
-import yargsParser from '@zno/bundles/model/yargs-parser'
+import yargsParser from '@znos/bundles/model/yargs-parser'
 import { runCLI } from 'jest'
 import assert from 'assert'
 import path from 'path'

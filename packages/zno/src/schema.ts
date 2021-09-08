@@ -1,4 +1,4 @@
-import Joi from '@zno/bundles/model/joi'
+import Joi from '@znos/bundles/model/joi'
 
 export default Joi.object({
   packageDirName: Joi.string(),

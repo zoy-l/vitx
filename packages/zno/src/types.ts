@@ -1,6 +1,6 @@
-import gulpInsert from '@zno/bundles/model/gulp-insert'
-import through2 from '@zno/bundles/model/through2'
-import gulpIf from '@zno/bundles/model/gulp-if'
+import gulpInsert from '@znos/bundles/model/gulp-insert'
+import through2 from '@znos/bundles/model/through2'
+import gulpIf from '@znos/bundles/model/gulp-if'
 import type { Config } from '@jest/types'
 import { runCLI } from 'jest'
 
