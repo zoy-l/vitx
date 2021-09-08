@@ -1,6 +1,6 @@
 *.d.ts
 lib/*
 debug/*
-fixtures/*
+packages/**/fixtures/*
 packages/**/lib
 packages/bundles/model

@@ -4,7 +4,7 @@ import glob from 'glob'
 import path from 'path'
 import fs from 'fs'
 
-import Nerd from './Build'
+import { build } from './Build'
 
 const wait = () => new Promise((resolve) => setTimeout(resolve, 1500))
 jest.setTimeout(30000)
@@ -55,10 +55,7 @@ describe('nerd build', () => {
         process.chdir(cwd)
         rimraf.sync(getPathActualed(cwd))
 
-        const build = new Nerd({ cwd })
-
-        build
-          .step()
+        build({ cwd })
           .then(() => {
             moveEsLibToDist(cwd)
 
@@ -99,9 +96,8 @@ describe('nerd build', () => {
       it(dir, async (done) => {
         process.chdir(cwd)
         rimraf.sync(getPathActualed(cwd))
-        const build = new Nerd({ cwd, watch: true })
 
-        await build.step()
+        await build({ cwd, watch: true })
         await wait()
 
         fs.writeFileSync(`${cwd}/src/foo.${file[index]}`, 'const a = 1')
@@ -127,50 +123,13 @@ describe('nerd build', () => {
   })
 })
 
-describe('nerd javascript api', () => {
-  const root = path.join(__dirname, '../fixtures')
-  const jsApiPath = path.join(root, 'jsApi')
-
-  fs.readdirSync(jsApiPath).forEach((dir) => {
-    const cwd = path.join(jsApiPath, dir)
-
-    if (dir.charAt(0) !== '.') {
-      it(dir, async (done) => {
-        process.chdir(cwd)
-        rimraf.sync(getPathActualed(cwd))
-
-        const build = new Nerd({
-          customPrefix: 'miniapp',
-          userConfig: {
-            moduleType: 'cjs',
-            target: 'node'
-          }
-        })
-
-        await build.step()
-
-        moveEsLibToDist(cwd)
-        try {
-          assertBuildResult(cwd)
-
-          done()
-        } catch (err) {
-          done(err)
-        }
-      })
-    }
-  })
-})
-
 test('config error', async () => {
   const root = path.join(__dirname, '../fixtures')
   const errorConfig = path.join(root, 'error')
 
   rimraf.sync(getPathActualed(errorConfig))
 
-  const build = new Nerd({ cwd: errorConfig })
-
-  await expect(build.step()).rejects.toThrow(
-    'Invalid options in "moduleType" must be one of [esm, cjs]'
+  await expect(build({ cwd: errorConfig })).rejects.toThrow(
+    'Invalid options in "moduleType" must be one of [esm, cjs, all]'
   )
 })
