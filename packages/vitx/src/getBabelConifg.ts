@@ -1,7 +1,7 @@
-import type { IZnoConfig } from './types'
+import type { IVitxConfig } from './types'
 
 export default function getBabelConfig(
-  bundleOpts: Omit<IZnoConfig, 'entry' | 'output'>,
+  vitxConfig: Omit<IVitxConfig, 'entry' | 'output'>,
   isBrowser: boolean,
   moduleType: 'cjs' | 'esm'
 ) {
@@ -12,7 +12,7 @@ export default function getBabelConfig(
     extraBabelPresets = [],
     disableTypes,
     react
-  } = bundleOpts
+  } = vitxConfig
 
   const defaultEnvConfig = {
     loose: true,

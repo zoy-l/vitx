@@ -2,6 +2,7 @@ import {
   BabelFileResult,
   transformSync as babelTransformSync
 } from '@vitx/bundles/model/@babel/core'
+import { parse } from '@vitx/bundles/model/@vue/compiler-sfc'
 import sourcemaps from '@vitx/bundles/model/gulp-sourcemaps'
 import gulpPlumber from '@vitx/bundles/model/gulp-plumber'
 import glupTs from '@vitx/bundles/model/gulp-typescript'
@@ -10,18 +11,19 @@ import through from '@vitx/bundles/model/through2'
 import figures from '@vitx/bundles/model/figures'
 import gulpIf from '@vitx/bundles/model/gulp-if'
 import less from '@vitx/bundles/model/gulp-less'
+import hash from '@vitx/bundles/model/hash-sum'
 import chalk from '@vitx/bundles/model/chalk'
 import path from 'path'
 
+import type { IVitxConfig, IModes } from './types'
 import getBabelConfig from './getBabelConifg'
-import type { IZnoConfig } from './types'
 import replaceAll from './replaceAll'
 
 const cache = {}
 
 const empty = () => {}
 
-export function logger(output: string, mode: 'cjs' | 'esm') {
+export function logger(output: string, mode: IModes) {
   return insert.transform((contents, file) => {
     if (!/d.ts/.test(file.path)) {
       console.log(
@@ -43,7 +45,7 @@ export function applyHook(func: any, args: any): NodeJS.ReadWriteStream {
   return typeof func === 'function' ? func(args) : through.obj()
 }
 
-export function modifySourcemap(sourcemap: IZnoConfig['sourcemap']) {
+export function modifySourcemap(sourcemap: IVitxConfig['sourcemap']) {
   return gulpIf((file) => !!sourcemap && !file.path.endsWith('.d.ts'), sourcemaps.write('.'))
 }
 
@@ -54,7 +56,7 @@ export function enablefileCache() {
   })
 }
 
-export function enableSourcemap(sourcemap: IZnoConfig['sourcemap']) {
+export function enableSourcemap(sourcemap: IVitxConfig['sourcemap']) {
   return gulpIf(() => !!sourcemap, sourcemaps.init())
 }
 
@@ -62,15 +64,15 @@ export function enablePlumber(watch: boolean | undefined) {
   return gulpIf(!!watch, gulpPlumber(empty))
 }
 
-export function applyBeforeHook(hook: IZnoConfig['beforeReadWriteStream']) {
+export function applyBeforeHook(hook: IVitxConfig['beforeReadWriteStream']) {
   return applyHook(hook, { through, insert, gulpIf })
 }
 
-export function applyAfterHook(hook: IZnoConfig['afterReadWriteStream']) {
+export function applyAfterHook(hook: IVitxConfig['afterReadWriteStream']) {
   return applyHook(hook, { through, insert, gulpIf })
 }
 
-export function compileLess(lessOptions: IZnoConfig['lessOptions']) {
+export function compileLess(lessOptions: IVitxConfig['lessOptions']) {
   return gulpIf((file) => file.path.endsWith('.less'), less(lessOptions))
 }
 
@@ -85,7 +87,7 @@ export function compileDeclaration(tsConfig: Record<string, any>) {
   )
 }
 
-export function compileAlias(paths: IZnoConfig['paths']) {
+export function compileAlias(paths: IVitxConfig['paths']) {
   return insert.transform((contents, file) => {
     const alias = { ...paths }
 
@@ -105,9 +107,26 @@ export function compileAlias(paths: IZnoConfig['paths']) {
   })
 }
 
+export function compileVueSfc() {
+  return gulpIf(
+    (file) => isTransform(/\.vue$/, file.path),
+    insert.transform((content, file) => {
+      const { descriptor } = parse(content, { filename: file.path })
+      const { template, styles } = descriptor
+
+      const hasScoped = styles.some((s) => s.scoped)
+      const scopedId = hasScoped ? `data-v-${hash(content)}` : ''
+
+      // if ()
+
+      return content
+    })
+  )
+}
+
 export function compileJsOrTs(
-  config: IZnoConfig,
-  options: { currentEntryPath: string; mode: any }
+  config: IVitxConfig,
+  options: { currentEntryPath: string; mode: IModes }
 ) {
   const { sourcemap, target, nodeFiles, browserFiles } = config
   const { currentEntryPath, mode } = options

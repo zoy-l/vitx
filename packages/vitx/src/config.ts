@@ -2,13 +2,13 @@ import path from 'path'
 import fs from 'fs'
 
 import { registerBabel, isDefault } from './utils'
-import { IZnoConfig } from './types'
+import { IVitxConfig } from './types'
 
 import schema from './schema'
 
 export const CONFIG_FILES = ['.nerdrc.ts', '.nerdrc.js']
 
-export default function (cwd: string, isMergeDefault = true): IZnoConfig {
+export default function (cwd: string, isMergeDefault = true): IVitxConfig {
   const isTest = process.env.NODE_ENV === 'test'
   const configFile = CONFIG_FILES.map((configName) => path.join(cwd, configName))
 
@@ -39,5 +39,5 @@ export default function (cwd: string, isMergeDefault = true): IZnoConfig {
         packageDirName: 'packages',
         ...config
       }
-    : (config as IZnoConfig)
+    : (config as IVitxConfig)
 }

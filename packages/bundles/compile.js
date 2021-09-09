@@ -109,6 +109,7 @@ const dependencies = [
   ['@babel/preset-typescript'],
   ['@babel/preset-env'],
   ['@babel/register'],
+  ['hash-sum', '@types/hash-sum'],
   ['chalk', 'self'],
   ['slash', 'self'],
   ['deepmerge', 'self'],
@@ -128,7 +129,8 @@ const dependencies = [
   ['less'],
   ['joi', 'self'],
   ['figures', 'self'],
-  ['ora', 'self']
+  ['ora', 'self'],
+  ['@vue/compiler-sfc', 'self']
 ]
 
 run()

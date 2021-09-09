@@ -19,19 +19,17 @@ import {
   modifySourcemap,
   logger
 } from './compiles'
-import type { IZnoConfig } from './types'
+import type { IModes, IVitxConfig } from './types'
 import getTSConfig from './getTsConifg'
 import getConfig from './config'
 
 interface IBuildOptions {
   cwd: string
   watch?: boolean
-  userConfig?: IZnoConfig
+  userConfig?: IVitxConfig
 }
 
-type IModes = 'cjs' | 'esm'
-
-function compile(watch: boolean, currentDirPath: string, mode: IModes, currentConfig: IZnoConfig) {
+function compile(watch: boolean, currentDirPath: string, mode: IModes, currentConfig: IVitxConfig) {
   const {
     entry,
     output,
@@ -134,7 +132,7 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
 export async function build(options: IBuildOptions) {
   const config = getConfig(options.cwd)
 
-  async function run(currentPath: string, currentConfig: IZnoConfig) {
+  async function run(currentPath: string, currentConfig: IVitxConfig) {
     let modes = [currentConfig.moduleType]
 
     if (currentConfig.moduleType === 'all') {

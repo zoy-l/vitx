@@ -4,7 +4,9 @@ import gulpIf from '@vitx/bundles/model/gulp-if'
 import type { Config } from '@jest/types'
 import { runCLI } from 'jest'
 
-export interface IZnoConfig {
+export type IModes = 'cjs' | 'esm'
+
+export interface IVitxConfig {
   packageDirName?: string
   esBuild?: boolean
   moduleType?: 'esm' | 'cjs' | 'all'
@@ -41,7 +43,7 @@ export interface IZnoConfig {
   sourcemap?: boolean
 }
 
-export interface IBundleOpt extends IZnoConfig {
+export interface IBundleOpt extends IVitxConfig {
   entry: string
   output: string
 }

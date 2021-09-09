@@ -1,4 +1,4 @@
-import { jestConfig } from 'nerd/'
+import { jestConfig } from 'vitx'
 
 export default {
   collectCoverageFrom(memo) {
