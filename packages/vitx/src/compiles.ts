@@ -1,8 +1,13 @@
 import {
+  parse,
+  SFCStyleBlock,
+  compileTemplate,
+  compileStyle
+} from '@vitx/bundles/model/@vue/compiler-sfc'
+import {
   BabelFileResult,
   transformSync as babelTransformSync
 } from '@vitx/bundles/model/@babel/core'
-import { parse } from '@vitx/bundles/model/@vue/compiler-sfc'
 import sourcemaps from '@vitx/bundles/model/gulp-sourcemaps'
 import gulpPlumber from '@vitx/bundles/model/gulp-plumber'
 import glupTs from '@vitx/bundles/model/gulp-typescript'
@@ -108,16 +113,91 @@ export function compileAlias(paths: IVitxConfig['paths']) {
 }
 
 export function compileVueSfc() {
+  const EXT_REGEXP = /\.\w+$/
+  const RENDER_FN = '__vue_render__'
+  const VUEIDS = '__vue_sfc__'
+  const EXPORT = 'export default'
+
+  function trim(code: string) {
+    return code.replace(/\/\/\n/g, '').trim()
+  }
+
+  function injectRender(render: string) {
+    return render.replace('export function render', `function ${RENDER_FN}`)
+  }
+
+  function injectScopeId(scopeId: string) {
+    return `\n${VUEIDS}._scopeId = '${scopeId}'`
+  }
+
+  function getSfcStylePath(filePath: string, ext: string, index: number) {
+    const number = index !== 0 ? `-${index}` : ''
+    return filePath.replace(EXT_REGEXP, `-sfc${number}.${ext}`)
+  }
+
+  function injectStyle(styles: SFCStyleBlock[], filePath: string) {
+    const imports = styles.reduce(
+      (code, _, index) =>
+        code + `import './${path.basename(getSfcStylePath(filePath, 'css', index))}';\n`,
+      ''
+    )
+
+    return imports
+  }
+
   return gulpIf(
     (file) => isTransform(/\.vue$/, file.path),
     insert.transform((content, file) => {
       const { descriptor } = parse(content, { filename: file.path })
-      const { template, styles } = descriptor
+      const { template, styles, script, filename } = descriptor
 
       const hasScoped = styles.some((s) => s.scoped)
-      const scopedId = hasScoped ? `data-v-${hash(content)}` : ''
+      const scopeId = hasScoped ? `data-v-${hash(content)}` : null
 
-      // if ()
+      if (script) {
+        // const lang = script.lang ?? 'js'
+        // const scriptFilePath = file.path.replace(EXT_REGEXP, `.${lang}`)
+        let makeScript = injectStyle(styles, file.path)
+
+        if (template) {
+          const render = compileTemplate({
+            id: scopeId ?? filename,
+            source: template.content,
+            filename: file.path
+          }).code
+
+          makeScript += injectRender(render)
+        }
+
+        makeScript += script.content
+        makeScript += template ? `${VUEIDS}.render = ${RENDER_FN}\n` : ''
+        makeScript = makeScript.replace(EXPORT, `const ${VUEIDS} =`)
+
+        if (scopeId) {
+          makeScript += injectScopeId(scopeId)
+        }
+        makeScript += `\n${EXPORT} ${VUEIDS}`
+
+        console.log(makeScript)
+      }
+
+      if (styles) {
+        styles.forEach((style, index) => {
+          const cssFilePath = getSfcStylePath(file.path, style.lang ?? 'css', index)
+          let styleSource = trim(style.content)
+
+          if (style.scoped) {
+            styleSource = compileStyle({
+              id: scopeId!,
+              scoped: true,
+              source: styleSource,
+              filename: cssFilePath
+            }).code
+          }
+
+          console.log(cssFilePath, styleSource)
+        })
+      }
 
       return content
     })

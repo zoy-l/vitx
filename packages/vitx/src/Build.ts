@@ -11,6 +11,7 @@ import {
   compileJsOrTs,
   compileAlias,
   compileLess,
+  compileVueSfc,
   enableSourcemap,
   enablePlumber,
   enablefileCache,
@@ -75,6 +76,7 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
       .pipe(enableSourcemap(sourcemap))
       .pipe(enablePlumber(watch))
       .pipe(enablefileCache())
+      .pipe(compileVueSfc())
       .pipe(compileLess(lessOptions))
       .pipe(applyBeforeHook(beforeReadWriteStream))
       .pipe(compileAlias(paths))
