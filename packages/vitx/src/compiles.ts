@@ -2,7 +2,8 @@ import {
   parse,
   SFCStyleBlock,
   compileTemplate,
-  compileStyle
+  compileStyle,
+  compileScript
 } from '@vitx/bundles/model/@vue/compiler-sfc'
 import {
   BabelFileResult,
@@ -127,7 +128,7 @@ export function compileVueSfc() {
   }
 
   function injectScopeId(scopeId: string) {
-    return `\n${VUEIDS}._scopeId = '${scopeId}'`
+    return `\n${VUEIDS}.__scopeId = '${scopeId}'`
   }
 
   function getSfcStylePath(filePath: string, ext: string, index: number) {
@@ -149,34 +150,44 @@ export function compileVueSfc() {
     (file) => isTransform(/\.vue$/, file.path),
     insert.transform((content, file) => {
       const { descriptor } = parse(content, { filename: file.path })
-      const { template, styles, script, filename } = descriptor
+      const { template, styles, script, filename, scriptSetup } = descriptor
 
       const hasScoped = styles.some((s) => s.scoped)
       const scopeId = hasScoped ? `data-v-${hash(content)}` : null
 
-      if (script) {
+      if (script || scriptSetup) {
         // const lang = script.lang ?? 'js'
         // const scriptFilePath = file.path.replace(EXT_REGEXP, `.${lang}`)
         let makeScript = injectStyle(styles, file.path)
 
-        if (template) {
-          const render = compileTemplate({
-            id: scopeId ?? filename,
-            source: template.content,
-            filename: file.path
-          }).code
-
-          makeScript += injectRender(render)
+        if (script) {
+          if (template) {
+            const render = compileTemplate({
+              id: scopeId ?? filename,
+              source: template.content,
+              filename: file.path
+            }).code
+            makeScript += injectRender(render)
+          }
+          makeScript += script.content
+          makeScript += template ? `${VUEIDS}.render = ${RENDER_FN}\n` : ''
         }
 
-        makeScript += script.content
-        makeScript += template ? `${VUEIDS}.render = ${RENDER_FN}\n` : ''
+        if (scriptSetup) {
+          makeScript += compileScript(descriptor, {
+            id: scopeId ?? filename,
+            refTransform: true,
+            inlineTemplate: true
+          }).content
+        }
+
         makeScript = makeScript.replace(EXPORT, `const ${VUEIDS} =`)
 
         if (scopeId) {
           makeScript += injectScopeId(scopeId)
         }
-        makeScript += `\n${EXPORT} ${VUEIDS}`
+
+        makeScript += `\n${VUEIDS}.__file = '${path.basename(filename)}'\n${EXPORT} ${VUEIDS}`
 
         console.log(makeScript)
       }
