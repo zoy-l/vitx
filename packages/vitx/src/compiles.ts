@@ -12,13 +12,14 @@ import {
 import sourcemaps from '@vitx/bundles/model/gulp-sourcemaps'
 import gulpPlumber from '@vitx/bundles/model/gulp-plumber'
 import glupTs from '@vitx/bundles/model/gulp-typescript'
-import insert from '@vitx/bundles/model/gulp-insert'
 import through from '@vitx/bundles/model/through2'
 import figures from '@vitx/bundles/model/figures'
 import gulpIf from '@vitx/bundles/model/gulp-if'
 import less from '@vitx/bundles/model/gulp-less'
 import hash from '@vitx/bundles/model/hash-sum'
 import chalk from '@vitx/bundles/model/chalk'
+import Vinyl from '@vitx/bundles/model/vinyl'
+import Stream from 'stream'
 import path from 'path'
 
 import type { IVitxConfig, IModes } from './types'
@@ -30,16 +31,20 @@ const cache = {}
 const empty = () => {}
 
 export function logger(output: string, mode: IModes) {
-  return insert.transform((contents, file) => {
+  return through.obj((file, _, cb) => {
     if (!/d.ts/.test(file.path)) {
+      const ext = path.extname(file.path)
+
       console.log(
         chalk.green(figures.tick),
-        chalk.yellow(`Success ${mode.toUpperCase()}:`),
+        chalk.yellow(
+          `Success ${(/.(j|t)s$/.test(file.path) ? mode : ext.slice(1)).toUpperCase()}:`
+        ),
         `${output}/${path.basename(file.path)}`
       )
     }
 
-    return contents
+    cb(null, file)
   })
 }
 
@@ -56,9 +61,9 @@ export function modifySourcemap(sourcemap: IVitxConfig['sourcemap']) {
 }
 
 export function enablefileCache() {
-  return insert.transform((contents, file) => {
-    cache[file.path] = contents
-    return contents
+  return through.obj((file, _, cb) => {
+    cache[file.path] = file.contents.toString()
+    cb(null, file)
   })
 }
 
@@ -71,11 +76,11 @@ export function enablePlumber(watch: boolean | undefined) {
 }
 
 export function applyBeforeHook(hook: IVitxConfig['beforeReadWriteStream']) {
-  return applyHook(hook, { through, insert, gulpIf })
+  return applyHook(hook, { through, gulpIf })
 }
 
 export function applyAfterHook(hook: IVitxConfig['afterReadWriteStream']) {
-  return applyHook(hook, { through, insert, gulpIf })
+  return applyHook(hook, { through, gulpIf })
 }
 
 export function compileLess(lessOptions: IVitxConfig['lessOptions']) {
@@ -94,26 +99,28 @@ export function compileDeclaration(tsConfig: Record<string, any>) {
 }
 
 export function compileAlias(paths: IVitxConfig['paths']) {
-  return insert.transform((contents, file) => {
+  return through.obj((file, _, cb) => {
     const alias = { ...paths }
 
     if (Object.keys(alias).length) {
       const dirname = path.dirname(file.path)
       const ext = path.extname(file.relative)
 
-      contents = replaceAll({
-        ext,
-        contents,
-        dirname,
-        aliasMap: alias
-      })
+      file.contents = Buffer.from(
+        replaceAll({
+          ext,
+          contents: file.contents.toString(),
+          dirname,
+          aliasMap: alias
+        })
+      )
     }
 
-    return contents
+    cb(null, file)
   })
 }
 
-export function compileVueSfc() {
+export function compileVueSfc(injectCss: IVitxConfig['injectCss']) {
   const EXT_REGEXP = /\.\w+$/
   const RENDER_FN = '__vue_render__'
   const VUEIDS = '__vue_sfc__'
@@ -133,7 +140,7 @@ export function compileVueSfc() {
 
   function getSfcStylePath(filePath: string, ext: string, index: number) {
     const number = index !== 0 ? `-${index}` : ''
-    return filePath.replace(EXT_REGEXP, `-sfc${number}.${ext}`)
+    return filePath.replace(EXT_REGEXP, `${number}.${ext}`)
   }
 
   function injectStyle(styles: SFCStyleBlock[], filePath: string) {
@@ -146,72 +153,89 @@ export function compileVueSfc() {
     return imports
   }
 
-  return gulpIf(
-    (file) => isTransform(/\.vue$/, file.path),
-    insert.transform((content, file) => {
-      const { descriptor } = parse(content, { filename: file.path })
-      const { template, styles, script, filename, scriptSetup } = descriptor
+  function transform(this: Stream.Transform, file: Vinyl.BufferFile, _: unknown, cb: () => void) {
+    const content = file.contents.toString()
+    const { descriptor } = parse(content, { filename: file.path })
+    const { template, styles, script, filename, scriptSetup } = descriptor
 
-      const hasScoped = styles.some((s) => s.scoped)
-      const scopeId = hasScoped ? `data-v-${hash(content)}` : null
+    const hasScoped = styles.some((s) => s.scoped)
+    const scopeId = hasScoped ? `data-v-${hash(content)}` : null
 
-      if (script || scriptSetup) {
-        // const lang = script.lang ?? 'js'
-        // const scriptFilePath = file.path.replace(EXT_REGEXP, `.${lang}`)
-        let makeScript = injectStyle(styles, file.path)
+    if (script || scriptSetup) {
+      const lang = script?.lang ?? 'js'
+      const scriptFilePath = file.path.replace(EXT_REGEXP, `.${lang}`)
+      let makeScript = injectCss ? injectStyle(styles, file.path) : ''
 
-        if (script) {
-          if (template) {
-            const render = compileTemplate({
-              id: scopeId ?? filename,
-              source: template.content,
-              filename: file.path
-            }).code
-            makeScript += injectRender(render)
-          }
-          makeScript += script.content
-          makeScript += template ? `${VUEIDS}.render = ${RENDER_FN}\n` : ''
-        }
-
-        if (scriptSetup) {
-          makeScript += compileScript(descriptor, {
+      if (script) {
+        if (template) {
+          const render = compileTemplate({
             id: scopeId ?? filename,
-            refTransform: true,
-            inlineTemplate: true
-          }).content
+            source: template.content,
+            filename: file.path
+          }).code
+          makeScript += injectRender(render)
         }
-
-        makeScript = makeScript.replace(EXPORT, `const ${VUEIDS} =`)
-
-        if (scopeId) {
-          makeScript += injectScopeId(scopeId)
-        }
-
-        makeScript += `\n${VUEIDS}.__file = '${path.basename(filename)}'\n${EXPORT} ${VUEIDS}`
-
-        console.log(makeScript)
+        makeScript += script.content
+        makeScript += template ? `${VUEIDS}.render = ${RENDER_FN}\n` : ''
       }
 
-      if (styles) {
-        styles.forEach((style, index) => {
-          const cssFilePath = getSfcStylePath(file.path, style.lang ?? 'css', index)
-          let styleSource = trim(style.content)
+      if (scriptSetup) {
+        makeScript += compileScript(descriptor, {
+          id: scopeId ?? filename,
+          refTransform: true,
+          inlineTemplate: true
+        }).content
+      }
 
-          if (style.scoped) {
-            styleSource = compileStyle({
-              id: scopeId!,
-              scoped: true,
-              source: styleSource,
-              filename: cssFilePath
-            }).code
-          }
+      makeScript = makeScript.replace(EXPORT, `const ${VUEIDS} =`)
 
-          console.log(cssFilePath, styleSource)
+      if (scopeId) {
+        makeScript += injectScopeId(scopeId)
+      }
+
+      makeScript += `\n${VUEIDS}.__file = '${path.basename(filename)}'\n${EXPORT} ${VUEIDS}`
+
+      this.push(
+        new Vinyl({
+          path: scriptFilePath,
+          contents: Buffer.from(makeScript),
+          cwd: file.cwd,
+          base: file.base
         })
-      }
+      )
+    }
 
-      return content
-    })
+    if (styles) {
+      styles.forEach((style, index) => {
+        const cssFilePath = getSfcStylePath(file.path, style.lang ?? 'css', index)
+        let styleSource = trim(style.content)
+
+        if (style.scoped) {
+          styleSource = compileStyle({
+            id: scopeId!,
+            scoped: true,
+            source: styleSource,
+            filename: cssFilePath
+          }).code
+        }
+
+        this.push(
+          new Vinyl({
+            path: cssFilePath,
+            contents: Buffer.from(styleSource),
+            cwd: file.cwd,
+            base: file.base
+          })
+        )
+      })
+    }
+
+    cb()
+  }
+
+  return gulpIf(
+    (file: { path: string }) => isTransform(/\.vue$/, file.path),
+    through.obj(transform)
   )
 }
 

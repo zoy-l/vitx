@@ -6,7 +6,7 @@ import { IVitxConfig } from './types'
 
 import schema from './schema'
 
-export const CONFIG_FILES = ['.nerdrc.ts', '.nerdrc.js']
+export const CONFIG_FILES = <const>['.vitxrc.ts', '.vitxrc.js']
 
 export default function (cwd: string, isMergeDefault = true): IVitxConfig {
   const isTest = process.env.NODE_ENV === 'test'

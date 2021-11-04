@@ -1,4 +1,3 @@
-import gulpInsert from '@vitx/bundles/model/gulp-insert'
 import through2 from '@vitx/bundles/model/through2'
 import gulpIf from '@vitx/bundles/model/gulp-if'
 import type { Config } from '@jest/types'
@@ -7,6 +6,7 @@ import { runCLI } from 'jest'
 export type IModes = 'cjs' | 'esm'
 
 export interface IVitxConfig {
+  injectCss?: boolean
   packageDirName?: string
   esBuild?: boolean
   moduleType?: 'esm' | 'cjs' | 'all'
@@ -21,12 +21,10 @@ export interface IVitxConfig {
   disableTypes?: boolean
   beforeReadWriteStream?: (options: {
     through: typeof through2
-    insert: typeof gulpInsert
     gulpIf: typeof gulpIf
   }) => NodeJS.ReadWriteStream
   afterReadWriteStream?: (options: {
     through: typeof through2
-    insert: typeof gulpInsert
     gulpIf: typeof gulpIf
   }) => NodeJS.ReadWriteStream
   afterHook?: () => void

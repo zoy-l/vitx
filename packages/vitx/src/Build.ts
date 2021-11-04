@@ -40,7 +40,8 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
     paths,
     afterHook,
     beforeReadWriteStream,
-    afterReadWriteStream
+    afterReadWriteStream,
+    injectCss
   } = currentConfig
 
   const currentEntryPath = path.join(currentDirPath, entry)
@@ -76,7 +77,7 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
       .pipe(enableSourcemap(sourcemap))
       .pipe(enablePlumber(watch))
       .pipe(enablefileCache())
-      .pipe(compileVueSfc())
+      .pipe(compileVueSfc(injectCss))
       .pipe(compileLess(lessOptions))
       .pipe(applyBeforeHook(beforeReadWriteStream))
       .pipe(compileAlias(paths))
