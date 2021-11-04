@@ -46,7 +46,7 @@ function sizeFilter(byte) {
 async function compileBundles(name, options = {}) {
   const spinner = ora({
     color: 'white',
-    text: `compile: ${chalk.cyan(name)}`
+    text: `Compile: ${chalk.cyan(name)}`
   }).start()
 
   const defaultOptions = { externals, minify: true, quiet: true }
