@@ -65,7 +65,7 @@ async function compileBundles(name, options = {}) {
   }
 
   externals[name] = `@vitx/bundles/${outDir}/${name}`
-  spinner.succeed(chalk.green('Success: ') + chalk.yellow(name + sizeFilter(buf.byteLength))).stop()
+  spinner.succeed(chalk.green('Success: ') + chalk.yellow(name) + sizeFilter(buf.byteLength)).stop()
 }
 
 async function run() {
@@ -117,6 +117,8 @@ const externals = {
 const dependencies = [
   ['@babel/types'],
   ['@babel/core', '@types/babel__core'],
+  ['@babel/parser'],
+  ['@babel/helper-plugin-utils'],
   ['@babel/plugin-transform-modules-commonjs'],
   ['@babel/plugin-proposal-do-expressions'],
   ['@babel/plugin-proposal-export-default-from'],
