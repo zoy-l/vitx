@@ -12,9 +12,9 @@ export default {
   mountedReadWriteStream({ through }) {
     return through.obj()
   },
-  mapSources(sourcesMap) {
-    return sourcesMap((path) => {
+  mapSources(sourcesMap: (arg0: (path: any) => any) => any) {
+    return sourcesMap((path: any) => {
       return path
     })
   }
-} as IConfig
+} as unknown as IConfig

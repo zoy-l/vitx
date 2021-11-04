@@ -42,7 +42,7 @@ function moveEsLibToDist(cwd: string) {
   }
 }
 
-describe('nerd build', () => {
+describe('vitx build', () => {
   const root = path.join(__dirname, '../fixtures')
   const buildPath = path.join(root, 'build')
   const watch = path.join(root, 'watch')

@@ -1,5 +1,5 @@
 export default {
   moduleType: 'cjs',
   target: 'node',
-  pkgs: ['bar', 'foo', 'notdir']
+  packages: ['bar', 'foo', 'notdir']
 }
