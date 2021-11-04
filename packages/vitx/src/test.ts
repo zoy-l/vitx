@@ -10,6 +10,12 @@ import defaultConfig from './jestConfig'
 const jestConfig = ['jest.config.js', 'jest.config.ts']
 
 export default async function (args: yargsParser.Arguments) {
+  try {
+    require('babel-jest')
+  } catch (err) {
+    throw new Error('The corresponding version of `babel-jest` needs to be installed')
+  }
+
   process.env.NODE_ENV = 'test'
   const cwd = args.cwd ?? process.cwd()
 

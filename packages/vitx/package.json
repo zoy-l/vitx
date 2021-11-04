@@ -23,10 +23,18 @@
     "@vitx/bundles": "2.0.0"
   },
   "peerDependencies": {
-    "typescript": "4.x"
+    "typescript": "4.x.x",
+    "jest": "26.x.x",
+    "babel-jest": "26.x.x"
   },
   "peerDependenciesMeta": {
     "typescript": {
+      "optional": true
+    },
+    "jest": {
+      "optional": true
+    },
+    "babel-jest": {
       "optional": true
     }
   },
@@ -39,7 +47,7 @@
   "keywords": [
     "vitx",
     "gulp",
-    "gulpplugin",
+    "gulp-plugin",
     "小程序",
     "打包",
     "typescript"

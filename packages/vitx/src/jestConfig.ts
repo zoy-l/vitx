@@ -7,16 +7,15 @@ export default function defaultConfig(cwd: string, args: ITestArgs) {
   const testMatchTypes = ['spec', 'test']
   const hasSrc = fs.existsSync(path.join(cwd, 'src'))
 
-  const isLerna = fs.existsSync(path.join(cwd, 'lerna.json'))
-  const hasPackage = isLerna && args.package
+  const hasPackage = args.package
   const testMatchPrefix = hasPackage ? `**/packages/${args.package}/` : ''
 
   return {
     collectCoverageFrom: [
       'index.{js,jsx,ts,tsx}',
       hasSrc && 'src/**/*.{js,jsx,ts,tsx}',
-      isLerna && !args.package && 'packages/*/src/**/*.{js,jsx,ts,tsx}',
-      isLerna && args.package && `packages/${args.package}/src/**/*.{js,jsx,ts,tsx}`,
+      !args.package && 'packages/*/src/**/*.{js,jsx,ts,tsx}',
+      args.package && `packages/${args.package}/src/**/*.{js,jsx,ts,tsx}`,
       '!**/node_modules/**',
       '!**/fixtures/**',
       '!**/__test__/**',
