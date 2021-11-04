@@ -29,6 +29,20 @@ function getModelPackageJson(name, sep = '../') {
   return getModelPackageJson(name, sep + '../')
 }
 
+function sizeFilter(byte) {
+  let i = 0
+
+  while (Math.abs(byte) >= 1024) {
+    byte /= 1024
+    i++
+    if (i === 2) break
+  }
+
+  const units = ['B', 'Kb', 'Mb']
+  const size = Math.round(byte, 2)
+  return ' ' + size + units[i]
+}
+
 async function compileBundles(name, options = {}) {
   const spinner = ora({
     color: 'white',
@@ -37,6 +51,8 @@ async function compileBundles(name, options = {}) {
 
   const defaultOptions = { externals, minify: true, quiet: true }
   const { code, assets } = await ncc(require.resolve(name), Object.assign(defaultOptions, options))
+
+  const buf = Buffer.from(code)
 
   const outPath = join(outDirPath, name, 'index.js')
 
@@ -49,7 +65,7 @@ async function compileBundles(name, options = {}) {
   }
 
   externals[name] = `@vitx/bundles/${outDir}/${name}`
-  spinner.succeed(chalk.green('success: ') + chalk.yellow(name)).stop()
+  spinner.succeed(chalk.green('Success: ') + chalk.yellow(name + sizeFilter(buf.byteLength))).stop()
 }
 
 async function run() {
