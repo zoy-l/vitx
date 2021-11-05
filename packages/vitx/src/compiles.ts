@@ -247,15 +247,18 @@ export function compileJsOrTs(
   config: IVitxConfig,
   options: { currentEntryPath: string; mode: IModes }
 ) {
-  const { sourcemap, target, nodeFiles, browserFiles } = config
-  const { currentEntryPath, mode } = options
-
-  let isBrowser = target === 'browser'
-
   return gulpIf(
     (file: { path: string }) => isTransform(/\.(t|j)sx?$/, file.path),
-    through.obj((file, _enc, callback) => {
-      if (/\.(t|j)sx$/.test(file.path) || new RegExp(jsxIdent).test(file.contents.toString())) {
+    through.obj((file, _, cb) => {
+      const { sourcemap, target, nodeFiles, browserFiles } = config
+      const { currentEntryPath, mode } = options
+
+      let isBrowser = target === 'browser'
+
+      if (
+        /\.(t|j)sx$/.test(file.path) ||
+        /\/*__vitx__jsx__file__\*\//.test(file.contents.toString())
+      ) {
         isBrowser = true
       } else {
         const currentFilePath = path.relative(currentEntryPath, file.path)
@@ -293,7 +296,7 @@ export function compileJsOrTs(
       }
 
       file.path = replaceExtname(file.path)
-      callback(null, file)
+      cb(null, file)
     })
   )
 }
