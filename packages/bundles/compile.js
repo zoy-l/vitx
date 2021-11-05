@@ -52,26 +52,41 @@ async function compileBundles(name, options = {}) {
     text: `Compile: ${chalk.cyan(name)}`
   }).start()
 
-  const defaultOptions = { externals, minify: true, quiet: true }
-  const { code, assets } = await ncc(require.resolve(name), Object.assign(defaultOptions, options))
+  const [embellish, packageName, packagePath] = name.split(':')
 
-  const buf = Buffer.from(code)
-  totalSize += buf.byteLength
+  let byte = 0
 
-  const outPath = join(outDirPath, name, 'index.js')
+  if (embellish === name) {
+    const defaultOptions = { externals, minify: true, quiet: true }
+    const { code, assets } = await ncc(
+      require.resolve(name),
+      Object.assign(defaultOptions, options)
+    )
 
-  fs.outputFileSync(outPath, code.replace(/new Buffer\(/g, 'Buffer.from('))
+    const buf = Buffer.from(code)
+    byte = buf.byteLength
+    // totalSize += buf.byteLength
 
-  if (assets) {
-    Object.keys(assets).forEach((fileName) => {
-      fs.outputFileSync(join(outPath, '..', fileName), assets[fileName].source)
-    })
+    const outPath = join(outDirPath, name, 'index.js')
+
+    fs.outputFileSync(outPath, code.replace(/new Buffer\(/g, 'Buffer.from('))
+
+    if (assets) {
+      Object.keys(assets).forEach((fileName) => {
+        fs.outputFileSync(join(outPath, '..', fileName), assets[fileName].source)
+      })
+    }
+    externals[name] = `@vitx/bundles/${outDir}/${name}`
+  } else {
+    fs.outputFileSync(join(outDirPath, packageName, 'index.js'), fs.readFileSync(packagePath))
+
+    const { size } = fs.statSync(packagePath)
+    byte = size
+    externals[packageName] = `@vitx/bundles/${outDir}/${packageName}`
   }
 
-  externals[name] = `@vitx/bundles/${outDir}/${name}`
-  spinner
-    .succeed(chalk.green('Success: ') + chalk.yellow(`${name} `) + sizeFilter(buf.byteLength))
-    .stop()
+  totalSize += byte
+  spinner.succeed(chalk.green('Success: ') + chalk.yellow(`${name} `) + sizeFilter(byte)).stop()
 }
 
 async function run() {

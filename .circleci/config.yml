@@ -18,6 +18,5 @@ jobs:
     steps:
       - checkout
       - run: yarn
-      - run: yarn compile
       - run: yarn test --forceExit --detectOpenHandles --runInBand --maxWorkers=2
       - run: bash <(curl -s https://codecov.io/bash)
