@@ -7,13 +7,13 @@ Simple transform tool
 ## Features
 
 - **支持** `TypeScript`
-- **支持** `lerna`
-- **支持** `babel` 或 `esbuild` 打包
+- **支持** `packages`
 - **支持** `cjs` 和 `esm`
 - **支持** 自定义 `Stream` 扩展, 支持 `gulp` 插件
 - **支持** sourcemap
 - **支持** 小程序编译
 - **支持** 增量编译
+- **支持** 支持`vue` 和 `react`
 
 ## Installation
 
@@ -54,13 +54,6 @@ export default {
 会自动读取 `tsconfig.json` 的 `compilerOptions` 的配置进行编译 `ts` or `tsx`, 如果是 `lerna` 项目, 也会继承外部 `tsconfig.json` 的 `compilerOptions` 的配置
 
 ### Options
-
-#### esBuild
-
-是否以 esBuild 打包
-
-- Type: `boolean`
-- Default: `false`
 
 #### moduleType
 

@@ -6,7 +6,6 @@ import { runCLI } from 'jest'
 export interface IVitxConfig {
   injectCss?: boolean
   packageDirName?: string
-  esBuild?: boolean
   moduleType?: 'esm' | 'cjs' | 'all'
   extraBabelPlugins?: any[]
   extraBabelPresets?: any[]

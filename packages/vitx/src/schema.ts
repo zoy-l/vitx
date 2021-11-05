@@ -16,7 +16,6 @@ export default Joi.object({
   entry: Joi.string(),
   output: Joi.string(),
   lessOptions: Joi.object(),
-  esBuild: Joi.boolean(),
   disableTypes: Joi.boolean(),
   beforeReadWriteStream: Joi.func(),
   afterReadWriteStream: Joi.func(),
