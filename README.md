@@ -27,15 +27,15 @@ $ yarn add vitx
 
 ```bash
 # Bundle library
-$ nerd build
+$ vitx build
 
 # Watch dev
-$ nerd build --watch
+$ vitx build --watch
 ```
 
 ## Config
 
-新建 `.nerdrc.js` or `.nerdrc.ts` 文件进行配置。
+新建 `.vitxrc.js` or `.vitxrc.ts` 文件进行配置。
 
 ```js
 import { IConfig } from 'vitx'
