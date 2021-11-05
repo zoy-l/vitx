@@ -27,6 +27,7 @@
     "clear:modules": "node ./scripts/removeSubNodeModules.js",
     "postinstall": "yarn clear:modules && yarn build:bundles-models && yarn build:vitx",
     "build:bundles-models": "cd ./packages/bundles && yarn compile",
-    "build:vitx": "cd ./packages/vitx && yarn compile"
+    "build:vitx": "cd ./packages/vitx && yarn compile",
+    "test": "cd ./packages/vitx && yarn test"
   }
 }
