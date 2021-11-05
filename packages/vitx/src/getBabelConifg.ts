@@ -11,8 +11,11 @@ export default function getBabelConfig(
     extraBabelPlugins = [],
     extraBabelPresets = [],
     disableTypes,
-    react
+    frame
   } = vitxConfig
+
+  const vue = frame === 'vue'
+  const react = frame === 'react'
 
   const defaultEnvConfig = {
     loose: true,
@@ -45,7 +48,7 @@ export default function getBabelConfig(
           ...defaultEnvConfig
         }
       ],
-      isBrowser && react && '@vitx/bundles/model/@babel/preset-react',
+      isBrowser && react && require.resolve('@vitx/bundles/model/@babel/preset-react'),
       ...extraBabelPresets
     ].filter(Boolean) as (string | any[])[],
     plugins: [
@@ -57,6 +60,8 @@ export default function getBabelConfig(
 
       require.resolve('@vitx/bundles/model/@babel/plugin-proposal-export-default-from'),
       require.resolve('@vitx/bundles/model/@babel/plugin-proposal-do-expressions'),
+
+      isBrowser && vue && require('@vitx/bundles/model/@vue/babel-plugin-jsx'),
 
       runtimeHelpers && [
         require.resolve('@vitx/bundles/model/@babel/plugin-transform-runtime'),

@@ -26,9 +26,8 @@ import type { IVitxConfig, IModes } from './types'
 import getBabelConfig from './getBabelConifg'
 import replaceAll from './replaceAll'
 
-const cache = {}
-
 const empty = () => {}
+const jsxIdent = '__vitx__jsx__file__'
 
 export function logger(output: string, mode: IModes) {
   return through.obj((file, _, cb) => {
@@ -60,9 +59,12 @@ export function modifySourcemap(sourcemap: IVitxConfig['sourcemap']) {
   return gulpIf((file) => !!sourcemap && !file.path.endsWith('.d.ts'), sourcemaps.write('.'))
 }
 
-export function enablefileCache() {
+export function enablefileCache(cache: Record<string, string>) {
   return through.obj((file, _, cb) => {
     cache[file.path] = file.contents.toString()
+    if (/\.(t|j)sx$/.test(file.basename)) {
+      file.contents = Buffer.from(`/*${jsxIdent}*/\n${cache[file.path]}`)
+    }
     cb(null, file)
   })
 }
@@ -89,7 +91,9 @@ export function compileLess(lessOptions: IVitxConfig['lessOptions']) {
 
 export function compileDeclaration(tsConfig: Record<string, any>) {
   return gulpIf(
-    (file) => tsConfig.compilerOptions.declaration && isTransform(/\.tsx?$/, file.path),
+    (file) => {
+      return tsConfig.compilerOptions.declaration && isTransform(/\.tsx?$/, file.path)
+    },
     glupTs(tsConfig.compilerOptions, {
       error: (err) => {
         console.log(`${chalk.red('➜ [Error]: ')}${err.message}`)
@@ -248,15 +252,13 @@ export function compileJsOrTs(
 
   let isBrowser = target === 'browser'
 
-  const babelConfig = getBabelConfig(config, isBrowser, mode)
-
   return gulpIf(
     (file: { path: string }) => isTransform(/\.(t|j)sx?$/, file.path),
-    through.obj((chunk, _enc, callback) => {
-      if (/\.(t|j)sx$/.test(chunk.path)) {
+    through.obj((file, _enc, callback) => {
+      if (/\.(t|j)sx$/.test(file.path) || new RegExp(jsxIdent).test(file.contents.toString())) {
         isBrowser = true
       } else {
-        const currentFilePath = path.relative(currentEntryPath, chunk.path)
+        const currentFilePath = path.relative(currentEntryPath, file.path)
 
         if (isBrowser && nodeFiles && nodeFiles.includes(currentFilePath)) {
           isBrowser = false
@@ -267,30 +269,31 @@ export function compileJsOrTs(
         }
       }
 
-      const babelFileResult: BabelFileResult = babelTransformSync(chunk.contents, {
+      const babelConfig = getBabelConfig(config, isBrowser, mode)
+      const babelFileResult: BabelFileResult = babelTransformSync(file.contents, {
         ...babelConfig,
-        filename: chunk.path,
+        filename: file.path,
         configFile: false,
         sourceMaps: sourcemap
       })!
 
       const replaceExtname = (file: string) => file.replace(path.extname(file), '.js')
-      chunk.contents = Buffer.from(babelFileResult.code ?? '')
+      file.contents = Buffer.from(babelFileResult.code ?? '')
 
-      if (chunk.sourceMap && sourcemap) {
+      if (file.sourceMap && sourcemap) {
         if (!Object.prototype.hasOwnProperty.call(babelFileResult.map, 'file')) {
           if (typeof babelFileResult.map === 'string') {
             babelFileResult.map = JSON.parse(babelFileResult.map ?? '{}')
-            babelFileResult.map!.sources = [path.basename(chunk.path)]
+            babelFileResult.map!.sources = [path.basename(file.path)]
           }
 
-          babelFileResult.map!.file = chunk.sourceMap.file
+          babelFileResult.map!.file = file.sourceMap.file
         }
-        require('@vitx/bundles/model/vinyl-sourcemaps-apply')(chunk, babelFileResult.map)
+        require('@vitx/bundles/model/vinyl-sourcemaps-apply')(file, babelFileResult.map)
       }
 
-      chunk.path = replaceExtname(chunk.path)
-      callback(null, chunk)
+      file.path = replaceExtname(file.path)
+      callback(null, file)
     })
   )
 }

@@ -21,9 +21,9 @@ export default Joi.object({
   beforeReadWriteStream: Joi.func(),
   afterReadWriteStream: Joi.func(),
   mountedReadWriteStream: Joi.func(),
-  react: Joi.boolean(),
   paths: Joi.object(),
   mapSources: Joi.func(),
   afterHook: Joi.func(),
-  sourcemap: Joi.boolean()
+  sourcemap: Joi.boolean(),
+  frame: Joi.string().valid('react', 'vue')
 })

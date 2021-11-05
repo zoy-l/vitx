@@ -142,6 +142,7 @@ const dependencies = [
   ['@babel/preset-typescript'],
   ['@babel/preset-env'],
   ['@babel/register'],
+  ['@vue/babel-plugin-jsx'],
   ['hash-sum', '@types/hash-sum'],
   ['chalk', 'self'],
   ['slash', 'self'],

@@ -3,8 +3,6 @@ import gulpIf from '@vitx/bundles/model/gulp-if'
 import type { Config } from '@jest/types'
 import { runCLI } from 'jest'
 
-export type IModes = 'cjs' | 'esm'
-
 export interface IVitxConfig {
   injectCss?: boolean
   packageDirName?: string
@@ -13,7 +11,7 @@ export interface IVitxConfig {
   extraBabelPlugins?: any[]
   extraBabelPresets?: any[]
   target?: 'node' | 'browser'
-  react?: boolean
+  frame?: 'react' | 'vue'
   browserFiles?: string[]
   nodeFiles?: string[]
   nodeVersion?: number
@@ -40,6 +38,8 @@ export interface IVitxConfig {
   }
   sourcemap?: boolean
 }
+
+export type IModes = 'cjs' | 'esm'
 
 export interface IBundleOpt extends IVitxConfig {
   entry: string

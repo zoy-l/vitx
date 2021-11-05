@@ -30,6 +30,8 @@ interface IBuildOptions {
   userConfig?: IVitxConfig
 }
 
+const cache = {}
+
 function compile(watch: boolean, currentDirPath: string, mode: IModes, currentConfig: IVitxConfig) {
   const {
     entry,
@@ -76,7 +78,7 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
       .src(patterns, { base: currentEntryPath, allowEmpty: true })
       .pipe(enableSourcemap(sourcemap))
       .pipe(enablePlumber(watch))
-      .pipe(enablefileCache())
+      .pipe(enablefileCache(cache))
       .pipe(compileVueSfc(injectCss))
       .pipe(compileLess(lessOptions))
       .pipe(applyBeforeHook(beforeReadWriteStream))
@@ -103,8 +105,6 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
             stabilityThreshold: 200
           }
         })
-
-        const cache = {}
 
         watcher.on('all', (evnet, fullEnterPath) => {
           console.log(`${chalk.blue(figures.info, evnet.charAt(0).toUpperCase() + evnet.slice(1))}`)
@@ -133,6 +133,9 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
 }
 
 export async function build(options: IBuildOptions) {
+  // process.on('uncaughtException', (err) => {
+  //   console.log(err)
+  // })
   const config = getConfig(options.cwd)
 
   async function run(currentPath: string, currentConfig: IVitxConfig) {
