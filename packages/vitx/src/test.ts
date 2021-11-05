@@ -20,7 +20,6 @@ export default async function (args: yargsParser.Arguments) {
   const cwd = args.cwd ?? process.cwd()
 
   const userJestConfigFiles = jestConfig.map((configName) => path.join(cwd, configName))
-
   const userJestConfig = userJestConfigFiles.find((configCwd) => fs.existsSync(configCwd))
 
   if (userJestConfig) {
@@ -40,4 +39,7 @@ export default async function (args: yargsParser.Arguments) {
   },[cwd])
 
   assert(result.results.success, `Test with jest failed`)
+
+  // prevents hangs
+  process.exit(0)
 }
