@@ -59,7 +59,4 @@ export default async function (args: yargsParser.Arguments) {
   },[cwd])
 
   assert(result.results.success, `Test with jest failed`)
-
-  // prevents hangs
-  process.exit(0)
 }

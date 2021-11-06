@@ -14,10 +14,6 @@
     "suppressImplicitAnyIndexErrors": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["packages/**/src"],
-  "exclude": [
-    "./node_modules",
-    "./packages/**/node_modules",
-    "./packages/**/fixtures"
-  ]
+  "include": ["packages/**/src", "packages/vitx/src/index.test.ts"],
+  "exclude": ["./node_modules", "./packages/**/node_modules", "./packages/**/fixtures"]
 }

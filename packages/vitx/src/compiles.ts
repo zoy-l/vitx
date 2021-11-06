@@ -62,6 +62,7 @@ export function modifySourcemap(sourcemap: IVitxConfig['sourcemap']) {
 export function enablefileCache(cache: Record<string, string>) {
   return through.obj((file, _, cb) => {
     cache[file.path] = file.contents.toString()
+
     if (/\.(t|j)sx$/.test(file.basename)) {
       file.contents = Buffer.from(`/*${jsxIdent}*/\n${cache[file.path]}`)
     }
@@ -245,13 +246,13 @@ export function compileVueSfc(injectCss: IVitxConfig['injectCss']) {
 
 export function compileJsOrTs(
   config: IVitxConfig,
-  options: { currentEntryPath: string; mode: IModes }
+  options: { currentEntryDirPath: string; mode: IModes }
 ) {
   return gulpIf(
     (file: { path: string }) => isTransform(/\.(t|j)sx?$/, file.path),
     through.obj((file, _, cb) => {
       const { sourcemap, target, nodeFiles, browserFiles } = config
-      const { currentEntryPath, mode } = options
+      const { currentEntryDirPath, mode } = options
 
       let isBrowser = target === 'browser'
 
@@ -261,7 +262,7 @@ export function compileJsOrTs(
       ) {
         isBrowser = true
       } else {
-        const currentFilePath = path.relative(currentEntryPath, file.path)
+        const currentFilePath = path.relative(currentEntryDirPath, file.path)
 
         if (isBrowser && nodeFiles && nodeFiles.includes(currentFilePath)) {
           isBrowser = false

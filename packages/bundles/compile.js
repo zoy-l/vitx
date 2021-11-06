@@ -3,8 +3,8 @@ const ncc = require('@vercel/ncc')
 const figures = require('figures')
 const rimraf = require('rimraf')
 const fs = require('fs-extra')
-const glob = require('glob')
 const chalk = require('chalk')
+const glob = require('glob')
 const ora = require('ora')
 
 const revise = require('./revise')
@@ -65,10 +65,8 @@ async function compileBundles(name, options = {}) {
 
     const buf = Buffer.from(code)
     byte = buf.byteLength
-    // totalSize += buf.byteLength
 
     const outPath = join(outDirPath, name, 'index.js')
-
     fs.outputFileSync(outPath, code.replace(/new Buffer\(/g, 'Buffer.from('))
 
     if (assets) {
@@ -135,12 +133,21 @@ async function run() {
   console.log(chalk.green(figures.tick + ' Package size: '), chalk.yellow(sizeFilter(totalSize)))
 }
 
+/**
+ * @description exclude packaged objects
+ */
 const externals = {
   typescript: 'typescript',
   'node-libs-browser': 'node-libs-browser',
   fsevents: 'fsevents'
 }
 
+/**
+ * @type {[string, string | 'self' | undefined]}
+ * @description describe packaging describe packaging,
+ * the first is the package name, support copy `copy:package:path`,
+ * the second place is the d.ts path
+ */
 const dependencies = [
   ['@babel/types'],
   ['@babel/code-frame'],

@@ -67,15 +67,15 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
 
   function createStream(options: {
     patterns: string | string[]
-    currentEntryPath: string
-    currentOutputPath: string
+    currentEntryDirPath: string
+    currentOutputDirPath: string
     mode: IModes
   }) {
-    const { patterns, currentEntryPath, currentOutputPath, mode } = options
-    const { tsConfig } = getTSConfig(currentEntryPath)
+    const { patterns, currentEntryDirPath, currentOutputDirPath, mode } = options
+    const { tsConfig } = getTSConfig(currentEntryDirPath)
 
     return vinylFs
-      .src(patterns, { base: currentEntryPath, allowEmpty: true })
+      .src(patterns, { base: currentEntryDirPath, allowEmpty: true })
       .pipe(enableSourcemap(sourcemap))
       .pipe(enablePlumber(watch))
       .pipe(enablefileCache(cache))
@@ -84,15 +84,20 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
       .pipe(applyBeforeHook(beforeReadWriteStream))
       .pipe(compileAlias(paths))
       .pipe(compileDeclaration(tsConfig))
-      .pipe(compileJsOrTs(currentConfig, { currentEntryPath, mode }))
+      .pipe(compileJsOrTs(currentConfig, { currentEntryDirPath, mode }))
       .pipe(applyAfterHook(afterReadWriteStream))
       .pipe(modifySourcemap(sourcemap))
       .pipe(logger(output, mode))
-      .pipe(vinylFs.dest(currentOutputPath))
+      .pipe(vinylFs.dest(currentOutputDirPath))
   }
 
   return new Promise<void>((resolve) => {
-    const streamOptions = { patterns, currentEntryPath, currentOutputPath, mode }
+    const streamOptions = {
+      patterns,
+      currentEntryDirPath: currentEntryPath,
+      currentOutputDirPath: currentOutputPath,
+      mode
+    }
     createStream(streamOptions).on('end', () => {
       afterHook && afterHook()
 
@@ -125,6 +130,14 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
             }
           }
         })
+
+        const exit = () => {
+          watcher.close()
+        }
+
+        process.once('SIGINT', exit)
+        process.once('SIGQUIT', exit)
+        process.once('SIGTERM', exit)
       }
 
       resolve()
@@ -133,9 +146,6 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
 }
 
 export async function build(options: IBuildOptions) {
-  // process.on('uncaughtException', (err) => {
-  //   console.log(err)
-  // })
   const config = getConfig(options.cwd)
 
   async function run(currentPath: string, currentConfig: IVitxConfig) {
@@ -170,6 +180,6 @@ export async function build(options: IBuildOptions) {
       await run(packagePath, { ...config, ...packageConfig })
     }
   } else {
-    run(options.cwd, config)
+    await run(options.cwd, config)
   }
 }

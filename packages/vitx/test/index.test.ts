@@ -4,7 +4,7 @@ import glob from 'glob'
 import path from 'path'
 import fs from 'fs'
 
-import { build } from './Build'
+import { build } from '../src/Build'
 
 const wait = () => new Promise((resolve) => setTimeout(resolve, 1500))
 jest.setTimeout(30000)
@@ -43,14 +43,13 @@ function moveEsLibToDist(cwd: string) {
 }
 
 describe('vitx build', () => {
-  const root = path.join(__dirname, '../fixtures')
-  const buildPath = path.join(root, 'build')
-  const watch = path.join(root, 'watch')
+  const root = path.join(__dirname, './fixtures')
 
-  fs.readdirSync(buildPath).forEach((dir) => {
-    const cwd = path.join(buildPath, dir)
+  fs.readdirSync(root)
+    .filter((dir) => !['config-error', 'build-watch'].includes(dir) && dir.charAt(0) !== '.')
+    .forEach((dir) => {
+      const cwd = path.join(root, dir)
 
-    if (dir.charAt(0) !== '.') {
       it(dir, (done) => {
         process.chdir(cwd)
         rimraf.sync(getPathActualed(cwd))
@@ -58,21 +57,6 @@ describe('vitx build', () => {
         build({ cwd })
           .then(() => {
             moveEsLibToDist(cwd)
-
-            if (fs.existsSync(path.join(cwd, 'lerna.json'))) {
-              mkdirSync(getPathActualed(cwd))
-              const pkgs = fs.readdirSync(path.join(cwd, 'packages'))
-              for (const pkg of pkgs) {
-                const pkgPath = path.join(cwd, 'packages', pkg)
-                if (fs.statSync(pkgPath).isDirectory()) {
-                  moveEsLibToDist(pkgPath)
-                  renameSync(
-                    getPathActualed(pkgPath),
-                    path.join(cwd, 'actualed', pkg.split('/').slice(-1).join(''))
-                  )
-                }
-              }
-            }
 
             try {
               assertBuildResult(cwd)
@@ -85,15 +69,16 @@ describe('vitx build', () => {
             done(err)
           })
       })
-    }
-  })
+    })
 
+  const rootWatch = path.join(__dirname, './fixtures/build-watch')
   const file = ['js', 'ts']
-  fs.readdirSync(watch).forEach((dir, index) => {
-    const cwd = path.join(watch, dir)
+
+  fs.readdirSync(rootWatch).forEach((dir, index) => {
+    const cwd = path.join(rootWatch, dir)
 
     if (dir.charAt(0) !== '.') {
-      it(dir, async (done) => {
+      it(dir, async () => {
         process.chdir(cwd)
         rimraf.sync(getPathActualed(cwd))
 
@@ -110,26 +95,21 @@ describe('vitx build', () => {
         await wait()
 
         moveEsLibToDist(cwd)
-        try {
-          assertBuildResult(cwd)
-          process.emit('SIGINT', 'SIGINT')
 
-          done()
-        } catch (err) {
-          done(err)
-        }
+        assertBuildResult(cwd)
+        process.emit('SIGINT', 'SIGINT')
       })
     }
   })
-})
 
-test('config error', async () => {
-  const root = path.join(__dirname, '../fixtures')
-  const errorConfig = path.join(root, 'error')
+  test('config error', async () => {
+    const root = path.join(__dirname, './fixtures')
+    const errorConfig = path.join(root, 'config-error')
 
-  rimraf.sync(getPathActualed(errorConfig))
+    rimraf.sync(getPathActualed(errorConfig))
 
-  await expect(build({ cwd: errorConfig })).rejects.toThrow(
-    'Invalid options in "moduleType" must be one of [esm, cjs, all]'
-  )
+    await expect(build({ cwd: errorConfig })).rejects.toThrow(
+      'Invalid options in "moduleType" must be one of [esm, cjs, all]'
+    )
+  })
 })

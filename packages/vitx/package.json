@@ -15,7 +15,8 @@
   "scripts": {
     "compile": "node --trace-deprecation -r ./compile.js ./src/cli.ts build",
     "compile:watch": "node -r ./compile.js ./src/cli.ts build --watch",
-    "test": "node ./lib/cli.js test --coverage",
+    "test": "node ./lib/cli.js test",
+    "test:coverage": "node ./lib/cli.js test --coverage",
     "clearCache": "node ./lib/cli.js test --clearCache",
     "debug": "node --inspect-brk bin/vitx.js build"
   },
