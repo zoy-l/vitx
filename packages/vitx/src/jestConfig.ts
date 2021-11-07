@@ -28,7 +28,7 @@ export default function defaultConfig(cwd: string, args: ITestArgs) {
     moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
     testMatch: [`${testMatchPrefix}**/?*.(${testMatchTypes.join('|')}).(j|t)s?(x)`],
     transform: {
-      '^.+\\.(j|t)sx?$': require.resolve('./ecma')
+      '^.+\\.(j|t)sx?$': require.resolve('./jestTransformer')
     },
     verbose: true
   }

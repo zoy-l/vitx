@@ -19,10 +19,10 @@ import {
   applyAfterHook,
   modifySourcemap,
   logger
-} from './compiles'
+} from './host'
 import type { IModes, IVitxConfig } from './types'
-import getTSConfig from './getTsConifg'
-import getConfig from './config'
+import getTSConfig from './getTypescriptConifg'
+import getConfig from './getUserConfig'
 
 interface IBuildOptions {
   cwd: string
@@ -30,6 +30,7 @@ interface IBuildOptions {
   userConfig?: IVitxConfig
 }
 
+const extSignals = ['SIGINT', 'SIGQUIT', 'SIGTERM']
 const cache = {}
 
 function compile(watch: boolean, currentDirPath: string, mode: IModes, currentConfig: IVitxConfig) {
@@ -39,7 +40,7 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
     moduleType,
     sourcemap,
     lessOptions,
-    paths,
+    alias,
     afterHook,
     beforeReadWriteStream,
     afterReadWriteStream,
@@ -82,7 +83,7 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
       .pipe(compileVueSfc(injectCss))
       .pipe(compileLess(lessOptions))
       .pipe(applyBeforeHook(beforeReadWriteStream))
-      .pipe(compileAlias(paths))
+      .pipe(compileAlias(alias))
       .pipe(compileDeclaration(tsConfig))
       .pipe(compileJsOrTs(currentConfig, { currentEntryDirPath, mode }))
       .pipe(applyAfterHook(afterReadWriteStream))
@@ -111,33 +112,43 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
           }
         })
 
-        watcher.on('all', (evnet, fullEnterPath) => {
-          console.log(`${chalk.blue(figures.info, evnet.charAt(0).toUpperCase() + evnet.slice(1))}`)
+        const eventLoger = (evnet: string, fullEnterPath: string) => {
+          console.log(
+            `${chalk.blue(
+              figures.info,
+              evnet.charAt(0).toUpperCase() + evnet.slice(1)
+            )} ${fullEnterPath.replace(currentDirPath, '').slice(1)}`
+          )
+        }
 
+        watcher.on('all', (evnet, fullEnterPath) => {
           if (!fs.existsSync(fullEnterPath)) {
+            eventLoger(evnet, fullEnterPath)
+
             const fullOutputPath = fullEnterPath.replace(entry, output)
 
             rimraf.sync(fullOutputPath.replace('.ts', '.js'))
             rimraf.sync(fullOutputPath.replace('.ts', '.d.ts'))
+
             return
           }
 
           if (fs.statSync(fullEnterPath).isFile()) {
             const content = fs.readFileSync(fullEnterPath, 'utf-8')
+
+            // Cache files to reduce unnecessary compilation
             if (cache[fullEnterPath] !== content) {
+              eventLoger(evnet, fullEnterPath)
               cache[fullEnterPath] = content
               createStream({ ...streamOptions, patterns: fullEnterPath })
             }
           }
         })
 
-        const exit = () => {
-          watcher.close()
-        }
-
-        process.once('SIGINT', exit)
-        process.once('SIGQUIT', exit)
-        process.once('SIGTERM', exit)
+        //  used for node api shutdown monitoring
+        extSignals.forEach((signal) => {
+          process.once(signal, () => watcher.close())
+        })
       }
 
       resolve()
@@ -145,6 +156,12 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
   })
 }
 
+/**
+ * @param {IBuildOptions} options - Node api startup parameters.
+ * @param {string} options.cwd - Root directory.
+ * @param {boolean} options.watch - Whether to enable monitoring.
+ * @param {IVitxConfig} options.userConfig - User configuration
+ */
 export async function build(options: IBuildOptions) {
   const config = getConfig(options.cwd)
 

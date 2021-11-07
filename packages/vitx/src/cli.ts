@@ -1,8 +1,8 @@
 import yargsParser from '@vitx/bundles/model/yargs-parser'
 import chalk from '@vitx/bundles/model/chalk'
 
-import { build } from './Build'
-import test from './test'
+import { build } from './compile'
+import test from './jestRun'
 
 const args = yargsParser(process.argv.slice(2))
 const commands = ['build', 'test']

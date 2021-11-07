@@ -24,7 +24,7 @@ import path from 'path'
 
 import type { IVitxConfig, IModes } from './types'
 import getBabelConfig from './getBabelConifg'
-import replaceAll from './replaceAll'
+import replaceAll from './alias'
 
 const empty = () => {}
 const jsxIdent = '__vitx__jsx__file__'
@@ -103,11 +103,11 @@ export function compileDeclaration(tsConfig: Record<string, any>) {
   )
 }
 
-export function compileAlias(paths: IVitxConfig['paths']) {
+export function compileAlias(alias: IVitxConfig['alias']) {
   return through.obj((file, _, cb) => {
-    const alias = { ...paths }
+    const _alias = { ...alias }
 
-    if (Object.keys(alias).length) {
+    if (Object.keys(_alias).length) {
       const dirname = path.dirname(file.path)
       const ext = path.extname(file.relative)
 
@@ -116,7 +116,7 @@ export function compileAlias(paths: IVitxConfig['paths']) {
           ext,
           contents: file.contents.toString(),
           dirname,
-          aliasMap: alias
+          aliasMap: _alias
         })
       )
     }

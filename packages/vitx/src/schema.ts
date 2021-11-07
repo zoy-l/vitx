@@ -20,7 +20,7 @@ export default Joi.object({
   beforeReadWriteStream: Joi.func(),
   afterReadWriteStream: Joi.func(),
   mountedReadWriteStream: Joi.func(),
-  paths: Joi.object(),
+  alias: Joi.object(),
   mapSources: Joi.func(),
   afterHook: Joi.func(),
   sourcemap: Joi.boolean(),

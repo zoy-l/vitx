@@ -28,7 +28,7 @@ export interface IVitxConfig {
   packages?: string[]
   entry: string
   output: string
-  paths?: Record<string, string>
+  alias?: Record<string, string>
   lessOptions?: {
     modifyVars?: Record<string, any>
     paths?: string[]

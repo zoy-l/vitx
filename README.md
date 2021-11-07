@@ -92,7 +92,7 @@ node 库 or browser 库，只作用于语法层。
 - Type: `boolean`
 - Default: `false`
 
-#### paths
+#### alias
 
 路径别名, 参考 `webpack` alias 参数, 支持大部分主流文件类型, 支持小程序
 
@@ -104,7 +104,7 @@ import path from 'path'
 const root = path.join(__dirname, './src')
 
 export default {
-  paths: {
+  alias: {
     '@': root,
     '@pkg': path.join(root, 'index'),
     '@utils': path.join(root, 'utils')

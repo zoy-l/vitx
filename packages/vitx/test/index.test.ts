@@ -4,7 +4,7 @@ import glob from 'glob'
 import path from 'path'
 import fs from 'fs'
 
-import { build } from '../src/Build'
+import { build } from '../src/compile'
 
 const wait = () => new Promise((resolve) => setTimeout(resolve, 1500))
 jest.setTimeout(30000)
