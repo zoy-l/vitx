@@ -2,7 +2,7 @@ import yargsParser from '@vitx/bundles/model/yargs-parser'
 import chalk from '@vitx/bundles/model/chalk'
 
 import { build } from './compile'
-import test from './jestRun'
+import jestRun from './jestRun'
 
 const args = yargsParser(process.argv.slice(2))
 const commands = ['build', 'test']
@@ -22,7 +22,7 @@ if (commands.includes(args._[0])) {
       logError(err)
     })
   } else if (command === 'test') {
-    test(args).catch((err) => {
+    jestRun(args).catch((err) => {
       logError(err)
     })
   } else {

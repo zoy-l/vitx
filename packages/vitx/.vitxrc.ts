@@ -1,4 +1,5 @@
 export default {
   moduleType: 'cjs',
-  target: 'node'
+  target: 'node',
+  frame: 'vue'
 }

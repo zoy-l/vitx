@@ -4,7 +4,7 @@ import fs from 'fs'
 import { registerBabel, isDefault } from './utils'
 import { IVitxConfig } from './types'
 
-import schema from './schema'
+import schema from './configSchema'
 
 export const CONFIG_FILES = <const>['.vitxrc.ts', '.vitxrc.js']
 
