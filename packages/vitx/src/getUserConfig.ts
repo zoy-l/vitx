@@ -6,20 +6,24 @@ import { IVitxConfig } from './types'
 
 import schema from './configSchema'
 
-export const CONFIG_FILES = <const>['.vitxrc.ts', '.vitxrc.js']
+export const configFileNames = <const>['.vitxrc.ts', '.vitxrc.js']
 
+/**
+ *
+ * @param cwd - config path
+ * @param isMergeDefault - Whether to initialize the value
+ * @returns {IVitxConfig}
+ */
 export default function (cwd: string, isMergeDefault = true): IVitxConfig {
-  const isTest = process.env.NODE_ENV === 'test'
-  const configFile = CONFIG_FILES.map((configName) => path.join(cwd, configName))
-
-  const userConfig = configFile.find((configCwd) => fs.existsSync(configCwd)) ?? ''
+  const configFile = configFileNames.map((configName) => path.join(cwd, configName))
+  const userConfig = configFile.find((configPath) => fs.existsSync(configPath))
 
   let config = {}
 
   if (userConfig) {
     // https://github.com/facebook/jest/issues/7864
     /* istanbul ignore next */
-    !isTest && registerBabel(userConfig)
+    process.env.NODE_ENV !== 'test' && registerBabel(userConfig)
     config = isDefault(require(userConfig))
 
     const { error } = schema.validate(config)
@@ -29,6 +33,7 @@ export default function (cwd: string, isMergeDefault = true): IVitxConfig {
     }
   }
 
+  // for multiple packages, only the config of the root directory is merged
   return isMergeDefault
     ? {
         entry: 'src',

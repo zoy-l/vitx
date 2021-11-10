@@ -67,6 +67,7 @@ async function compileBundles(name, options = {}) {
     byte = buf.byteLength
 
     const outPath = join(outDirPath, name, 'index.js')
+    // Replace the deprecated api in the package
     fs.outputFileSync(outPath, code.replace(/new Buffer\(/g, 'Buffer.from('))
 
     if (assets) {
