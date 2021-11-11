@@ -6,7 +6,6 @@ export default function getTSConfig(cwd: string) {
   const fileName = 'tsconfig.json'
 
   const readFile = (path: string) => fs.readFileSync(path, 'utf-8')
-
   const rootTsConfig = ts.readConfigFile(path.join(cwd, fileName), readFile)
 
   if (rootTsConfig.error) {

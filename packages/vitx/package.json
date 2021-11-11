@@ -1,6 +1,6 @@
 {
   "name": "vitx",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
@@ -21,7 +21,7 @@
     "debug": "node --inspect-brk bin/vitx.js build"
   },
   "dependencies": {
-    "@vitx/bundles": "2.0.0"
+    "@vitx/bundles": "2.0.1"
   },
   "peerDependencies": {
     "typescript": "4.x.x",
