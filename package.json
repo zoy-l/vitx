@@ -16,9 +16,10 @@
     "@vercel/ncc": "^0.31.1",
     "babel-jest": "27.3.1",
     "eslint": "^7.32.0",
-    "eslint-config-iroot": "^1.3.6",
+    "eslint-config-iroot": "^1.3.7",
     "husky": "^7.0.4",
     "jest": "27.3.1",
+    "prettier": "^2.4.1",
     "typescript": "^4.4.4"
   },
   "workspaces": [
@@ -30,6 +31,7 @@
     "postinstall": "yarn clear:modules && yarn build:bundles-models && yarn build:vitx",
     "build:bundles-models": "cd ./packages/bundles && yarn compile",
     "build:vitx": "cd ./packages/vitx && yarn compile",
-    "test": "cd ./packages/vitx && yarn test"
+    "test": "vitx test",
+    "test:coverage": "vitx test --coverage"
   }
 }
