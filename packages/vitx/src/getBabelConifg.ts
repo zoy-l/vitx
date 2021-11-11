@@ -1,9 +1,9 @@
-import type { IVitxConfig } from './types'
+import type { IVitxConfig, IModes } from './types'
 
 export default function getBabelConfig(
   vitxConfig: Omit<IVitxConfig, 'entry' | 'output'>,
   isBrowser: boolean,
-  moduleType: 'cjs' | 'esm'
+  moduleType: IModes
 ) {
   const {
     nodeVersion,

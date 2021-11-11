@@ -4,9 +4,6 @@
 import slash from '@vitx/bundles/model/slash'
 import path from 'path'
 
-type AliasMapType = Record<string, string>
-type GetRegExpReturn = (name: string) => RegExp
-
 const suffixPatten = `\\/|['"]|\\s*\\)`
 const prefixPattenMap = {
   js: `import\\s*[^'"]*\\(?|from|require\\s*\\(`,
@@ -24,7 +21,7 @@ function relative(from: string, to: string) {
   return !/^\./.test(relativePath) ? `./${relativePath}` : relativePath
 }
 
-function getRegExp(prefixPatten: string): GetRegExpReturn {
+function getRegExp(prefixPatten: string): (name: string) => RegExp {
   return function (aliasName) {
     return new RegExp(`(?:(${prefixPatten})\\s*['"]?\\s*)${aliasName}(${suffixPatten})`, 'gm')
   }
@@ -34,12 +31,12 @@ export default function replaceAll(options: {
   ext: string
   contents: string
   dirname: string
-  aliasMap: AliasMapType
+  aliasMap: Record<string, string>
 }) {
   const { ext, dirname, aliasMap } = options
   let { contents } = options
 
-  let reg: GetRegExpReturn
+  let reg: (name: string) => RegExp
   switch (ext) {
     case '.js':
     case '.ts':

@@ -23,12 +23,6 @@ import {
 import type { IModes, IVitxConfig } from './types'
 import getConfig from './getUserConfig'
 
-interface IBuildOptions {
-  cwd: string
-  watch?: boolean
-  userConfig?: IVitxConfig
-}
-
 const extSignals = ['SIGINT', 'SIGQUIT', 'SIGTERM']
 const cache = {}
 
@@ -155,12 +149,12 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
 }
 
 /**
- * @param {IBuildOptions} options - Node api startup parameters.
+ * @param {{ cwd: string; watch?: boolean; userConfig?: IVitxConfig }} options - Node api startup parameters.
  * @param {string} options.cwd - Root directory.
  * @param {boolean} options.watch - Whether to enable monitoring.
  * @param {IVitxConfig} options.userConfig - User configuration
  */
-export async function build(options: IBuildOptions) {
+export async function build(options: { cwd: string; watch?: boolean; userConfig?: IVitxConfig }) {
   const config = getConfig(options.cwd)
 
   async function run(currentPath: string, currentConfig: IVitxConfig) {

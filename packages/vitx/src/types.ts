@@ -121,12 +121,21 @@ export interface IVitxConfig {
   sourcemap?: boolean
 }
 
-export type IModes = 'cjs' | 'esm'
+/**
+ * The value of internal moduleType is always "esm" | "cjs"
+ */
+export type IModes = Exclude<Required<IVitxConfig>['moduleType'], 'all'>
 
+/**
+ * Jest run function Help type
+ */
 export type IArgsType<T extends (...args: any[]) => any> = T extends (...args: infer U) => any
   ? U
   : never
 
+/**
+ * Jest run function parameters
+ */
 export interface ITestArgs extends Partial<IArgsType<typeof runCLI>['0']> {
   version?: boolean
   cwd?: string
@@ -135,21 +144,33 @@ export interface ITestArgs extends Partial<IArgsType<typeof runCLI>['0']> {
   package?: string
 }
 
+/**
+ * Jest config function parameters
+ */
 export type IAnyConfig<T extends Record<string, any>, U extends Record<string, any>> = {
-  [V in keyof U]: V extends keyof T
-    ? U[V] extends (...args: any[]) => any
-      ? (argv: T[V]) => T[V]
-      : T[V]
-    : U[V]
+  [key in keyof U]: key extends keyof T
+    ? U[key] extends (...args: any[]) => any
+      ? (argv: T[key]) => T[key]
+      : T[key]
+    : U[key]
 }
 
-export type ICalculatedConfig<T extends Record<string, any>, U extends Record<string, any>> = T &
-  {
-    [V in keyof U]: V extends keyof T ? T[V] : U[V]
-  }
+/**
+ * Jest config Help type
+ */
+// prettier-ignore
+export type ICalculatedConfig<T extends Record<string, any>, U extends Record<string, any>> = T & {
+  [key in keyof U]: key extends keyof T ? T[key] : U[key]
+}
 
-export type IhandleConfig<T> = T extends Record<string, any>
+/**
+ * Jest config Help type
+ */
+export type IHandleConfig<T> = T extends Record<string, any>
   ? { [key in keyof T]: T[key] | ((value: T[key]) => T[key]) }
   : T
 
-export type jestConfig = IhandleConfig<Config.InitialOptions>
+/**
+ * Jest config
+ */
+export type jestConfig = IHandleConfig<Config.InitialOptions>
