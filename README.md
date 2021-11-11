@@ -6,14 +6,16 @@
 
 ## Features
 
-- **支持** `TypeScript`
-- **支持** `packages`
+- **支持** `typeScript`
+- **支持** 多目录编译
 - **支持** `cjs` 和 `esm`
-- **支持** 自定义 `Stream` 扩展, 支持 `gulp` 插件
-- **支持** sourcemap
+- **支持** 自定义 `stream` 扩展, 支持 `gulp` 插件
+- **支持** `sourcemap`
 - **支持** 小程序编译
 - **支持** 增量编译
-- **支持** 支持`vue` 和 `react`
+- **支持** 支持`vue` 和 `react` 文件编译
+- **支持** 支持`less`编译
+- **支持** 支持路径别名`alias`
 
 ## Installation
 
@@ -43,7 +45,7 @@ import { IConfig } from 'vitx'
 export default {
   moduleType: 'cjs',
   target: 'node',
-  paths: {
+  alias: {
     '@': './src'
   }
 } as IConfig
@@ -51,7 +53,7 @@ export default {
 
 ### tsconfig.json
 
-会自动读取 `tsconfig.json` 的 `compilerOptions` 的配置进行编译 `ts` or `tsx`, 如果是 `lerna` 项目, 也会继承外部 `tsconfig.json` 的 `compilerOptions` 的配置
+会自动读取 `tsconfig.json` 的 `compilerOptions` 的配置进行编译 `ts` or `tsx`
 
 ### Options
 
@@ -59,8 +61,10 @@ export default {
 
 输出格式,打包方式等
 
-- Type: `"cjs" | "esm"`
+- Type: `"cjs" | "esm" | "all" `
 - Default: `"esm"`
+
+`all` 会同时输出 `cjs` 和 `esm` 的格式文件
 
 #### extraBabelPresets
 
@@ -85,12 +89,12 @@ node 库 or browser 库，只作用于语法层。
 
 `node`，兼容到 node@6 `browser`，兼容到 `['last 2 versions', 'IE 10']`
 
-#### react
+#### frame
 
-支持 jsx or tsx
+支持`.vue`单文件编译及`vue jsx or tsx` (只支持 vue3) 支持`react jsx or tsx` 注意目前必须要指定框架
 
-- Type: `boolean`
-- Default: `false`
+- Type: `"vue" | "react"`
+- Default: ``
 
 #### alias
 
@@ -158,18 +162,14 @@ target 为 `browser` 时，配置例外文件走 `node` target。
 
 1. 会传入两个参数
    - `through2` https://github.com/rvagg/through2
-   - `insert` https://github.com/rschmukler/gulp-insert,
+   - `gulp-if` https://github.com/robrich/gulp-if,
 2. 可以直接使用 `gulp` 插件
 
 ```js
 export default {
-  beforeReadWriteStream({ through, insert }) {
+  beforeReadWriteStream({ through, gulpIf }) {
     return through.obj((chunk, _, cb) => {
       cb(null, chunk)
-    })
-
-    return insert.transform((content, file) => {
-      return content
     })
 
     return gulpLess()
@@ -188,40 +188,35 @@ export default {
 
 1. 会传入两个参数,
    - `through2` https://github.com/rvagg/through2
-   - `insert` https://github.com/rschmukler/gulp-insert,
+   - `gulp-if` https://github.com/robrich/gulp-if,
 2. 可以直接使用 `gulp` 插件
 
 ```js
 export default {
-  beforeReadWriteStream({ through, insert }) {
+  beforeReadWriteStream({ through, gulpIf }) {
     return through.obj((chunk, _, cb) => {
       cb(null, chunk)
-    })
-
-    return insert.transform((content, file) => {
-      return content
     })
   }
 }
 ```
 
-#### pkgs
+#### packages
 
-在 lerna 构建中，有可能出现组件间有构建先后的需求 `pkgs` 允许你自定义 packages 目录下的构建顺序, 当使用`pkgs`的时候没有在`pkgs`里面的目录不会进行编译
+在多目录构建中，有可能出现组件间有构建先后的需求 `packages` 允许你自定义 packages 目录下的构建顺序, 当使用`packages`的时候没有在`packages`里面的目录不会进行编译
 
 - Type: `string[]`
 - Default: `[]`
 
 ```js
 export default {
-  pkgs: ['packagesA', 'packagesB']
+  packages: ['packagesA', 'packagesB']
 }
 ```
 
 注:
 
-1. 如果是 lerna 项目,没有传 `pkgs` 全部目录将进行编译
-2. 子目录的配置文件会继承最外层的配置, tsconfig 也会继承
+1. 子目录的配置文件会继承最外层的配置
 
 #### entry
 
