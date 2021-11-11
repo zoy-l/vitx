@@ -7,7 +7,7 @@ import fs from 'fs'
 import { build } from '../src/compile'
 
 const wait = () => new Promise((resolve) => setTimeout(resolve, 1500))
-jest.setTimeout(30000)
+jest.setTimeout(300000)
 
 const getPathActualed = (cwd: string) => path.join(cwd, 'actualed')
 
