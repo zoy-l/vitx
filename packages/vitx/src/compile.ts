@@ -21,7 +21,6 @@ import {
   logger
 } from './host'
 import type { IModes, IVitxConfig } from './types'
-import getTSConfig from './getTypescriptConifg'
 import getConfig from './getUserConfig'
 
 interface IBuildOptions {
@@ -73,7 +72,6 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
     mode: IModes
   }) {
     const { patterns, currentEntryDirPath, currentOutputDirPath, mode } = options
-    const { tsConfig } = getTSConfig(currentEntryDirPath)
 
     return vinylFs
       .src(patterns, { base: currentEntryDirPath, allowEmpty: true })
@@ -84,7 +82,7 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
       .pipe(compileLess(lessOptions))
       .pipe(applyBeforeHook(beforeReadWriteStream))
       .pipe(compileAlias(alias))
-      .pipe(compileDeclaration(tsConfig))
+      .pipe(compileDeclaration(currentEntryDirPath))
       .pipe(compileJsOrTs(currentConfig, { currentEntryDirPath, mode }))
       .pipe(applyAfterHook(afterReadWriteStream))
       .pipe(modifySourcemap(sourcemap))

@@ -37,7 +37,7 @@ export default function getBabelConfig(
 
   return {
     presets: [
-      disableTypes && require.resolve('@vitx/bundles/model/@babel/preset-typescript'),
+      !disableTypes && require.resolve('@vitx/bundles/model/@babel/preset-typescript'),
       [
         require.resolve('@vitx/bundles/model/@babel/preset-env'),
         {

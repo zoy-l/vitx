@@ -11,7 +11,6 @@ import {
 } from '@vitx/bundles/model/@babel/core'
 import sourcemaps from '@vitx/bundles/model/gulp-sourcemaps'
 import gulpPlumber from '@vitx/bundles/model/gulp-plumber'
-import glupTs from '@vitx/bundles/model/gulp-typescript'
 import through from '@vitx/bundles/model/through2'
 import figures from '@vitx/bundles/model/figures'
 import gulpIf from '@vitx/bundles/model/gulp-if'
@@ -23,6 +22,7 @@ import Stream from 'stream'
 import path from 'path'
 
 import type { IVitxConfig, IModes } from './types'
+import getTSConfig from './getTypescriptConifg'
 import getBabelConfig from './getBabelConifg'
 import replaceAll from './alias'
 
@@ -90,17 +90,25 @@ export function compileLess(lessOptions: IVitxConfig['lessOptions']) {
   return gulpIf((file) => file.path.endsWith('.less'), less(lessOptions))
 }
 
-export function compileDeclaration(tsConfig: Record<string, any>) {
-  return gulpIf(
-    (file) => {
-      return tsConfig.compilerOptions.declaration && isTransform(/\.tsx?$/, file.path)
-    },
-    glupTs(tsConfig.compilerOptions, {
-      error: (err) => {
-        console.log(`${chalk.red('➜ [Error]: ')}${err.message}`)
-      }
-    })
-  )
+export function compileDeclaration(currentEntryDirPath: string) {
+  const { tsConfig, glupTs } = getTSConfig(currentEntryDirPath)
+
+  if (tsConfig) {
+    return gulpIf(
+      (file: { path: string }) => {
+        return tsConfig.compilerOptions.declaration && isTransform(/\.tsx?$/, file.path)
+      },
+      glupTs(tsConfig.compilerOptions, {
+        error: (err: { message: string }) => {
+          console.log(`${chalk.red('➜ [Error]: ')}${err.message}`)
+        }
+      })
+    )
+  }
+
+  return through.obj((file, _, cb) => {
+    cb(null, file)
+  })
 }
 
 export function compileAlias(alias: IVitxConfig['alias']) {
