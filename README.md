@@ -7,7 +7,7 @@
 ## Features
 
 - **支持** `typescript`
-- **支持** 多目录编译
+- **支持** 多目录`workspaces`编译
 - **支持** `cjs` 和 `esm`
 - **支持** 自定义 `stream` 扩展, 支持 `gulp` 插件
 - **支持** `sourcemap`
