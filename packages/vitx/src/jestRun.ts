@@ -4,7 +4,7 @@ import assert from 'assert'
 import path from 'path'
 import fs from 'fs'
 
-import { AnyConfig, CalculatedConfig } from './types'
+import { IAnyConfig, ICalculatedConfig } from './types'
 import { registerBabel, isDefault } from './utils'
 import defaultConfig from './jestConfig'
 
@@ -12,9 +12,9 @@ const jestConfig = ['jest.config.js', 'jest.config.ts']
 
 function mergeConfig<T extends Record<string, any>, U extends Record<string, any>>(
   defaultConfig: T,
-  ...configs: (AnyConfig<T, U> | null | undefined)[]
+  ...configs: (IAnyConfig<T, U> | null | undefined)[]
 ) {
-  const ret = { ...defaultConfig } as Partial<CalculatedConfig<T, U>>
+  const ret = { ...defaultConfig } as Partial<ICalculatedConfig<T, U>>
   configs.forEach((config) => {
     if (!config) return
     ;(Object.keys(config) as (keyof typeof config)[]).forEach((key) => {
@@ -22,11 +22,11 @@ function mergeConfig<T extends Record<string, any>, U extends Record<string, any
       if (typeof val === 'function') {
         ret[key] = val(ret[key])
       } else {
-        ret[key] = val as CalculatedConfig<T, U>[typeof key]
+        ret[key] = val as ICalculatedConfig<T, U>[typeof key]
       }
     })
   })
-  return ret as CalculatedConfig<T, U>
+  return ret as ICalculatedConfig<T, U>
 }
 
 export default async function (args: yargsParser.Arguments) {
