@@ -1,6 +1,6 @@
 {
   "root": true,
-  "extends": ["zmi/typescript"],
+  "extends": ["iroot/typescript"],
   "rules": {
     "no-restricted-syntax": "off",
     "global-require": "off",
