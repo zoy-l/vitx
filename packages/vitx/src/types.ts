@@ -7,7 +7,7 @@ export interface IVitxConfig {
   /**
    * Whether to inject css when compiling a single `.vue` file
    */
-  injectCss?: boolean
+  injectVueCss?: boolean
 
   /**
    * The directory name for multi-directory compilation is `packages` by default

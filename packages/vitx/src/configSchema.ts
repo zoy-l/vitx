@@ -1,7 +1,7 @@
 import Joi from '@vitx/bundles/model/joi'
 
 export default Joi.object({
-  injectCss: Joi.boolean(),
+  injectVueCss: Joi.boolean(),
   packageDirName: Joi.string(),
   packages: Joi.array().items(Joi.string()),
   nodeVersion: Joi.number(),

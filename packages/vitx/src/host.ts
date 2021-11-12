@@ -133,7 +133,7 @@ export function compileAlias(alias: IVitxConfig['alias']) {
   })
 }
 
-export function compileVueSfc(injectCss: IVitxConfig['injectCss']) {
+export function compileVueSfc(injectCss: IVitxConfig['injectVueCss']) {
   const EXT_REGEXP = /\.\w+$/
   const RENDER_FN = '__vue_render__'
   const VUEIDS = '__vue_sfc__'
