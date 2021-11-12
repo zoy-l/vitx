@@ -4,7 +4,7 @@ export default function getBabelConfig(
   vitxConfig: Omit<IVitxConfig, 'entry' | 'output'>,
   isBrowser: boolean,
   moduleType: IModes
-) {
+): { plugins: string[]; presets: string[] } {
   const {
     nodeVersion,
     runtimeHelpers,
@@ -50,7 +50,7 @@ export default function getBabelConfig(
       ],
       isBrowser && react && require.resolve('@vitx/bundles/model/@babel/preset-react'),
       ...extraBabelPresets
-    ].filter(Boolean) as (string | any[])[],
+    ].filter(Boolean),
     plugins: [
       moduleType === 'cjs' &&
         !isBrowser && [
@@ -71,6 +71,6 @@ export default function getBabelConfig(
         }
       ],
       ...extraBabelPlugins
-    ].filter(Boolean) as (string | any[])[]
+    ].filter(Boolean)
   }
 }
