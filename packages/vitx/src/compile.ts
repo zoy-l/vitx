@@ -76,7 +76,7 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
       .pipe(compileLess(lessOptions))
       .pipe(applyBeforeHook(beforeReadWriteStream))
       .pipe(compileAlias(alias))
-      .pipe(compileDeclaration(currentEntryDirPath))
+      .pipe(compileDeclaration(currentDirPath))
       .pipe(compileJsOrTs(currentConfig, { currentEntryDirPath, mode }))
       .pipe(applyAfterHook(afterReadWriteStream))
       .pipe(modifySourcemap(sourcemap))

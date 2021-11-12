@@ -90,8 +90,8 @@ export function compileLess(lessOptions: IVitxConfig['lessOptions']) {
   return gulpIf((file) => file.path.endsWith('.less'), less(lessOptions))
 }
 
-export function compileDeclaration(currentEntryDirPath: string) {
-  const { tsConfig, glupTs } = getTSConfig(currentEntryDirPath)
+export function compileDeclaration(currentDirPath: string) {
+  const { tsConfig, glupTs } = getTSConfig(currentDirPath)
 
   if (tsConfig) {
     return gulpIf(

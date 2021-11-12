@@ -12,7 +12,6 @@ export default function defaultConfig(cwd: string, args: ITestArgs): Config.Conf
   const testMatchPrefix = hasPackage ? `**/packages/${args.package}/` : ''
 
   return {
-    bail: 1,
     collectCoverageFrom: [
       'index.{js,jsx,ts,tsx}',
       hasSrc && 'src/**/*.{js,jsx,ts,tsx}',
