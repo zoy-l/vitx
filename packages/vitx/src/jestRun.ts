@@ -17,11 +17,7 @@ function mergeConfig(defaultConfig: Config.InitialOptions, config: IJestConfig) 
 
   Object.keys(config).forEach((key) => {
     const val = config[key]
-    if (typeof val === 'function') {
-      ret[key] = val(ret[key])
-    } else {
-      ret[key] = val
-    }
+    ret[key] = typeof val === 'function' ? val(ret[key]) : val
   })
 
   return ret
