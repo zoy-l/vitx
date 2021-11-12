@@ -14,6 +14,10 @@ jest.setTimeout(300000)
 
 const getPathActualed = (cwd: string) => path.join(cwd, 'actualed')
 
+function isDefault(obj: any) {
+  return obj.default ?? obj
+}
+
 function assertBuildResult(cwd: string) {
   const actualDir = getPathActualed(cwd)
   const expectDir = path.join(cwd, 'expected')
@@ -45,6 +49,7 @@ function moveEsLibToDist(cwd: string) {
   }
 }
 
+export const configFileNames = <const>['.vitxrc.ts', '.vitxrc.js']
 describe('vitx build', () => {
   const root = path.join(__dirname, './fixtures')
 
@@ -60,6 +65,25 @@ describe('vitx build', () => {
         build({ cwd })
           .then(() => {
             moveEsLibToDist(cwd)
+
+            const configFile = configFileNames.map((configName) => path.join(cwd, configName))
+            const userConfig = configFile.find((configPath) => fs.existsSync(configPath))
+            const config = isDefault(require(userConfig))
+
+            if (config.packages) {
+              mkdirSync(getPathActualed(cwd))
+              const pkgs = fs.readdirSync(path.join(cwd, 'packages'))
+              for (const pkg of pkgs) {
+                const pkgPath = path.join(cwd, 'packages', pkg)
+                if (fs.statSync(pkgPath).isDirectory()) {
+                  moveEsLibToDist(pkgPath)
+                  renameSync(
+                    getPathActualed(pkgPath),
+                    path.join(cwd, 'actualed', pkg.split('/').slice(-1).join(''))
+                  )
+                }
+              }
+            }
 
             try {
               assertBuildResult(cwd)
