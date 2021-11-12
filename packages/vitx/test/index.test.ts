@@ -3,7 +3,9 @@ import rimraf from 'rimraf'
 import glob from 'glob'
 import path from 'path'
 import fs from 'fs'
+import os from 'os'
 
+import { isDefault } from '../src/utils'
 import { build } from '../src/compile'
 
 const wait = () =>
@@ -13,10 +15,6 @@ const wait = () =>
 jest.setTimeout(300000)
 
 const getPathActualed = (cwd: string) => path.join(cwd, 'actualed')
-
-function isDefault(obj: any) {
-  return obj.default ?? obj
-}
 
 function assertBuildResult(cwd: string) {
   const actualDir = getPathActualed(cwd)
@@ -36,7 +34,9 @@ function assertBuildResult(cwd: string) {
     const actualFile = fs.readFileSync(path.join(actualDir, file), 'utf-8')
     const expectFile = fs.readFileSync(path.join(expectDir, file), 'utf-8')
 
-    expect(actualFile.trim()).toEqual(expectFile.trim())
+    expect(actualFile.trim().replace(/\r\n/g, '\n')).toEqual(
+      expectFile.trim().replace(/\r\n/g, '\n')
+    )
   })
 }
 
@@ -50,11 +50,18 @@ function moveEsLibToDist(cwd: string) {
 }
 
 export const configFileNames = <const>['.vitxrc.ts', '.vitxrc.js']
+const extras = ['config-error', 'build-watch', 'build-vue-css-scoped']
 describe('vitx build', () => {
   const root = path.join(__dirname, './fixtures')
 
+  if (os.type() === 'Windows_NT') {
+    extras.push('build-react-ts')
+  }
+
+  console.warn(extras)
+
   fs.readdirSync(root)
-    .filter((dir) => !['config-error', 'build-watch'].includes(dir) && dir.charAt(0) !== '.')
+    .filter((dir) => !extras.includes(dir) && dir.charAt(0) !== '.')
     .forEach((dir) => {
       const cwd = path.join(root, dir)
 
@@ -138,5 +145,15 @@ describe('vitx build', () => {
     await expect(build({ cwd: errorConfig })).rejects.toThrow(
       'Invalid options in "moduleType" must be one of [esm, cjs, all]'
     )
+  })
+
+  test('vue scoped', async () => {
+    const root = path.join(__dirname, './fixtures')
+    const cwd = path.join(root, 'build-vue-css-scoped')
+
+    await build({ cwd })
+
+    const vueSFC = isDefault(require(path.join(cwd, '/lib')))
+    expect(vueSFC.__scopeId).toMatch(/data-v-\d+/)
   })
 })

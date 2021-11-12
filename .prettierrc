@@ -4,6 +4,7 @@
   "printWidth": 100,
   "proseWrap": "never",
   "arrowParens": "always",
+  "endOfLine": "lf",
   "semi": false,
   "overrides": [
     {

@@ -35,6 +35,7 @@
     "build:bundles-models": "cd ./packages/bundles && yarn compile",
     "build:vitx": "cd ./packages/vitx && yarn compile",
     "test": "vitx test",
-    "test:coverage": "vitx test --coverage"
+    "test:coverage": "vitx test --coverage",
+    "lint": "eslint --fix --ext .ts,.js packages/"
   }
 }

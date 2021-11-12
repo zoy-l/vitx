@@ -6,7 +6,7 @@
 export default {}
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .root {
   &-box {
     color: #000;
