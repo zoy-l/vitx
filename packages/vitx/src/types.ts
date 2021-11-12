@@ -145,25 +145,6 @@ export interface ITestArgs extends Partial<IArgsType<typeof runCLI>['0']> {
 }
 
 /**
- * Jest config function parameters
- */
-export type IAnyConfig<T extends Record<string, any>, U extends Record<string, any>> = {
-  [key in keyof U]: key extends keyof T
-    ? U[key] extends (...args: any[]) => any
-      ? (argv: T[key]) => T[key]
-      : T[key]
-    : U[key]
-}
-
-/**
- * Jest config Help type
- */
-// prettier-ignore
-export type ICalculatedConfig<T extends Record<string, any>, U extends Record<string, any>> = T & {
-  [key in keyof U]: key extends keyof T ? T[key] : U[key]
-}
-
-/**
  * Jest config Help type
  */
 export type IHandleConfig<T> = T extends Record<string, any>
@@ -173,4 +154,4 @@ export type IHandleConfig<T> = T extends Record<string, any>
 /**
  * Jest config
  */
-export type jestConfig = IHandleConfig<Config.InitialOptions>
+export type IJestConfig = IHandleConfig<Config.InitialOptions>

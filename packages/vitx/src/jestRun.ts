@@ -1,32 +1,30 @@
 import yargsParser from '@vitx/bundles/model/yargs-parser'
+import type { Config } from '@jest/types'
 import { runCLI } from 'jest'
 import assert from 'assert'
 import path from 'path'
 import fs from 'fs'
 
-import { IAnyConfig, ICalculatedConfig } from './types'
 import { registerBabel, isDefault } from './utils'
 import defaultConfig from './jestConfig'
+import { IJestConfig } from './types'
 
 const jestConfig = ['jest.config.js', 'jest.config.ts']
 
-function mergeConfig<T extends Record<string, any>, U extends Record<string, any>>(
-  defaultConfig: T,
-  ...configs: (IAnyConfig<T, U> | null | undefined)[]
-) {
-  const ret = { ...defaultConfig } as Partial<ICalculatedConfig<T, U>>
-  configs.forEach((config) => {
-    if (!config) return
-    ;(Object.keys(config) as (keyof typeof config)[]).forEach((key) => {
-      const val = config[key]
-      if (typeof val === 'function') {
-        ret[key] = val(ret[key])
-      } else {
-        ret[key] = val as ICalculatedConfig<T, U>[typeof key]
-      }
-    })
+function mergeConfig(defaultConfig: Config.InitialOptions, config: IJestConfig) {
+  const ret = { ...defaultConfig }
+  if (!config) return
+
+  Object.keys(config).forEach((key) => {
+    const val = config[key]
+    if (typeof val === 'function') {
+      ret[key] = val(ret[key])
+    } else {
+      ret[key] = val
+    }
   })
-  return ret as ICalculatedConfig<T, U>
+
+  return ret
 }
 
 export default async function (args: yargsParser.Arguments) {

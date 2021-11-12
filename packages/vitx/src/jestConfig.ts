@@ -1,9 +1,10 @@
+import type { Config } from '@jest/types'
 import path from 'path'
 import fs from 'fs'
 
 import { ITestArgs } from './types'
 
-export default function defaultConfig(cwd: string, args: ITestArgs) {
+export default function defaultConfig(cwd: string, args: ITestArgs): Config.ConfigGlobals {
   const testMatchTypes = ['spec', 'test']
   const hasSrc = fs.existsSync(path.join(cwd, 'src'))
 
@@ -11,6 +12,7 @@ export default function defaultConfig(cwd: string, args: ITestArgs) {
   const testMatchPrefix = hasPackage ? `**/packages/${args.package}/` : ''
 
   return {
+    bail: 1,
     collectCoverageFrom: [
       'index.{js,jsx,ts,tsx}',
       hasSrc && 'src/**/*.{js,jsx,ts,tsx}',

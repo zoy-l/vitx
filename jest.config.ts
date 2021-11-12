@@ -1,6 +1,6 @@
-import { jestConfig } from 'vitx'
+import { IJestConfig } from 'vitx'
 
-export default <jestConfig>{
+export default <IJestConfig>{
   collectCoverageFrom(memo) {
     return memo.concat([
       '!packages/vitx/src/jestConfig.ts',
