@@ -58,8 +58,6 @@ describe('vitx build', () => {
     extras.push('build-react-ts')
   }
 
-  console.warn(extras)
-
   fs.readdirSync(root)
     .filter((dir) => !extras.includes(dir) && dir.charAt(0) !== '.')
     .forEach((dir) => {

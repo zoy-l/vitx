@@ -4608,8 +4608,8 @@ jest-circus@^27.3.1:
 
 jest-cli@^27.3.1:
   version "27.3.1"
-  resolved "https://registry.npmmirror.com/jest-cli/download/jest-cli-27.3.1.tgz#b576f9d146ba6643ce0a162d782b40152b6b1d16"
-  integrity sha1-tXb50Ua6ZkPOChYteCtAFStrHRY=
+  resolved "https://registry.yarnpkg.com/jest-cli/-/jest-cli-27.3.1.tgz#b576f9d146ba6643ce0a162d782b40152b6b1d16"
+  integrity sha512-WHnCqpfK+6EvT62me6WVs8NhtbjAS4/6vZJnk7/2+oOr50cwAzG4Wxt6RXX0hu6m1169ZGMlhYYUNeKBXCph/Q==
   dependencies:
     "@jest/core" "^27.3.1"
     "@jest/test-result" "^27.3.1"

@@ -131,7 +131,22 @@ async function run() {
     }
   }
 
+  getJestArgs()
+
   console.log(chalk.green(figures.tick + ' Package size: '), chalk.yellow(sizeFilter(totalSize)))
+}
+
+function getJestArgs() {
+  const value = require(join(require.resolve('jest-cli'), '../cli/args'))
+
+  fs.outputFileSync(
+    join(outDirPath, 'jestArgs/index.js'),
+    `module.exports = ${JSON.stringify(value.options)}`
+  )
+
+  fs.outputFileSync(join(outDirPath, 'jestArgs/index.d.ts'), `import('.')`)
+
+  console.log('The extraction was successful jest-args')
 }
 
 /**

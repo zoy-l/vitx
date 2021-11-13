@@ -137,8 +137,6 @@ export type IArgsType<T extends (...args: any[]) => any> = T extends (...args: i
  * Jest run function parameters
  */
 export interface ITestArgs extends Partial<IArgsType<typeof runCLI>['0']> {
-  version?: boolean
-  cwd?: string
   debug?: boolean
   e2e?: boolean
   package?: string

@@ -1,4 +1,5 @@
 import yargsParser from '@vitx/bundles/model/yargs-parser'
+import jestArgs from '@vitx/bundles/model/jestArgs'
 import type { Config } from '@jest/types'
 import { runCLI } from 'jest'
 import assert from 'assert'
@@ -23,6 +24,19 @@ function mergeConfig(defaultConfig: Config.InitialOptions, config: IJestConfig) 
   return ret
 }
 
+function formatArgs(args: yargsParser.Arguments) {
+  // Generate jest options
+  const argsConfig = Object.keys(jestArgs).reduce((prev, name) => {
+    if (args[name]) prev[name] = args[name]
+    // Convert alias args into real one
+    const { alias } = jestArgs[name]
+    if (alias && args[alias]) prev[name] = args[alias]
+    return prev
+  }, {})
+
+  return argsConfig
+}
+
 export default async function (args: yargsParser.Arguments) {
   try {
     require('babel-jest')
@@ -45,11 +59,15 @@ export default async function (args: yargsParser.Arguments) {
     isDefault(userJestConfig ? require(userJestConfig) : {})
   )
 
+  const argsConfig = formatArgs(args)
+
   // prettier-ignore
   // Run jest
   const result = await runCLI({
+    _: args._ || [],
+    $0: args.$0 || '',
     config: JSON.stringify(config),
-    ...args
+    ...argsConfig,
   },[cwd])
 
   assert(result.results.success, `Test with jest failed`)

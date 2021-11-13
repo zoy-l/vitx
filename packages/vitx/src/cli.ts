@@ -4,7 +4,12 @@ import chalk from '@vitx/bundles/model/chalk'
 import { build } from './compile'
 import jestRun from './jestRun'
 
-const args = yargsParser(process.argv.slice(2))
+const args = yargsParser(process.argv.slice(2), {
+  alias: {
+    watch: ['w']
+  },
+  boolean: ['coverage', 'watch', 'debug', 'e2e']
+})
 const commands = ['build', 'test']
 
 function logError(err: any) {
@@ -15,17 +20,15 @@ function logError(err: any) {
 if (commands.includes(args._[0])) {
   const command = args._[0]
 
+  console.log(args)
+
   if (command === 'build') {
     const watch = args.w ?? args.watch
     const cwd = process.cwd()
-    build({ cwd, watch }).catch((err) => {
-      logError(err)
-    })
+    build({ cwd, watch }).catch(logError)
   } else if (command === 'test') {
-    jestRun(args).catch((err) => {
-      logError(err)
-    })
+    jestRun(args).catch(logError)
   } else {
-    throw new Error(chalk.red(`Unknown command '${args._}'`))
+    throw new Error(chalk.red(`Unknown command '${command}'`))
   }
 }
