@@ -144,7 +144,7 @@ function getJestArgs() {
     `module.exports = ${JSON.stringify(value.options)}`
   )
 
-  fs.outputFileSync(join(outDirPath, 'jestArgs/index.d.ts'), `import('.')`)
+  fs.outputFileSync(join(outDirPath, 'jestArgs/index.d.ts'), `export = import('.')`)
 
   console.log('The extraction was successful jest-args')
 }

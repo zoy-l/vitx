@@ -20,8 +20,6 @@ function logError(err: any) {
 if (commands.includes(args._[0])) {
   const command = args._[0]
 
-  console.log(args)
-
   if (command === 'build') {
     const watch = args.w ?? args.watch
     const cwd = process.cwd()
