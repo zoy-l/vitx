@@ -37,7 +37,8 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
     afterHook,
     beforeReadWriteStream,
     afterReadWriteStream,
-    injectVueCss
+    injectVueCss,
+    disableTypes
   } = currentConfig
 
   const currentEntryPath = path.join(currentDirPath, entry)
@@ -76,7 +77,7 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
       .pipe(compileLess(lessOptions))
       .pipe(applyBeforeHook(beforeReadWriteStream))
       .pipe(compileAlias(alias))
-      .pipe(compileDeclaration(currentDirPath))
+      .pipe(compileDeclaration(currentDirPath, disableTypes))
       .pipe(compileJsOrTs(currentConfig, { currentEntryDirPath, mode }))
       .pipe(applyAfterHook(afterReadWriteStream))
       .pipe(modifySourcemap(sourcemap))

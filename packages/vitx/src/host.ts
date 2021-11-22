@@ -90,25 +90,21 @@ export function compileLess(lessOptions: IVitxConfig['lessOptions']) {
   return gulpIf((file) => file.path.endsWith('.less'), less(lessOptions))
 }
 
-export function compileDeclaration(currentDirPath: string) {
+export function compileDeclaration(currentDirPath: string, disableTypes?: boolean) {
   const { tsConfig, glupTs } = getTSConfig(currentDirPath)
 
-  if (tsConfig) {
-    return gulpIf(
-      (file: { path: string }) => {
-        return tsConfig.compilerOptions.declaration && isTransform(/\.tsx?$/, file.path)
-      },
-      glupTs(tsConfig.compilerOptions, {
-        error: (err: { message: string }) => {
-          console.log(`${chalk.red('➜ [Error]: ')}${err.message}`)
-        }
-      })
-    )
-  }
+  tsConfig.compilerOptions.declaration = !disableTypes
 
-  return through.obj((file, _, cb) => {
-    cb(null, file)
-  })
+  return gulpIf(
+    (file: { path: string }) => {
+      return tsConfig.compilerOptions.declaration && isTransform(/\.tsx?$/, file.path)
+    },
+    glupTs(tsConfig.compilerOptions, {
+      error: (err: { message: string }) => {
+        console.log(`${chalk.red('➜ [Error]: ')}${err.message}`)
+      }
+    })
+  )
 }
 
 export function compileAlias(alias: IVitxConfig['alias']) {
@@ -294,11 +290,6 @@ export function compileJsOrTs(
 
       if (file.sourceMap && sourcemap) {
         if (!Object.prototype.hasOwnProperty.call(babelFileResult.map, 'file')) {
-          if (typeof babelFileResult.map === 'string') {
-            babelFileResult.map = JSON.parse(babelFileResult.map ?? '{}')
-            babelFileResult.map!.sources = [path.basename(file.path)]
-          }
-
           babelFileResult.map!.file = file.sourceMap.file
         }
         require('@vitx/bundles/model/vinyl-sourcemaps-apply')(file, babelFileResult.map)

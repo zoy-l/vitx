@@ -12,7 +12,7 @@ const wait = () =>
   new Promise((resolve) => {
     setTimeout(resolve, 1500)
   })
-jest.setTimeout(300000)
+jest.setTimeout(100000)
 
 const getPathActualed = (cwd: string) => path.join(cwd, 'actualed')
 
@@ -50,7 +50,7 @@ function moveEsLibToDist(cwd: string) {
 }
 
 export const configFileNames = <const>['.vitxrc.ts', '.vitxrc.js']
-const extras = ['config-error', 'build-watch', 'build-vue-css-scoped']
+const extras = ['config-error', 'build-watch']
 describe('vitx build', () => {
   const root = path.join(__dirname, './fixtures')
 
@@ -69,6 +69,7 @@ describe('vitx build', () => {
 
         build({ cwd })
           .then(() => {
+            console.log(cwd)
             moveEsLibToDist(cwd)
 
             const configFile = configFileNames.map((configName) => path.join(cwd, configName))
@@ -98,6 +99,7 @@ describe('vitx build', () => {
             }
           })
           .catch((err) => {
+            console.log(err)
             done(err)
           })
       })

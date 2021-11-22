@@ -2,7 +2,7 @@ import slash from '@vitx/bundles/model/slash'
 import getBabelConfig from './getBabelConifg'
 
 export function registerBabel(only: string) {
-  const bebelConifg = getBabelConfig({ target: 'node' }, false, 'cjs')
+  const bebelConifg = getBabelConfig({ target: 'node', disableTypes: true }, false, 'cjs')
 
   require('@babel/register')({
     ...bebelConifg,

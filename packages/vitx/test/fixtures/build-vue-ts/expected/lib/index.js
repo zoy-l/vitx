@@ -1,6 +1,10 @@
-import { defineComponent } from 'vue';
+"use strict";
 
-var __vue_sfc__ = defineComponent({
+exports.__esModule = true;
+
+var vue_1 = require("vue");
+
+var __vue_sfc__ = (0, vue_1.defineComponent)({
   data: function data() {
     return {
       msg: 'hello vitx!'
@@ -14,4 +18,4 @@ var __vue_sfc__ = defineComponent({
 });
 
 __vue_sfc__.__file = 'index.vue';
-export default __vue_sfc__;
+exports["default"] = __vue_sfc__;

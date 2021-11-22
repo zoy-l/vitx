@@ -1,3 +1,2 @@
-/// <reference types="react" />
-declare function Foo(): JSX.Element;
+declare function Foo(): any;
 export default Foo;

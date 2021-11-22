@@ -4,8 +4,9 @@ export default class Com extends React.Component<{
 }, {
     age?: number;
 }> {
+    state: {};
     constructor(props: {
         name: string;
     });
-    render(): JSX.Element;
+    render(): any;
 }

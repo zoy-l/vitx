@@ -12,6 +12,9 @@ export default {
   mountedReadWriteStream({ through }) {
     return through.obj()
   },
+  afterHook() {
+    console.log('afterHook')
+  },
   mapSources(sourcesMap: (arg0: (path: any) => any) => any) {
     return sourcesMap((path: any) => {
       return path
