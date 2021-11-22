@@ -91,20 +91,25 @@ export function compileLess(lessOptions: IVitxConfig['lessOptions']) {
 }
 
 export function compileDeclaration(currentDirPath: string, disableTypes?: boolean) {
-  const { tsConfig, glupTs } = getTSConfig(currentDirPath)
+  const { tsConfig, gulpTs } = getTSConfig(currentDirPath)
 
-  tsConfig.compilerOptions.declaration = !disableTypes
+  // typescript may not be installed
+  if (tsConfig) {
+    tsConfig.compilerOptions.declaration = !disableTypes
 
-  return gulpIf(
-    (file: { path: string }) => {
-      return tsConfig.compilerOptions.declaration && isTransform(/\.tsx?$/, file.path)
-    },
-    glupTs(tsConfig.compilerOptions, {
-      error: (err: { message: string }) => {
-        console.log(`${chalk.red('➜ [Error]: ')}${err.message}`)
-      }
-    })
-  )
+    return gulpIf(
+      (file: { path: string }) => {
+        return tsConfig.compilerOptions.declaration && isTransform(/\.tsx?$/, file.path)
+      },
+      gulpTs(tsConfig.compilerOptions, {
+        error: (err: { message: string }) => {
+          console.log(`${chalk.red('➜ [Error]: ')}${err.message}`)
+        }
+      })
+    )
+  }
+
+  return through.obj((file, _, cb) => cb(null, file))
 }
 
 export function compileAlias(alias: IVitxConfig['alias']) {

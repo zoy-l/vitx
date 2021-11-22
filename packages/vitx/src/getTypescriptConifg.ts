@@ -3,7 +3,7 @@ import fs from 'fs'
 
 export default function getTSConfig(cwd: string) {
   try {
-    const glupTs = require('@vitx/bundles/model/gulp-typescript')
+    const gulpTs = require('@vitx/bundles/model/gulp-typescript')
     const ts = require('typescript')
     const fileName = 'tsconfig.json'
 
@@ -24,7 +24,7 @@ export default function getTSConfig(cwd: string) {
     return {
       tsConfig: rootTsConfig.config,
       error: rootTsConfig.error,
-      glupTs
+      gulpTs
     }
   } catch {
     return {}
