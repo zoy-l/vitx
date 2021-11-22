@@ -50,7 +50,7 @@ function moveEsLibToDist(cwd: string) {
 }
 
 export const configFileNames = <const>['.vitxrc.ts', '.vitxrc.js']
-const extras = ['config-error', 'build-watch']
+const extras = ['config-error', 'build-watch', 'build-vue-css-scoped']
 describe('vitx build', () => {
   const root = path.join(__dirname, './fixtures')
 
