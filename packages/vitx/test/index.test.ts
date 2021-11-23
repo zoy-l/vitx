@@ -50,7 +50,13 @@ function moveEsLibToDist(cwd: string) {
 }
 
 export const configFileNames = <const>['.vitxrc.ts', '.vitxrc.js']
-const extras = ['config-error', 'build-watch', 'build-vue-css-scoped']
+const extras = [
+  'config-error',
+  'build-watch',
+  'build-vue-css-scoped',
+  'build-entry',
+  'build-output'
+]
 describe('vitx build', () => {
   const root = path.join(__dirname, './fixtures')
 
@@ -69,7 +75,6 @@ describe('vitx build', () => {
 
         build({ cwd })
           .then(() => {
-            console.log(cwd)
             moveEsLibToDist(cwd)
 
             const configFile = configFileNames.map((configName) => path.join(cwd, configName))
@@ -77,10 +82,11 @@ describe('vitx build', () => {
             const config = isDefault(require(userConfig))
 
             if (config.packages) {
+              const packageDirName = config.packageDirName ?? 'packages'
               mkdirSync(getPathActualed(cwd))
-              const pkgs = fs.readdirSync(path.join(cwd, 'packages'))
+              const pkgs = fs.readdirSync(path.join(cwd, packageDirName))
               for (const pkg of pkgs) {
-                const pkgPath = path.join(cwd, 'packages', pkg)
+                const pkgPath = path.join(cwd, packageDirName, pkg)
                 if (fs.statSync(pkgPath).isDirectory()) {
                   moveEsLibToDist(pkgPath)
                   renameSync(
@@ -155,5 +161,27 @@ describe('vitx build', () => {
 
     const vueSFC = isDefault(require(path.join(cwd, '/lib')))
     expect(vueSFC.__scopeId).toMatch(/data-v-\d+/)
+  })
+
+  test('build entry', async () => {
+    const root = path.join(__dirname, './fixtures')
+    const cwd = path.join(root, 'build-entry')
+
+    await build({ cwd })
+
+    const dirs = fs.readdirSync(cwd)
+
+    expect(dirs.includes('lib')).toEqual(true)
+  })
+
+  test('build output', async () => {
+    const root = path.join(__dirname, './fixtures')
+    const cwd = path.join(root, 'build-output')
+
+    await build({ cwd })
+
+    const dirs = fs.readdirSync(cwd)
+
+    expect(dirs.includes('mo')).toEqual(true)
   })
 })

@@ -1,0 +1,1 @@
+var p1 = function p1() {};
