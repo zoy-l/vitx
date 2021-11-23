@@ -101,7 +101,7 @@ export function compileDeclaration(currentDirPath: string, disableTypes?: boolea
       (file: { path: string }) => {
         return tsConfig.compilerOptions.declaration && isTransform(/\.tsx?$/, file.path)
       },
-      gulpTs(tsConfig.compilerOptions, {
+      gulpTs!(tsConfig.compilerOptions, {
         error: (err: { message: string }) => {
           console.log(`${chalk.red('➜ [Error]: ')}${err.message}`)
         }
