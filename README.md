@@ -37,6 +37,9 @@ $ vitx build --watch
 ```
 
 ```bash
+
+$ yarn add jest -D
+
 # Bundle library
 $ vitx test
 
