@@ -46,6 +46,10 @@ function sizeFilter(byte) {
   return size + units[i]
 }
 
+/**
+ * @param {string} name
+ * @param {object} options
+ */
 async function compileBundles(name, options = {}) {
   const spinner = ora({
     color: 'white',
