@@ -1,0 +1,14 @@
+{
+  "name": "vitx-site",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "vite": "^2.6.14"
+  },
+  "devDependencies": {
+    "commander": "^8.3.0",
+    "vue": "^3.2.23",
+    "vue-router": "^4.0.12"
+  }
+}
