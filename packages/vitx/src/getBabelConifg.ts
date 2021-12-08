@@ -31,7 +31,7 @@ export default function getBabelConfig(
       'transform-modules-systemjs',
       'transform-modules-amd',
       'transform-literals',
-      !isBrowser && 'transform-regenerator'
+      'transform-regenerator'
     ].filter(Boolean)
   }
 

@@ -5,4 +5,4 @@ export default transformer.createTransformer!({
   ...getBabelConifg({ target: 'node', disableTypes: true }, false, 'cjs'),
   babelrc: false,
   configFile: false
-})
+}) as any

@@ -32,7 +32,7 @@ const jsxIdent = '__vitx__jsx__file__'
 export function logger(output: string, mode: IModes) {
   return through.obj((file, _, cb) => {
     if (!/d.ts/.test(file.path)) {
-      const ext = path.extname(file.path)
+      const ext = path.extname(file.path) || '/DIR'
 
       console.log(
         chalk.green(figures.tick),
@@ -61,7 +61,7 @@ export function modifySourcemap(sourcemap: IVitxConfig['sourcemap']) {
 
 export function enablefileCache(cache: Record<string, string>) {
   return through.obj((file, _, cb) => {
-    cache[file.path] = file.contents.toString()
+    cache[file.path] = file.contents?.toString()
 
     if (/\.(t|j)sx$/.test(file.basename)) {
       file.contents = Buffer.from(`/*${jsxIdent}*/\n${cache[file.path]}`)
@@ -134,7 +134,8 @@ export function compileAlias(alias: IVitxConfig['alias']) {
   })
 }
 
-export function compileVueSfc(injectCss: IVitxConfig['injectVueCss']) {
+export function compileVueSfc(frame: IVitxConfig['frame'], injectCss: IVitxConfig['injectVueCss']) {
+  const isVue = frame === 'vue'
   const EXT_REGEXP = /\.\w+$/
   const RENDER_FN = '__vue_render__'
   const VUEIDS = '__vue_sfc__'
@@ -248,8 +249,11 @@ export function compileVueSfc(injectCss: IVitxConfig['injectVueCss']) {
   }
 
   return gulpIf(
-    (file: { path: string }) => isTransform(/\.vue$/, file.path),
-    through.obj(transform)
+    (file: { path: string }) => isVue && isTransform(/\.vue$/, file.path),
+    through.obj(transform),
+    through.obj((file, _, cb) => {
+      cb(null, file)
+    })
   )
 }
 
