@@ -14,12 +14,12 @@ export default function getTSConfig(cwd: string) {
 
     const rootTsConfig = ts.readConfigFile(path.join(cwd, fileName), readFile)
 
-    if (rootTsConfig.error) {
+    if (rootTsConfig.error || !Object.keys(rootTsConfig.config.compilerOptions).length) {
       rootTsConfig.config.compilerOptions = {
         allowSyntheticDefaultImports: true,
         declaration: true,
         skipLibCheck: true,
-        module: 'esnext',
+        module: 'ES2015',
         target: 'esnext',
         moduleResolution: 'node'
       }

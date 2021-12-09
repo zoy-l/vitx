@@ -250,10 +250,7 @@ export function compileVueSfc(frame: IVitxConfig['frame'], injectCss: IVitxConfi
 
   return gulpIf(
     (file: { path: string }) => isVue && isTransform(/\.vue$/, file.path),
-    through.obj(transform),
-    through.obj((file, _, cb) => {
-      cb(null, file)
-    })
+    through.obj(transform)
   )
 }
 

@@ -14,6 +14,11 @@
     "suppressImplicitAnyIndexErrors": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["packages/**/src", "packages/vitx/src/index.test.ts", "packages/vitx/test/fixtures/build-vue-ts/tsx.tsx"],
+  "include": [
+    "packages/**/src",
+    "packages/vitx/src/index.test.ts",
+    "packages/vitx/test/fixtures/build-vue-ts/tsx.tsx",
+    "packages/vitx-site/tsconfig.json"
+  ],
   "exclude": ["./node_modules", "./packages/**/node_modules", "./packages/**/fixtures"]
 }
