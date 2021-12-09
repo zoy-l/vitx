@@ -3,5 +3,7 @@ node_modules
 coverage
 actualed
 
+
+/packages/vitx-site/lib
 /packages/bundles/model
 /packages/vitx/lib

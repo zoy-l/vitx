@@ -2,7 +2,12 @@ import { createRouter, createWebHashHistory } from 'vue-router'
 
 export const router = createRouter({
   history: createWebHashHistory(),
-  routes: [],
+  routes: [
+    {
+      path: '/',
+      redirect: '/login'
+    }
+  ],
   scrollBehavior(to) {
     if (to.hash) {
       return { el: to.hash }

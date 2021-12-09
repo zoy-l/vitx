@@ -4,7 +4,6 @@
 </script>
 
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
   <div>hello vitx-site</div>
 </template>
 

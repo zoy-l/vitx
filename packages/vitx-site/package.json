@@ -5,7 +5,8 @@
   "type": "module",
   "license": "MIT",
   "scripts": {
-    "dev": "vitx build --watch"
+    "compile": "vitx build --watch",
+    "run:vue-site": "node ./lib/compiler/compile-site-vue.js"
   },
   "dependencies": {
     "@vitejs/plugin-vue": "^1.10.2",
