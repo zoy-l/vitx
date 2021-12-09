@@ -134,8 +134,7 @@ export function compileAlias(alias: IVitxConfig['alias']) {
   })
 }
 
-export function compileVueSfc(frame: IVitxConfig['frame'], injectCss: IVitxConfig['injectVueCss']) {
-  const isVue = frame === 'vue'
+export function compileVueSfc(injectCss: IVitxConfig['injectVueCss']) {
   const EXT_REGEXP = /\.\w+$/
   const RENDER_FN = '__vue_render__'
   const VUEIDS = '__vue_sfc__'
@@ -249,7 +248,7 @@ export function compileVueSfc(frame: IVitxConfig['frame'], injectCss: IVitxConfi
   }
 
   return gulpIf(
-    (file: { path: string }) => isVue && isTransform(/\.vue$/, file.path),
+    (file: { path: string }) => isTransform(/\.vue$/, file.path),
     through.obj(transform)
   )
 }

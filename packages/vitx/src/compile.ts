@@ -38,7 +38,6 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
     beforeReadWriteStream,
     afterReadWriteStream,
     injectVueCss,
-    frame,
     disableTypes
   } = currentConfig
 
@@ -74,7 +73,7 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
       .pipe(enableSourcemap(sourcemap))
       .pipe(enablePlumber(watch))
       .pipe(enablefileCache(cache))
-      .pipe(compileVueSfc(frame, injectVueCss))
+      .pipe(compileVueSfc(injectVueCss))
       .pipe(compileLess(lessOptions))
       .pipe(applyBeforeHook(beforeReadWriteStream))
       .pipe(compileAlias(alias))

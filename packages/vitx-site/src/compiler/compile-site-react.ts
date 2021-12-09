@@ -7,7 +7,7 @@ export async function compileSite() {
   const cwd = process.cwd()
 
   const server = await createServer({
-    root: path.join(cwd, 'lib/template/react'),
+    root: path.join(cwd, 'template/react'),
 
     plugins: [vitePluginReact({})]
   })
