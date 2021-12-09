@@ -3,9 +3,7 @@ import vitePluginReact from '@vitejs/plugin-react'
 import { createServer } from 'vite'
 import path from 'path'
 
-export async function compileSite() {
-  const cwd = process.cwd()
-
+export default async function compileSiteReact(cwd: string) {
   const server = await createServer({
     root: path.join(cwd, 'template/react'),
 
@@ -15,5 +13,3 @@ export async function compileSite() {
   await server.listen()
   server.printUrls()
 }
-
-compileSite()

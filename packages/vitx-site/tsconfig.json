@@ -3,7 +3,7 @@
     "allowSyntheticDefaultImports": true,
     "declaration": true,
     "skipLibCheck": true,
-    "module": "ES2015",
+    "module": "es2020",
     "target": "esnext",
     "moduleResolution": "node"
   }

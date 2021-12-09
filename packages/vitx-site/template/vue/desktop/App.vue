@@ -4,7 +4,7 @@
 </script>
 
 <template>
-  <div>hello vitx-site</div>
+  <div>hello vitx-site1</div>
 </template>
 
 <style>

@@ -3,9 +3,7 @@ import vitePluginVue from '@vitejs/plugin-vue'
 import { createServer } from 'vite'
 import path from 'path'
 
-export async function compileSite() {
-  const cwd = process.cwd()
-
+export default async function compileSiteVue(cwd: string) {
   const server = await createServer({
     root: path.join(cwd, 'template/vue'),
 
@@ -20,5 +18,3 @@ export async function compileSite() {
   await server.listen()
   server.printUrls()
 }
-
-compileSite()
