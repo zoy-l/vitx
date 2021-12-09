@@ -4,9 +4,12 @@
   "main": "index.js",
   "type": "module",
   "license": "MIT",
+  "bin": {
+    "vitx-site": "./bin/vitx-site.js"
+  },
   "scripts": {
     "compile": "vitx build --watch",
-    "run:vue-site": "node ./lib/compiler/compile-site-vue.js"
+    "run:vue-site": "vitx-site build --vue"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^1.1.1",
