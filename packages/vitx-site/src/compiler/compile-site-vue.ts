@@ -1,7 +1,7 @@
-// import vitePluginJsx from '@vitejs/plugin-vue-jsx'
+import vitePluginJsx from '@vitejs/plugin-vue-jsx'
 import vitePluginVue from '@vitejs/plugin-vue'
 import { createServer } from 'vite'
-import * as path from 'path'
+import path from 'path'
 
 export async function compileSite() {
   const cwd = process.cwd()
@@ -12,8 +12,8 @@ export async function compileSite() {
     plugins: [
       vitePluginVue({
         include: [/\.vue$/, /\.md$/]
-      })
-      // vitePluginJsx()
+      }),
+      vitePluginJsx()
     ]
   })
 

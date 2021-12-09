@@ -989,6 +989,20 @@
   dependencies:
     "@babel/plugin-transform-react-jsx" "^7.16.0"
 
+"@babel/plugin-transform-react-jsx-self@^7.16.0":
+  version "7.16.0"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx-self/-/plugin-transform-react-jsx-self-7.16.0.tgz#09202158abbc716a08330f392bfb98d6b9acfa0c"
+  integrity sha512-97yCFY+2GvniqOThOSjPor8xUoDiQ0STVWAQMl3pjhJoFVe5DuXDLZCRSZxu9clx+oRCbTiXGgKEG/Yoyo6Y+w==
+  dependencies:
+    "@babel/helper-plugin-utils" "^7.14.5"
+
+"@babel/plugin-transform-react-jsx-source@^7.16.0":
+  version "7.16.0"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx-source/-/plugin-transform-react-jsx-source-7.16.0.tgz#d40c959d7803aae38224594585748693e84c0a22"
+  integrity sha512-8yvbGGrHOeb/oyPc9tzNoe9/lmIjz3HLa9Nc5dMGDyNpGjfFrk8D2KdEq9NRkftZzeoQEW6yPQ29TMZtrLiUUA==
+  dependencies:
+    "@babel/helper-plugin-utils" "^7.14.5"
+
 "@babel/plugin-transform-react-jsx@^7.16.0":
   version "7.16.0"
   resolved "https://registry.yarnpkg.com/@babel/plugin-transform-react-jsx/-/plugin-transform-react-jsx-7.16.0.tgz#55b797d4960c3de04e07ad1c0476e2bc6a4889f1"
@@ -1964,6 +1978,27 @@
   resolved "https://registry.npmmirror.com/@types/prettier/download/@types/prettier-2.4.1.tgz#e1303048d5389563e130f5bdd89d37a99acb75eb"
   integrity sha1-4TAwSNU4lWPhMPW92J03qZrLdes=
 
+"@types/prop-types@*":
+  version "15.7.4"
+  resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.4.tgz#fcf7205c25dff795ee79af1e30da2c9790808f11"
+  integrity sha512-rZ5drC/jWjrArrS8BR6SIr4cWpW09RNTYt9AMZo3Jwwif+iacXAqgVjm0B0Bv/S1jhDXKHqRVNCbACkJ89RAnQ==
+
+"@types/react-dom@^17.0.11":
+  version "17.0.11"
+  resolved "https://registry.yarnpkg.com/@types/react-dom/-/react-dom-17.0.11.tgz#e1eadc3c5e86bdb5f7684e00274ae228e7bcc466"
+  integrity sha512-f96K3k+24RaLGVu/Y2Ng3e1EbZ8/cVJvypZWd7cy0ofCBaf2lcM46xNhycMZ2xGwbBjRql7hOlZ+e2WlJ5MH3Q==
+  dependencies:
+    "@types/react" "*"
+
+"@types/react@*", "@types/react@^17.0.37":
+  version "17.0.37"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-17.0.37.tgz#6884d0aa402605935c397ae689deed115caad959"
+  integrity sha512-2FS1oTqBGcH/s0E+CjrCCR9+JMpsu9b69RTFO+40ua43ZqP5MmQ4iUde/dMjWR909KxZwmOQIFq6AV6NjEG5xg==
+  dependencies:
+    "@types/prop-types" "*"
+    "@types/scheduler" "*"
+    csstype "^3.0.2"
+
 "@types/rimraf@^3.0.2":
   version "3.0.2"
   resolved "https://registry.yarnpkg.com/@types/rimraf/-/rimraf-3.0.2.tgz#a63d175b331748e5220ad48c901d7bbf1f44eef8"
@@ -1971,6 +2006,11 @@
   dependencies:
     "@types/glob" "*"
     "@types/node" "*"
+
+"@types/scheduler@*":
+  version "0.16.2"
+  resolved "https://registry.yarnpkg.com/@types/scheduler/-/scheduler-0.16.2.tgz#1a62f89525723dde24ba1b01b092bf5df8ad4d39"
+  integrity sha512-hppQEBDmlwhFAXKJX2KnWLYu5yMfi91yazPb2l+lbJiwW+wdo1gNeRA+3RgNSO39WYX2euey41KEwnqesU2Jew==
 
 "@types/stack-utils@^2.0.0":
   version "2.0.1"
@@ -2087,6 +2127,20 @@
   version "0.33.0"
   resolved "https://registry.npmmirror.com/@vercel/ncc/download/@vercel/ncc-0.33.0.tgz#538d73ad4be1b259830d249d83f857432edd8967"
   integrity sha512-m21HzXD+L/YHoJTwyCCyGBXD0O2L4KR/Y6SSsS4qvRlz3NAYsiiYahzOsgfWEt4PJxpPVCMGiuWzsvb2tycmyA==
+
+"@vitejs/plugin-react@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@vitejs/plugin-react/-/plugin-react-1.1.1.tgz#5a242c64fa0a588e5b203938e5bd6d05fa25edf2"
+  integrity sha512-IJSRD4culdwQ6cRK0D1mstV1vdvYSb2HK1JQ1FDo6Hr7j5ppWJEwBC2v/Gy0h/A1lMmi4AnXACY/d10EgbQNEA==
+  dependencies:
+    "@babel/core" "^7.16.0"
+    "@babel/plugin-transform-react-jsx" "^7.16.0"
+    "@babel/plugin-transform-react-jsx-development" "^7.16.0"
+    "@babel/plugin-transform-react-jsx-self" "^7.16.0"
+    "@babel/plugin-transform-react-jsx-source" "^7.16.0"
+    "@rollup/pluginutils" "^4.1.1"
+    react-refresh "^0.11.0"
+    resolve "^1.20.0"
 
 "@vitejs/plugin-vue-jsx@^1.3.1":
   version "1.3.1"
@@ -3258,6 +3312,11 @@ csstype@^2.6.8:
   version "2.6.18"
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-2.6.18.tgz#980a8b53085f34af313410af064f2bd241784218"
   integrity sha512-RSU6Hyeg14am3Ah4VZEmeX8H7kLwEEirXe6aU2IPfKNvhXwTflK5HQRDNI0ypQXoqmm+QPyG2IaPuQE5zMwSIQ==
+
+csstype@^3.0.2:
+  version "3.0.10"
+  resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.0.10.tgz#2ad3a7bed70f35b965707c092e5f30b327c290e5"
+  integrity sha512-2u44ZG2OcNUO9HDp/Jl8C07x6pU/eTR3ncV91SiK3dhG9TWvRVsCoJw14Ckx5DgWkzGA3waZWO3d7pgqpUI/XA==
 
 d@1, d@^1.0.1:
   version "1.0.1"
@@ -6466,10 +6525,24 @@ quick-lru@^4.0.1:
   resolved "https://registry.yarnpkg.com/quick-lru/-/quick-lru-4.0.1.tgz#5b8878f113a58217848c6482026c73e1ba57727f"
   integrity sha512-ARhCpm70fzdcvNQfPoy49IaanKkTlRWF2JMzqhcJbhSFRZv7nPTvZJdcY7301IPmvW+/p0RgIWnQDLJxifsQ7g==
 
+react-dom@^17.0.2:
+  version "17.0.2"
+  resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-17.0.2.tgz#ecffb6845e3ad8dbfcdc498f0d0a939736502c23"
+  integrity sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA==
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
+    scheduler "^0.20.2"
+
 react-is@^17.0.1:
   version "17.0.2"
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.2.tgz#e691d4a8e9c789365655539ab372762b0efb54f0"
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
+
+react-refresh@^0.11.0:
+  version "0.11.0"
+  resolved "https://registry.yarnpkg.com/react-refresh/-/react-refresh-0.11.0.tgz#77198b944733f0f1f1a90e791de4541f9f074046"
+  integrity sha512-F27qZr8uUqwhWZboondsPx8tnC3Ct3SxZA3V5WyEvujRyyNv0VYPhoBg1gZ8/MV5tubQp76Trw8lTv9hzRBa+A==
 
 react@^17.0.2:
   version "17.0.2"
@@ -6749,6 +6822,14 @@ saxes@^5.0.1:
   integrity sha512-5LBh1Tls8c9xgGjw3QrMwETmTMVk0oFgvrFSvWx62llR2hcEInrKNZ2GZCCuuy2lvWrdl5jhbpeqc5hRYKFOcw==
   dependencies:
     xmlchars "^2.2.0"
+
+scheduler@^0.20.2:
+  version "0.20.2"
+  resolved "https://registry.yarnpkg.com/scheduler/-/scheduler-0.20.2.tgz#4baee39436e34aa93b4874bddcbf0fe8b8b50e91"
+  integrity sha512-2eWfGgAqqWFGqtdMmcL5zCMK1U8KlXv8SQFGglL3CEtd0aDVDWgeF/YoCmvln55m5zSk3J/20hTaSBeSObsQDQ==
+  dependencies:
+    loose-envify "^1.1.0"
+    object-assign "^4.1.1"
 
 "semver@2 || 3 || 4 || 5", semver@^5.6.0:
   version "5.7.1"
