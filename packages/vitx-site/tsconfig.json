@@ -5,6 +5,8 @@
     "skipLibCheck": true,
     "module": "es2020",
     "target": "esnext",
-    "moduleResolution": "node"
-  }
+    "moduleResolution": "node",
+    "allowJs": true
+  },
+  "exclude": ["bin/*", "lib/*", "template/**/*.js"]
 }

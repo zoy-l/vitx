@@ -6,6 +6,7 @@ import type { PluginOption } from 'vite'
 import { createServer } from 'vite'
 import path from 'path'
 
+import { siteTemplateCommon } from './constants'
 import { IFrame } from './types'
 
 export function createSiteServer(options: { cwd: string; frame: IFrame }) {
@@ -42,6 +43,11 @@ export function createSiteServer(options: { cwd: string; frame: IFrame }) {
     plugins,
     server: {
       host: true
+    },
+    resolve: {
+      alias: {
+        'vitx-site-common': siteTemplateCommon
+      }
     }
   })
 }
