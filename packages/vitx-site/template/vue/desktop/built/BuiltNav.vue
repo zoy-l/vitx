@@ -7,15 +7,15 @@ const navConfig = reactive([
     items: [
       {
         path: 'home',
-        title: '介绍',
-      },
-    ],
+        title: '介绍'
+      }
+    ]
   }
 ])
 
 const itemName = computed(() => (item) => {
-  const name = (item.title || item.name).split(' ');
-  return `${name[0]} <span>${name.slice(1).join(' ')}</span>`;
+  const name = (item.title || item.name).split(' ')
+  return `${name[0]} <span>${name.slice(1).join(' ')}</span>`
 })
 </script>
 
@@ -42,16 +42,35 @@ const itemName = computed(() => (item) => {
 <style lang="less">
 .vitx-built-nav {
   position: fixed;
-  width: 250px;
-  left: 0;
+  width: var(--vitx-built-nav-width);
   z-index: 1;
-  overflow-y: scroll;
+  left: 0;
+  top: var(--vitx-built-header-height);
+  bottom: 0;
   height: 100%;
+  overflow-y: scroll;
+  padding: 10px;
+  box-sizing: border-box;
   border-right: thin solid var(--vitx-built-border-color);
+
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    background-color: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    border-radius: 6px;
+  }
+
+  &:hover::-webkit-scrollbar-thumb {
+    background-color: rgba(69, 90, 100, 0.2);
+  }
 
   &__title {
     padding: 8px 0 8px var(--vitx-built-padding);
-    color: #455a64;
+    color: #7f8e9d;
     font-weight: 600;
     font-size: 15px;
     line-height: 28px;
@@ -62,7 +81,7 @@ const itemName = computed(() => (item) => {
       display: block;
       margin: 8px 0;
       padding: 8px 0 8px var(--vitx-built-padding);
-      color: #455a64;
+      color: #46505a;
       font-size: 14px;
       font-weight: 500;
       line-height: 20px;
@@ -71,7 +90,8 @@ const itemName = computed(() => (item) => {
       &:hover,
       &.active {
         color: #20262d;
-        background-color: #f3f6f9;
+        background-color: rgb(243, 246, 249);
+        border-radius: 6px;
       }
 
       &.active {
