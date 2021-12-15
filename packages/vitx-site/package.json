@@ -9,8 +9,8 @@
   },
   "scripts": {
     "compile": "vitx build --watch",
-    "run:vue-site-vue": "node --experimental-specifier-resolution=node ./lib/cli.js dev --vue",
-    "run:vue-site-react": "node --experimental-specifier-resolution=node ./lib/cli.js dev --react"
+    "run:site-vue": "node --experimental-specifier-resolution=node ./lib/cli.js dev --vue",
+    "run:site-react": "node --experimental-specifier-resolution=node ./lib/cli.js dev --react"
   },
   "dependencies": {
     "commander": "^8.3.0",

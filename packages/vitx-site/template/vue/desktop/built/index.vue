@@ -1,6 +1,6 @@
 <template>
   <built-header />
-
+  <built-nav />
   <!-- <built-nav />
 
   <built-container>
@@ -12,10 +12,12 @@
 
 <script>
 import BuiltHeader from './BuiltHeader.vue'
+import BuiltNav from './BuiltNav.vue'
 
 export default {
   components: {
-    BuiltHeader
+    BuiltHeader,
+    BuiltNav
   }
 }
 </script>

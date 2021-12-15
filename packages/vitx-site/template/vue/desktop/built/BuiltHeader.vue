@@ -1,46 +1,45 @@
 
-<script>
-export default {
-  name: 'VitxSiteBuiltHeader'
-}
+<script setup>
+import BuiltLogo from './BuiltLogo.vue';
 </script>
 
 <template>
-  <section class="vitx-built-header">
+  <header class="vitx-built-header">
     <a class="vitx-built-header__logo">
-      <img src="config.logo" />
+      <img src="config.logo" v-if="config" />
+      <built-logo v-else />
       <span>Vitx Site</span>
     </a>
-  </section>
+  </header>
 </template>
 
 <style lang="less">
-@import "vitx-site-common/styles/mixin.less";
-
 .vitx-built-header {
-  .vitx-built-row;
-
   display: flex;
   align-items: center;
   height: var(--vitx-built-header-height);
   padding: 0 var(--vitx-built-padding);
+  border-bottom: thin solid var(--vitx-built-border-color);
 
   &__logo {
     display: block;
 
     img,
-    span {
+    span,
+    svg {
       display: inline-block;
       vertical-align: middle;
+      cursor: pointer;
     }
 
-    img {
+    img,
+    svg {
       width: 28px;
       margin-right: 12px;
     }
 
     span {
-      color: #fff;
+      color: var(--vitx-built-primary-color);
       font-size: 22px;
     }
   }
