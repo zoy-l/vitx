@@ -36,6 +36,8 @@ export interface Options {
     before?: (code: string, id: string) => string
     after?: (code: string, id: string) => string
   }
+
+  frame: 'vue' | 'react'
 }
 
 export type ResolvedOptions = Required<Options>

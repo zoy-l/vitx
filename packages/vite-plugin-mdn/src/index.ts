@@ -1,5 +1,6 @@
 import type { PluginOption, ResolvedConfig } from 'vite'
 import { compileTemplate } from '@vue/compiler-sfc'
+// import { transformAsync } from '@babel/core'
 import MarkdownIt from 'markdown-it'
 import matter from 'gray-matter'
 
@@ -16,7 +17,7 @@ export function parseId(id: string) {
   return id.slice(0, index)
 }
 
-function VitePluginMarkdown(options: Options = {}): PluginOption {
+function VitePluginMarkdown(options: Options): PluginOption {
   const resolved: ResolvedOptions = {
     markdownItOptions: {},
     markdownItUses: [],
@@ -24,7 +25,7 @@ function VitePluginMarkdown(options: Options = {}): PluginOption {
     wrapperClasses: 'markdown-body',
     wrapperComponent: null,
     transforms: {},
-    ...options
+    ...(options ?? {})
   }
 
   const markdown = new MarkdownIt({
@@ -47,6 +48,16 @@ function VitePluginMarkdown(options: Options = {}): PluginOption {
     .join(' ')
   let config: ResolvedConfig | undefined
 
+  let props: string
+
+  if (resolved.frame === 'vue') {
+    props = ':frontmatter="frontmatter"'
+  }
+
+  if (resolved.frame === 'react') {
+    props = 'frontmatter={frontmatter}'
+  }
+
   return {
     name: 'vite-plugin-mdn',
     enforce: 'pre',
@@ -65,39 +76,57 @@ function VitePluginMarkdown(options: Options = {}): PluginOption {
       }
 
       const { content: md, data: frontmatter } = matter(raw)
-      let sfc = markdown.render(md, {})
+      let code = markdown.render(md, {})
 
       if (resolved.wrapperClasses) {
-        sfc = `<div class="${wrapperClasses}">${sfc}</div>`
+        code = `<div class="${wrapperClasses}">${code}</div>`
       }
 
       if (resolved.wrapperComponent) {
-        sfc = `<${resolved.wrapperComponent} :frontmatter="frontmatter">${sfc}</${resolved.wrapperComponent}>`
+        code = `<${resolved.wrapperComponent} ${props}>${code}</${resolved.wrapperComponent}>`
       }
 
       if (resolved.transforms.after) {
-        sfc = resolved.transforms.after(sfc, id)
+        code = resolved.transforms.after(code, id)
       }
 
-      let { code: result } = compileTemplate({
-        filename: path,
-        id: path,
-        source: sfc,
-        transformAssetUrls: false
-      })
+      function componentVue() {
+        let { code: result } = compileTemplate({
+          filename: path,
+          id: path,
+          source: code,
+          transformAssetUrls: false
+        })
 
-      result = result.replace('export function render', 'function render')
-      result += `\nconst __matter = ${JSON.stringify(frontmatter)};`
-      result += '\nconst data = () => ({ frontmatter: __matter });'
-      result += '\nconst __script = { render, data };'
+        result = result.replace('export function render', 'function render')
+        result += `\nconst __matter = ${JSON.stringify(frontmatter)};`
+        result += '\nconst data = () => ({ frontmatter: __matter });'
+        result += '\nconst __script = { render, data };'
 
-      if (!config?.isProduction) {
-        result += `\n__script.__hmrId = ${JSON.stringify(path)};`
+        if (!config?.isProduction) {
+          result += `\n__script.__hmrId = ${JSON.stringify(path)};`
+        }
+
+        result += '\nexport default __script;'
+
+        return result
       }
 
-      result += '\nexport default __script;'
+      function componentReact() {
+        const result = `function ${path}(){
+          const __matter = ${JSON.stringify(frontmatter)};
+          return (${code.replace(/class=/g, 'className=')})
+        }`
 
-      return result
+        return result
+      }
+
+      const transfromFrame = {
+        vue: componentVue,
+        react: componentReact
+      }
+
+      return transfromFrame[resolved.frame]()
     }
   }
 }

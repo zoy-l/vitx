@@ -10,8 +10,6 @@
     "run:example-vue": "node --experimental-specifier-resolution=node ./index.js vue"
   },
   "dependencies": {
-    "@babel/core": "^7.16.5",
-    "@babel/plugin-transform-react-jsx": "^7.16.5",
     "gray-matter": "^4.0.3",
     "markdown-it": "^12.3.0"
   },

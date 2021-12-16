@@ -1,6 +1,7 @@
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
-import { compileTemplate } from '@vue/compiler-sfc';
+import { compileTemplate } from '@vue/compiler-sfc'; // import { transformAsync } from '@babel/core'
+
 import MarkdownIt from 'markdown-it';
 import matter from 'gray-matter';
 
@@ -16,10 +17,6 @@ export function parseId(id) {
 }
 
 function VitePluginMarkdown(options) {
-  if (options === void 0) {
-    options = {};
-  }
-
   var resolved = _extends({
     markdownItOptions: {},
     markdownItUses: [],
@@ -27,7 +24,7 @@ function VitePluginMarkdown(options) {
     wrapperClasses: 'markdown-body',
     wrapperComponent: null,
     transforms: {}
-  }, options);
+  }, options != null ? options : {});
 
   var markdown = new MarkdownIt(_extends({
     html: true,
@@ -46,6 +43,16 @@ function VitePluginMarkdown(options) {
     return i;
   }).join(' ');
   var config;
+  var props;
+
+  if (resolved.frame === 'vue') {
+    props = ':frontmatter="frontmatter"';
+  }
+
+  if (resolved.frame === 'react') {
+    props = 'frontmatter={frontmatter}';
+  }
+
   return {
     name: 'vite-plugin-mdn',
     enforce: 'pre',
@@ -53,8 +60,6 @@ function VitePluginMarkdown(options) {
       config = _config;
     },
     transform: function transform(raw, id) {
-      var _config2;
-
       var path = parseId(id);
 
       if (!path.endsWith('.md')) {
@@ -69,39 +74,57 @@ function VitePluginMarkdown(options) {
           md = _matter.content,
           frontmatter = _matter.data;
 
-      var sfc = markdown.render(md, {});
+      var code = markdown.render(md, {});
 
       if (resolved.wrapperClasses) {
-        sfc = `<div class="${wrapperClasses}">${sfc}</div>`;
+        code = `<div class="${wrapperClasses}">${code}</div>`;
       }
 
       if (resolved.wrapperComponent) {
-        sfc = `<${resolved.wrapperComponent} :frontmatter="frontmatter">${sfc}</${resolved.wrapperComponent}>`;
+        code = `<${resolved.wrapperComponent} ${props}>${code}</${resolved.wrapperComponent}>`;
       }
 
       if (resolved.transforms.after) {
-        sfc = resolved.transforms.after(sfc, id);
+        code = resolved.transforms.after(code, id);
       }
 
-      var _compileTemplate = compileTemplate({
-        filename: path,
-        id: path,
-        source: sfc,
-        transformAssetUrls: false
-      }),
-          result = _compileTemplate.code;
+      function componentVue() {
+        var _config2;
 
-      result = result.replace('export function render', 'function render');
-      result += `\nconst __matter = ${JSON.stringify(frontmatter)};`;
-      result += '\nconst data = () => ({ frontmatter: __matter });';
-      result += '\nconst __script = { render, data };';
+        var _compileTemplate = compileTemplate({
+          filename: path,
+          id: path,
+          source: code,
+          transformAssetUrls: false
+        }),
+            result = _compileTemplate.code;
 
-      if (!((_config2 = config) != null && _config2.isProduction)) {
-        result += `\n__script.__hmrId = ${JSON.stringify(path)};`;
+        result = result.replace('export function render', 'function render');
+        result += `\nconst __matter = ${JSON.stringify(frontmatter)};`;
+        result += '\nconst data = () => ({ frontmatter: __matter });';
+        result += '\nconst __script = { render, data };';
+
+        if (!((_config2 = config) != null && _config2.isProduction)) {
+          result += `\n__script.__hmrId = ${JSON.stringify(path)};`;
+        }
+
+        result += '\nexport default __script;';
+        return result;
       }
 
-      result += '\nexport default __script;';
-      return result;
+      function componentReact() {
+        var result = `function ${path}(){
+          const __matter = ${JSON.stringify(frontmatter)};
+          return (${code.replace(/class=/g, 'className=')})
+        }`;
+        return result;
+      }
+
+      var transfromFrame = {
+        vue: componentVue,
+        react: componentReact
+      };
+      return transfromFrame[resolved.frame]();
     }
   };
 }
