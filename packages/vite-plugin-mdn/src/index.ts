@@ -3,6 +3,7 @@ import { compileTemplate } from '@vue/compiler-sfc'
 // import { transformAsync } from '@babel/core'
 import MarkdownIt from 'markdown-it'
 import matter from 'gray-matter'
+import { basename } from 'path'
 
 import { Options, ResolvedOptions } from './types'
 
@@ -28,6 +29,16 @@ function VitePluginMarkdown(options: Options): PluginOption {
     ...(options ?? {})
   }
 
+  let props: string
+
+  if (resolved.frame === 'vue') {
+    props = ':frontmatter="frontmatter"'
+  } else if (resolved.frame === 'react') {
+    props = 'frontmatter={frontmatter}'
+  } else {
+    throw new Error('You need to specify a framework `react or vue`')
+  }
+
   const markdown = new MarkdownIt({
     html: true,
     linkify: true,
@@ -47,16 +58,6 @@ function VitePluginMarkdown(options: Options): PluginOption {
     .filter((i) => i)
     .join(' ')
   let config: ResolvedConfig | undefined
-
-  let props: string
-
-  if (resolved.frame === 'vue') {
-    props = ':frontmatter="frontmatter"'
-  }
-
-  if (resolved.frame === 'react') {
-    props = 'frontmatter={frontmatter}'
-  }
 
   return {
     name: 'vite-plugin-mdn',
@@ -113,7 +114,11 @@ function VitePluginMarkdown(options: Options): PluginOption {
       }
 
       function componentReact() {
-        const result = `function ${path}(){
+        let componentName = basename(path, '.md')
+        componentName = componentName.charAt(0).toUpperCase() + componentName.slice(1)
+
+        const result = `
+        export default function ${componentName}(){
           const __matter = ${JSON.stringify(frontmatter)};
           return (${code.replace(/class=/g, 'className=')})
         }`
