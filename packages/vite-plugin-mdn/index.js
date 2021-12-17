@@ -13,8 +13,6 @@ async function run() {
     react: vitePluginReact
   }
 
-  console.log(plugin)
-
   const server = await createServer({
     root: `./example/${type}`,
     plugins: [

@@ -1,8 +1,11 @@
 import type { PluginOption, ResolvedConfig } from 'vite'
 import { compileTemplate } from '@vue/compiler-sfc'
 // import { transformAsync } from '@babel/core'
+import { transformSync } from 'esBuild'
 import MarkdownIt from 'markdown-it'
+import HtmlToJsx from 'htmltojsx'
 import matter from 'gray-matter'
+
 import { basename } from 'path'
 
 import { Options, ResolvedOptions } from './types'
@@ -19,7 +22,7 @@ export function parseId(id: string) {
 }
 
 function VitePluginMarkdown(options: Options): PluginOption {
-  const resolved: ResolvedOptions = {
+  const resolved = {
     markdownItOptions: {},
     markdownItUses: [],
     markdownItSetup: () => {},
@@ -27,7 +30,7 @@ function VitePluginMarkdown(options: Options): PluginOption {
     wrapperComponent: null,
     transforms: {},
     ...(options ?? {})
-  }
+  } as ResolvedOptions
 
   let props: string
 
@@ -117,13 +120,21 @@ function VitePluginMarkdown(options: Options): PluginOption {
         let componentName = basename(path, '.md')
         componentName = componentName.charAt(0).toUpperCase() + componentName.slice(1)
 
-        const result = `
-        export default function ${componentName}(){
-          const __matter = ${JSON.stringify(frontmatter)};
-          return (${code.replace(/class=/g, 'className=')})
+        const converter = new HtmlToJsx({
+          createClass: false
+        })
+
+        const content = `
+        import React from 'react'
+        export default function ${componentName}(props){
+          const frontmatter = ${JSON.stringify(frontmatter)};
+          const __html = ${converter.convert(code)}
+          return <div {...props}>{ __html }</div>
         }`
 
-        return result
+        const result = transformSync(content, { loader: 'jsx' })
+
+        return result.code
       }
 
       const transfromFrame = {

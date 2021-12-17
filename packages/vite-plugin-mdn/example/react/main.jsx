@@ -7,5 +7,5 @@ ReactDom.render(
     <Counter />
     <App />
   </>,
-  document.getElementById('#app')
+  document.getElementById('app')
 )

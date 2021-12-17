@@ -23,10 +23,7 @@ import Vue from '@vitejs/plugin-vue'
 import Markdown from 'vite-plugin-md'
 
 export default {
-  plugins: [
-    Vue(),
-    Markdown()
-  ],
+  plugins: [Vue(), Markdown()]
 }
 ```
 
@@ -40,13 +37,13 @@ And import it as a normal Vue component
 </template>
 
 <script>
-import HelloWorld from './README.md'
+  import HelloWorld from './README.md'
 
-export default {
-  components: {
-    HelloWorld,
-  },
-}
+  export default {
+    components: {
+      HelloWorld
+    }
+  }
 </script>
 ```
 
@@ -55,10 +52,8 @@ export default {
 You can even use Vue inside your markdown, for example
 
 ```html
-<Counter :init='5'/>
+<Counter :init="5" />
 ```
-
-<Counter :init='5'/>
 
 Note you need to register the components globally to use them in Markdown
 
@@ -78,7 +73,7 @@ Use [`vite-plugin-components`](#work-with-vite-plugin-components) for auto compo
 
 ## Frontmatter
 
-Frontmatter will be parsed and inject into Vue's instance data `frontmatter` field. 
+Frontmatter will be parsed and inject into Vue's instance data `frontmatter` field.
 
 For example:
 
@@ -117,7 +112,7 @@ export default {
       markdownItOptions: {
         html: true,
         linkify: true,
-        typographer: true,
+        typographer: true
       },
       // A function providing the Markdown It instance gets the ability to apply custom settings/plugins
       markdownItSetup(md) {
@@ -128,7 +123,7 @@ export default {
       // Class names for the wrapper div
       wrapperClasses: 'markdown-body'
     })
-  ],
+  ]
 }
 ```
 
@@ -151,15 +146,14 @@ import Voie from 'vite-plugin-voie'
 export default {
   plugins: [
     Voie({
-      extensions: ['vue', 'md'],
+      extensions: ['vue', 'md']
     }),
     Markdown()
-  ],
+  ]
 }
 ```
 
 Put your markdown under `./src/pages/xx.md`, then you can access the page via route `/xx`.
-
 
 ### Work with [vite-plugin-components](https://github.com/antfu/vite-plugin-components)
 
@@ -178,9 +172,9 @@ export default {
       extensions: ['vue', 'md'],
 
       // allow auto import and register components used in markdown
-      customLoaderMatcher: path => path.endsWith('.md'),
+      customLoaderMatcher: (path) => path.endsWith('.md')
     })
-  ],
+  ]
 }
 ```
 

@@ -2,7 +2,9 @@ function _extends() { _extends = Object.assign || function (target) { for (var i
 
 import { compileTemplate } from '@vue/compiler-sfc'; // import { transformAsync } from '@babel/core'
 
+import { transformSync } from 'esBuild';
 import MarkdownIt from 'markdown-it';
+import HtmlToJsx from 'htmltojsx';
 import matter from 'gray-matter';
 import { basename } from 'path';
 
@@ -116,12 +118,20 @@ function VitePluginMarkdown(options) {
       function componentReact() {
         var componentName = basename(path, '.md');
         componentName = componentName.charAt(0).toUpperCase() + componentName.slice(1);
-        var result = `
-        export default function ${componentName}(){
-          const __matter = ${JSON.stringify(frontmatter)};
-          return (${code.replace(/class=/g, 'className=')})
+        var converter = new HtmlToJsx({
+          createClass: false
+        });
+        var content = `
+        import React from 'react'
+        export default function ${componentName}(props){
+          const frontmatter = ${JSON.stringify(frontmatter)};
+          const __html = ${converter.convert(code)}
+          return <div {...props}>{ __html }</div>
         }`;
-        return result;
+        var result = transformSync(content, {
+          loader: 'jsx'
+        });
+        return result.code;
       }
 
       var transfromFrame = {
