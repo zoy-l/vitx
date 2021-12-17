@@ -1,6 +1,6 @@
 import { IConfig } from 'vitx'
 
 export default <IConfig>{
-  // target: 'node',
+  target: 'node',
   moduleType: 'esm'
 }

@@ -13,45 +13,45 @@ function toArray(n) {
 }
 
 export function parseId(id) {
-  var index = id.indexOf('?');
+  const index = id.indexOf('?');
   if (index < 0) return id;
   return id.slice(0, index);
 }
 
 function VitePluginMarkdown(options) {
-  var resolved = _extends({
+  const resolved = _extends({
     markdownItOptions: {},
     markdownItUses: [],
-    markdownItSetup: function markdownItSetup() {},
+    markdownItSetup: () => {},
     wrapperClasses: 'markdown-body',
     transforms: {}
   }, options != null ? options : {});
 
-  var markdown = new MarkdownIt(_extends({
+  const markdown = new MarkdownIt(_extends({
     html: true,
     linkify: true,
     typographer: true
   }, resolved.markdownItOptions));
-  resolved.markdownItUses.forEach(function (e) {
-    var _toArray = toArray(e),
-        plugin = _toArray[0],
-        options = _toArray[1];
+  resolved.markdownItUses.forEach(e => {
+    const _toArray = toArray(e),
+          plugin = _toArray[0],
+          options = _toArray[1];
 
     markdown.use(plugin, options);
   });
   resolved.markdownItSetup(markdown);
-  var wrapperClasses = toArray(resolved.wrapperClasses).filter(function (i) {
-    return i;
-  }).join(' ');
-  var config;
+  const wrapperClasses = toArray(resolved.wrapperClasses).filter(i => i).join(' ');
+  let config;
   return {
     name: 'vite-plugin-mdn',
     enforce: 'pre',
-    configResolved: function configResolved(_config) {
+
+    configResolved(_config) {
       config = _config;
     },
-    transform: function transform(raw, id) {
-      var path = parseId(id);
+
+    transform(raw, id) {
+      const path = parseId(id);
 
       if (!path.endsWith('.md')) {
         return raw;
@@ -61,11 +61,11 @@ function VitePluginMarkdown(options) {
         raw = resolved.transforms.before(raw, id);
       }
 
-      var _matter = matter(raw),
-          md = _matter.content,
-          frontmatter = _matter.data;
+      const _matter = matter(raw),
+            md = _matter.content,
+            frontmatter = _matter.data;
 
-      var code = markdown.render(md, {});
+      let code = markdown.render(md, {});
 
       if (resolved.wrapperClasses) {
         code = `<div class="${wrapperClasses}">${code}</div>`;
@@ -78,7 +78,7 @@ function VitePluginMarkdown(options) {
       function componentVue() {
         var _config2;
 
-        var _compileTemplate = compileTemplate({
+        let _compileTemplate = compileTemplate({
           filename: path,
           id: path,
           source: code,
@@ -100,35 +100,36 @@ function VitePluginMarkdown(options) {
       }
 
       function componentReact() {
-        var componentName = basename(path, '.md');
+        let componentName = basename(path, '.md');
         componentName = componentName.charAt(0).toUpperCase() + componentName.slice(1);
-        var RE = /\{\{((?:.|\r?\n))+?\}\}/g;
-        code = code.replace(RE, function (interpolation) {
-          var variable = interpolation.replace(/{|}|\s/g, '');
-          var keys = variable.split('.').slice(1);
+        const RE = /\{\{((?:.|\r?\n))+?\}\}/g;
+        code = code.replace(RE, interpolation => {
+          const variable = interpolation.replace(/{|}|\s/g, '');
+          const keys = variable.split('.').slice(1);
           return frontmatter[keys.join('.')];
         });
-        var converter = new HtmlToJsx({
+        const converter = new HtmlToJsx({
           createClass: false
         });
-        var content = `
+        const content = `
         import React from 'react'
         export default function ${componentName}(props){
           const html = ${converter.convert(code)}
           return <div {...props}>{ html }</div>
         }`;
-        var result = transformSync(content, {
+        const result = transformSync(content, {
           loader: 'jsx'
         });
         return result.code;
       }
 
-      var transfromFrame = {
+      const transfromFrame = {
         vue: componentVue,
         react: componentReact
       };
       return transfromFrame[resolved.frame]();
     }
+
   };
 }
 

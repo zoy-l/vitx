@@ -44,7 +44,13 @@ export default function getBabelConfig(
           targets: isBrowser
             ? { browsers: ['last 2 versions', 'IE 10'] }
             : { node: nodeVersion ?? 6 },
-          modules: isBrowser ? (moduleType === 'esm' ? false : 'cjs') : 'auto',
+          modules: isBrowser
+            ? moduleType === 'esm'
+              ? false
+              : 'cjs'
+            : moduleType === 'esm'
+            ? false
+            : 'auto',
           ...defaultEnvConfig
         }
       ],
