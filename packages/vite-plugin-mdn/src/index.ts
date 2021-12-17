@@ -1,6 +1,5 @@
 import type { PluginOption, ResolvedConfig } from 'vite'
 import { compileTemplate } from '@vue/compiler-sfc'
-// import { transformAsync } from '@babel/core'
 import { transformSync } from 'esBuild'
 import MarkdownIt from 'markdown-it'
 import HtmlToJsx from 'htmltojsx'
@@ -120,6 +119,15 @@ function VitePluginMarkdown(options: Options): PluginOption {
         let componentName = basename(path, '.md')
         componentName = componentName.charAt(0).toUpperCase() + componentName.slice(1)
 
+        const RE = /\{\{((?:.|\r?\n))+?\}\}/g
+
+        code = code.replace(RE, (interpolation) => {
+          const variable = interpolation.replace(/{|}|\s/g, '')
+          const keys = variable.split('.').slice(1)
+
+          return frontmatter[keys.join('.')]
+        })
+
         const converter = new HtmlToJsx({
           createClass: false
         })
@@ -127,8 +135,7 @@ function VitePluginMarkdown(options: Options): PluginOption {
         const content = `
         import React from 'react'
         export default function ${componentName}(props){
-          const frontmatter = ${JSON.stringify(frontmatter)};
-          const html = ${converter.convert(code).replace(/!:/g, '{').replace(/:!/g, '}')}
+          const html = ${converter.convert(code)}
           return <div {...props}>{ html }</div>
         }`
 

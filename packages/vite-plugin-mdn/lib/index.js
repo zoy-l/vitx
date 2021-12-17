@@ -1,7 +1,6 @@
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
-import { compileTemplate } from '@vue/compiler-sfc'; // import { transformAsync } from '@babel/core'
-
+import { compileTemplate } from '@vue/compiler-sfc';
 import { transformSync } from 'esBuild';
 import MarkdownIt from 'markdown-it';
 import HtmlToJsx from 'htmltojsx';
@@ -118,14 +117,19 @@ function VitePluginMarkdown(options) {
       function componentReact() {
         var componentName = basename(path, '.md');
         componentName = componentName.charAt(0).toUpperCase() + componentName.slice(1);
+        var RE = /\{\{((?:.|\r?\n))+?\}\}/g;
+        code = code.replace(RE, function (interpolation) {
+          var variable = interpolation.replace(/{|}|\s/g, '');
+          var keys = variable.split('.').slice(1);
+          return frontmatter[keys.join('.')];
+        });
         var converter = new HtmlToJsx({
           createClass: false
         });
         var content = `
         import React from 'react'
         export default function ${componentName}(props){
-          const frontmatter = ${JSON.stringify(frontmatter)};
-          const html = ${converter.convert(code).replace(/!:/g, '{').replace(/:!/g, '}')}
+          const html = ${converter.convert(code)}
           return <div {...props}>{ html }</div>
         }`;
         var result = transformSync(content, {
