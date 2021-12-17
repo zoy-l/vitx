@@ -128,8 +128,8 @@ function VitePluginMarkdown(options: Options): PluginOption {
         import React from 'react'
         export default function ${componentName}(props){
           const frontmatter = ${JSON.stringify(frontmatter)};
-          const __html = ${converter.convert(code)}
-          return <div {...props}>{ __html }</div>
+          const html = ${converter.convert(code).replace(/!:/g, '{').replace(/:!/g, '}')}
+          return <div {...props}>{ html }</div>
         }`
 
         const result = transformSync(content, { loader: 'jsx' })
