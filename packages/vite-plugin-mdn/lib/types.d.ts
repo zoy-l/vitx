@@ -19,18 +19,15 @@ export interface Options {
      */
     wrapperClasses?: string | string[];
     /**
-     * Component name to wrapper with
-     *
-     * @default undefined
-     */
-    wrapperComponent?: string | undefined | null;
-    /**
      * Custom tranformations apply before and after the markdown transformation.
      */
     transforms?: {
         before?: (code: string, id: string) => string;
         after?: (code: string, id: string) => string;
     };
+    /**
+     * Define the framework
+     */
     frame: 'vue' | 'react';
 }
 export declare type ResolvedOptions = Required<Options>;

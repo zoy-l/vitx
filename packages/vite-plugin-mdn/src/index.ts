@@ -26,20 +26,9 @@ function VitePluginMarkdown(options: Options): PluginOption {
     markdownItUses: [],
     markdownItSetup: () => {},
     wrapperClasses: 'markdown-body',
-    wrapperComponent: null,
     transforms: {},
     ...(options ?? {})
   } as ResolvedOptions
-
-  let props: string
-
-  if (resolved.frame === 'vue') {
-    props = ':frontmatter="frontmatter"'
-  } else if (resolved.frame === 'react') {
-    props = 'frontmatter={frontmatter}'
-  } else {
-    throw new Error('You need to specify a framework `react or vue`')
-  }
 
   const markdown = new MarkdownIt({
     html: true,
@@ -83,10 +72,6 @@ function VitePluginMarkdown(options: Options): PluginOption {
 
       if (resolved.wrapperClasses) {
         code = `<div class="${wrapperClasses}">${code}</div>`
-      }
-
-      if (resolved.wrapperComponent) {
-        code = `<${resolved.wrapperComponent} ${props}>${code}</${resolved.wrapperComponent}>`
       }
 
       if (resolved.transforms.after) {

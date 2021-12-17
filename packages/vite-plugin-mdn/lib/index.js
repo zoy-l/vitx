@@ -24,19 +24,8 @@ function VitePluginMarkdown(options) {
     markdownItUses: [],
     markdownItSetup: function markdownItSetup() {},
     wrapperClasses: 'markdown-body',
-    wrapperComponent: null,
     transforms: {}
   }, options != null ? options : {});
-
-  var props;
-
-  if (resolved.frame === 'vue') {
-    props = ':frontmatter="frontmatter"';
-  } else if (resolved.frame === 'react') {
-    props = 'frontmatter={frontmatter}';
-  } else {
-    throw new Error('You need to specify a framework `react or vue`');
-  }
 
   var markdown = new MarkdownIt(_extends({
     html: true,
@@ -80,10 +69,6 @@ function VitePluginMarkdown(options) {
 
       if (resolved.wrapperClasses) {
         code = `<div class="${wrapperClasses}">${code}</div>`;
-      }
-
-      if (resolved.wrapperComponent) {
-        code = `<${resolved.wrapperComponent} ${props}>${code}</${resolved.wrapperComponent}>`;
       }
 
       if (resolved.transforms.after) {
