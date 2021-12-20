@@ -2,6 +2,7 @@ import vitePluginJsx from '@vitejs/plugin-vue-jsx'
 import vitePluginReact from '@vitejs/plugin-react'
 import vitePluginVue from '@vitejs/plugin-vue'
 import { injectHtml } from 'vite-plugin-html'
+import vitePluginMdn from 'vite-plugin-mdn'
 import type { PluginOption } from 'vite'
 import { createServer } from 'vite'
 import path from 'path'
@@ -22,7 +23,8 @@ export function createSiteServer(options: { cwd: string; frame: IFrame }) {
         description: 'vitx site demo',
         logo: '1'
       }
-    })
+    }),
+    vitePluginMdn({ frame })
   ]
 
   if (isVue) {
