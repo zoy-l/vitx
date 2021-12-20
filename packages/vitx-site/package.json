@@ -19,7 +19,8 @@
     "commander": "^8.3.0",
     "fast-glob": "^3.2.7",
     "vite": "^2.7.1",
-    "vite-plugin-html": "^2.1.1"
+    "vite-plugin-html": "^2.1.1",
+    "vitx": "2.0.6"
   },
   "devDependencies": {
     "react": "^17.0.2",

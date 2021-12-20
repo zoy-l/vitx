@@ -1,6 +1,6 @@
 import { fileURLToPath, pathToFileURL } from 'url'
 import { dirname, join, isAbsolute } from 'path'
-import { existsSync } from 'fs-extra'
+import { existsSync } from 'fs'
 
 async function getConfig() {
   try {
