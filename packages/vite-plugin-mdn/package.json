@@ -6,8 +6,8 @@
   "license": "MIT",
   "scripts": {
     "compile": "vitx build --watch",
-    "run:example-vue": "node --experimental-specifier-resolution=node ./index.js vue",
-    "run:example-react": "node --experimental-specifier-resolution=node ./index.js react"
+    "run:example-vue": "node ./index.js vue",
+    "run:example-react": "node ./index.js react"
   },
   "dependencies": {
     "gray-matter": "^4.0.3",

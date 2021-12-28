@@ -1,3 +1,1 @@
-module.exports = {
-  hello: '123'
-}
+module.exports = {}

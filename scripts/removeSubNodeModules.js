@@ -5,7 +5,7 @@ const path = require('path')
 const fs = require('fs')
 
 fs.readdirSync('./packages')
-  .filter((dirName) => dirName[0] !== '.')
+  .filter((dirName) => dirName[0] !== '.' && ['bundles', 'vitx'].includes(dirName))
   .forEach((dirName) => {
     const nodeModules = path.join(__dirname, '..', 'packages', dirName, 'node_modules')
 
