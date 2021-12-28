@@ -1,20 +1,17 @@
+import type { ObjectSchema } from '@vitx/bundles/model/joi'
 import path from 'path'
 import fs from 'fs'
 
 import { registerBabel, isDefault } from './utils'
-import { IVitxConfig } from './types'
 
-import schema from './configSchema'
+export interface IGetUserConfig {
+  cwd: string
+  schema: ObjectSchema
+  configFileNames: string[]
+}
 
-export const configFileNames = <const>['.vitxrc.ts', '.vitxrc.js']
-
-/**
- *
- * @param cwd - config path
- * @param isMergeDefault - Whether to initialize the value
- * @returns {IVitxConfig}
- */
-export default function (cwd: string, isMergeDefault = true): IVitxConfig {
+export default function (options: IGetUserConfig): unknown {
+  const { cwd, schema, configFileNames } = options
   const configFile = configFileNames.map((configName) => path.join(cwd, configName))
   const userConfig = configFile.find((configPath) => fs.existsSync(configPath))
 
@@ -33,16 +30,5 @@ export default function (cwd: string, isMergeDefault = true): IVitxConfig {
     }
   }
 
-  // for multiple packages, only the config of the root directory is merged
-  return isMergeDefault
-    ? {
-        entry: 'src',
-        output: 'lib',
-        target: 'browser',
-        moduleType: 'esm',
-        sourcemap: false,
-        packageDirName: 'packages',
-        ...config
-      }
-    : (config as IVitxConfig)
+  return config
 }

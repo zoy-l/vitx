@@ -1,8 +1,6 @@
-import { URL, fileURLToPath } from 'url'
-import fs from 'fs'
+import path from 'path'
 
-const packagePath = fileURLToPath(new URL('../package.json', import.meta.url))
-const packageJson = JSON.parse(fs.readFileSync(packagePath, 'utf-8'))
+const packageJson = require(path.join(process.cwd(), './package.json'))
 
 export { compiler } from './compiler'
 export const vitxSiteVersion: string = packageJson.version

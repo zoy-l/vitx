@@ -1,1 +1,3 @@
-export default {}
+module.exports = {
+  hello: '123'
+}

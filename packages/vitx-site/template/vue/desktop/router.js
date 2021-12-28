@@ -4,12 +4,16 @@ function installRouters() {
   const routes = []
 
   routes.push({
-    name: 'notFound',
-    path: '/:path(.*)+',
-    redirect: {
-      name: 'home'
-    }
+    // name: 'notFound',
+    // path: '/:path(.*)+',
+    // redirect: {
+    //   name: 'home'
+    // }
   })
+
+  console.log(routes)
+
+  return routes
 }
 
 export const router = createRouter({

@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
-  "type": "module",
   "license": "MIT",
   "scripts": {
     "compile": "vitx build --watch",

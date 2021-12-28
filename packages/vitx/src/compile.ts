@@ -20,11 +20,23 @@ import {
   modifySourcemap,
   logger
 } from './host'
+import getConfig, { IGetUserConfig } from './getUserConfig'
 import type { IModes, IVitxConfig } from './types'
-import getConfig from './getUserConfig'
+import schema from './configSchema'
 
+const configFileNames = ['.vitxrc.ts', '.vitxrc.js']
 const extSignals = ['SIGINT', 'SIGQUIT', 'SIGTERM']
 const cache = {}
+const getUserConfig = (cwd: IGetUserConfig['cwd']) =>
+  getConfig({ cwd, schema, configFileNames }) as IVitxConfig
+const defaultConfig = <const>{
+  entry: 'src',
+  output: 'lib',
+  target: 'browser',
+  moduleType: 'esm',
+  sourcemap: false,
+  packageDirName: 'packages'
+}
 
 function compile(watch: boolean, currentDirPath: string, mode: IModes, currentConfig: IVitxConfig) {
   const {
@@ -156,7 +168,7 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
  * @param {IVitxConfig} options.userConfig - User configuration
  */
 export async function build(options: { cwd: string; watch?: boolean; userConfig?: IVitxConfig }) {
-  const config = getConfig(options.cwd)
+  const config = { ...defaultConfig, ...getUserConfig(options.cwd) }
 
   async function run(currentPath: string, currentConfig: IVitxConfig) {
     let modes = [currentConfig.moduleType]
@@ -180,7 +192,7 @@ export async function build(options: { cwd: string; watch?: boolean; userConfig?
 
     while (packagesPaths.length) {
       const packagePath = packagesPaths.shift()!
-      const packageConfig = getConfig(packagePath, false)
+      const packageConfig = getUserConfig(packagePath)
       process.chdir(packagePath)
 
       console.log(

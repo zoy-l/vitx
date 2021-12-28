@@ -1,57 +1,70 @@
-function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+"use strict";
 
-import { compileTemplate } from '@vue/compiler-sfc';
-import { transformSync } from 'esBuild';
-import MarkdownIt from 'markdown-it';
-import HtmlToJsx from 'htmltojsx';
-import matter from 'gray-matter';
-import { basename } from 'path';
+exports.__esModule = true;
+exports.default = void 0;
+exports.parseId = parseId;
+
+var _compilerSfc = require("@vue/compiler-sfc");
+
+var _esBuild = require("esBuild");
+
+var _markdownIt = _interopRequireDefault(require("markdown-it"));
+
+var _htmltojsx = _interopRequireDefault(require("htmltojsx"));
+
+var _grayMatter = _interopRequireDefault(require("gray-matter"));
+
+var _path = require("path");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
 function toArray(n) {
   if (!Array.isArray(n)) return [n];
   return n;
 }
 
-export function parseId(id) {
-  const index = id.indexOf('?');
+function parseId(id) {
+  var index = id.indexOf('?');
   if (index < 0) return id;
   return id.slice(0, index);
 }
 
 function VitePluginMarkdown(options) {
-  const resolved = _extends({
+  var resolved = _extends({
     markdownItOptions: {},
     markdownItUses: [],
-    markdownItSetup: () => {},
+    markdownItSetup: function markdownItSetup() {},
     wrapperClasses: 'markdown-body',
     transforms: {}
   }, options != null ? options : {});
 
-  const markdown = new MarkdownIt(_extends({
+  var markdown = new _markdownIt.default(_extends({
     html: true,
     linkify: true,
     typographer: true
   }, resolved.markdownItOptions));
-  resolved.markdownItUses.forEach(e => {
-    const _toArray = toArray(e),
-          plugin = _toArray[0],
-          options = _toArray[1];
+  resolved.markdownItUses.forEach(function (e) {
+    var _toArray = toArray(e),
+        plugin = _toArray[0],
+        options = _toArray[1];
 
     markdown.use(plugin, options);
   });
   resolved.markdownItSetup(markdown);
-  const wrapperClasses = toArray(resolved.wrapperClasses).filter(i => i).join(' ');
-  let config;
+  var wrapperClasses = toArray(resolved.wrapperClasses).filter(function (i) {
+    return i;
+  }).join(' ');
+  var config;
   return {
     name: 'vite-plugin-mdn',
     enforce: 'pre',
-
-    configResolved(_config) {
+    configResolved: function configResolved(_config) {
       config = _config;
     },
-
-    transform(raw, id) {
-      const path = parseId(id);
+    transform: function transform(raw, id) {
+      var path = parseId(id);
 
       if (!path.endsWith('.md')) {
         return raw;
@@ -61,11 +74,11 @@ function VitePluginMarkdown(options) {
         raw = resolved.transforms.before(raw, id);
       }
 
-      const _matter = matter(raw),
-            md = _matter.content,
-            frontmatter = _matter.data;
+      var _matter = (0, _grayMatter.default)(raw),
+          md = _matter.content,
+          frontmatter = _matter.data;
 
-      let code = markdown.render(md, {});
+      var code = markdown.render(md, {});
 
       if (resolved.wrapperClasses) {
         code = `<div class="${wrapperClasses}">${code}</div>`;
@@ -78,7 +91,7 @@ function VitePluginMarkdown(options) {
       function componentVue() {
         var _config2;
 
-        let _compileTemplate = compileTemplate({
+        var _compileTemplate = (0, _compilerSfc.compileTemplate)({
           filename: path,
           id: path,
           source: code,
@@ -100,37 +113,37 @@ function VitePluginMarkdown(options) {
       }
 
       function componentReact() {
-        let componentName = basename(path, '.md');
+        var componentName = (0, _path.basename)(path, '.md');
         componentName = componentName.charAt(0).toUpperCase() + componentName.slice(1);
-        const RE = /\{\{((?:.|\r?\n))+?\}\}/g;
-        code = code.replace(RE, interpolation => {
-          const variable = interpolation.replace(/{|}|\s/g, '');
-          const keys = variable.split('.').slice(1);
+        var RE = /\{\{((?:.|\r?\n))+?\}\}/g;
+        code = code.replace(RE, function (interpolation) {
+          var variable = interpolation.replace(/{|}|\s/g, '');
+          var keys = variable.split('.').slice(1);
           return frontmatter[keys.join('.')];
         });
-        const converter = new HtmlToJsx({
+        var converter = new _htmltojsx.default({
           createClass: false
         });
-        const content = `
+        var content = `
         import React from 'react'
         export default function ${componentName}(props){
           const html = ${converter.convert(code)}
           return <div {...props}>{ html }</div>
         }`;
-        const result = transformSync(content, {
+        var result = (0, _esBuild.transformSync)(content, {
           loader: 'jsx'
         });
         return result.code;
       }
 
-      const transfromFrame = {
+      var transfromFrame = {
         vue: componentVue,
         react: componentReact
       };
       return transfromFrame[resolved.frame]();
     }
-
   };
 }
 
-export default VitePluginMarkdown;
+var _default = VitePluginMarkdown;
+exports.default = _default;

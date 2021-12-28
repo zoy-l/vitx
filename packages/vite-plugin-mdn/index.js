@@ -1,9 +1,9 @@
-import vitePluginReact from '@vitejs/plugin-react'
-import vitePluginVue from '@vitejs/plugin-vue'
-import prism from 'markdown-it-prism'
-import { createServer } from 'vite'
+const vitePluginReact = require('@vitejs/plugin-react')
+const vitePluginVue = require('@vitejs/plugin-vue')
+const prism = require('markdown-it-prism')
+const { createServer } = require('vite')
 
-import Markdown from './lib'
+const Markdown = require('./lib')
 
 const type = process.argv.slice(2)[0]
 
