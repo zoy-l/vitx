@@ -1,1 +1,5 @@
-module.exports = {}
+export default {
+  site: {
+    title: 'hello vitx'
+  }
+}

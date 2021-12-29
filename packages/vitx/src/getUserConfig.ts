@@ -8,10 +8,11 @@ export interface IGetUserConfig {
   cwd: string
   schema: ObjectSchema
   configFileNames: string[]
+  typeKey?: string
 }
 
 export default function (options: IGetUserConfig): unknown {
-  const { cwd, schema, configFileNames } = options
+  const { cwd, schema, configFileNames, typeKey } = options
   const configFile = configFileNames.map((configName) => path.join(cwd, configName))
   const userConfig = configFile.find((configPath) => fs.existsSync(configPath))
 
@@ -22,6 +23,10 @@ export default function (options: IGetUserConfig): unknown {
     /* istanbul ignore next */
     process.env.NODE_ENV !== 'test' && registerBabel(userConfig)
     config = isDefault(require(userConfig))
+
+    if (typeKey) {
+      config = config[typeKey]
+    }
 
     const { error } = schema.validate(config)
 
