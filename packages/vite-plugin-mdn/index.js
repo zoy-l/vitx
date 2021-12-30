@@ -3,7 +3,7 @@ const vitePluginVue = require('@vitejs/plugin-vue')
 const prism = require('markdown-it-prism')
 const { createServer } = require('vite')
 
-const Markdown = require('./lib')
+const Markdown = require('./lib').default
 
 const type = process.argv.slice(2)[0]
 

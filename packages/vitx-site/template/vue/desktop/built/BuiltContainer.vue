@@ -32,6 +32,7 @@ function scrollToAnchor(target) {
 .vitx-built-container {
   box-sizing: border-box;
   padding-left: var(--vitx-built-nav-width);
+  padding-top: var(--vitx-built-header-height);
   overflow: hidden;
 
   &__content {

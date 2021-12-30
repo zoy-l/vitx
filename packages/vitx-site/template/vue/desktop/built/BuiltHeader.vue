@@ -6,8 +6,9 @@ import BuiltLogo from './BuiltLogo.vue';
 <template>
   <header class="vitx-built-header">
     <a class="vitx-built-header__logo">
-      <img src="config.logo" v-if="config" />
-      <built-logo v-else />
+      <!-- <img src="config.logo" v-if="config" /> -->
+      <!-- v-else -->
+      <built-logo />
       <span>Vitx Site</span>
     </a>
   </header>
@@ -15,11 +16,17 @@ import BuiltLogo from './BuiltLogo.vue';
 
 <style lang="less">
 .vitx-built-header {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1;
   display: flex;
   align-items: center;
   height: var(--vitx-built-header-height);
   padding: 0 var(--vitx-built-padding);
   border-bottom: thin solid var(--vitx-built-border-color);
+  background-color: var(--vitx-built-background-color);
 
   &__logo {
     display: block;

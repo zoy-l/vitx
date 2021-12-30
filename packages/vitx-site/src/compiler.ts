@@ -1,9 +1,10 @@
 import { existsSync, readdirSync } from 'fs'
-import { join } from 'path'
+import { ViteDevServer } from 'vite'
 
+import { join } from 'path'
+import { createSiteServer, IDocuments } from './compile-site-server'
 import { getUserSiteConfig } from './get-user-config'
-import compileSiteReact from './compile-site-react'
-import compileSiteVue from './compile-site-vue'
+import { IFrame } from './types'
 
 export async function compiler(options: { vue: boolean; react: boolean }) {
   const { vue, react } = options
@@ -12,7 +13,7 @@ export async function compiler(options: { vue: boolean; react: boolean }) {
   const { locales, defaultLang } = site
   const entryPath = join(cwd, entry)
   const components = readdirSync(entryPath)
-  const docs: { name: string; path: string }[] = []
+  const docs: IDocuments = []
 
   if (locales) {
     const langs = Object.keys(locales)
@@ -36,8 +37,11 @@ export async function compiler(options: { vue: boolean; react: boolean }) {
 
   const documents = docs.filter((item) => existsSync(item.path))
 
-  console.log(documents)
+  let server: ViteDevServer
 
-  vue && compileSiteVue(cwd)
-  react && compileSiteReact(cwd)
+  vue && (server = await createSiteServer({ cwd, frame: IFrame.vue, documents, site }))
+  react && (server = await createSiteServer({ cwd, frame: IFrame.react, documents, site }))
+
+  await server.listen()
+  server.printUrls()
 }

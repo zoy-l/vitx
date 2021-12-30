@@ -9,7 +9,10 @@ export interface IVitxSiteConfig {
   entry?: string
   site?: {
     locales?: Record<string, any>
-    defaultLang: string
+    defaultLang?: string
+    title?: string
+    description?: string
+    logo: string
   }
   build?: IConfig
 }

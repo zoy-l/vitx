@@ -3,9 +3,9 @@ import VitxSite from './built/index.vue'
 </script>
 
 <template>
-  <div>
-    <vitx-site />
-  </div>
+  <vitx-site>
+    <router-view />
+  </vitx-site>
 </template>
 
 <style>
