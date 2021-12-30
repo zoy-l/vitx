@@ -1,17 +1,16 @@
-import type { PluginOption, ResolvedConfig } from 'vite'
 import vitePluginJsx from '@vitejs/plugin-vue-jsx'
 import vitePluginReact from '@vitejs/plugin-react'
 import vitePluginVue from '@vitejs/plugin-vue'
 import { injectHtml } from 'vite-plugin-html'
 import vitePluginMdn from 'vite-plugin-mdn'
+import type { PluginOption } from 'vite'
 import highlight from 'highlight.js'
 import { createServer } from 'vite'
 import path from 'path'
 
+import { IDocuments, modifyVueRoute, modifyReactRoute } from './gen-router'
 import { IFrame, IVitxSiteConfig } from './types'
 import { siteTemplateCommon } from './constants'
-
-export type IDocuments = { name: string; path: string }[]
 
 function markdownHighlight(code: string, lang: string) {
   if (lang && highlight.getLanguage(lang)) {
@@ -19,39 +18,6 @@ function markdownHighlight(code: string, lang: string) {
   }
 
   return ''
-}
-
-function modifyRoute(documents: IDocuments): PluginOption {
-  const virtualModuleId = '@vitx-documents'
-  const resolvedVirtualModuleId = `vitx:${virtualModuleId}`
-  let config: ResolvedConfig | undefined
-  return {
-    name: 'vite-plugin-vitx-route',
-    resolveId(id) {
-      if (id === virtualModuleId) {
-        return resolvedVirtualModuleId
-      }
-    },
-    load(id) {
-      if (id === resolvedVirtualModuleId) {
-        return `
-        ${documents.reduce((memo, current) => {
-          if (config.isProduction) {
-            memo += `import ${current.name} from "${current.path}";\n`
-          } else {
-            memo += `const ${current.name} = () => import("${current.path}");\n`
-          }
-          return memo
-        }, '')}
-        export default {
-          ${documents.map((item) => item.name).join(',')}
-        }`
-      }
-    },
-    configResolved(_config) {
-      config = _config
-    }
-  }
 }
 
 export function createSiteServer(options: {
@@ -80,8 +46,7 @@ export function createSiteServer(options: {
         typographer: false,
         highlight: markdownHighlight
       }
-    }),
-    modifyRoute(documents)
+    })
   ]
 
   if (isVue) {
@@ -89,12 +54,13 @@ export function createSiteServer(options: {
       vitePluginVue({
         include: [/\.vue$/]
       }),
-      vitePluginJsx()
+      vitePluginJsx(),
+      modifyVueRoute(documents)
     )
   }
 
   if (isReact) {
-    plugins.push(vitePluginReact({}))
+    plugins.push(vitePluginReact({}), modifyReactRoute(documents))
   }
 
   return createServer({

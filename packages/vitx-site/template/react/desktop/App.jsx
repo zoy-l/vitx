@@ -1,11 +1,8 @@
+import BuiltRouter from '@vitx-documents'
 import React from 'react'
 
 import BuiltSite from './built'
 
 export default function App() {
-  return (
-    <div>
-      <BuiltSite />
-    </div>
-  )
+  return <BuiltRouter site={BuiltSite} />
 }
