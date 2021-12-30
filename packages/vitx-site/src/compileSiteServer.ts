@@ -8,7 +8,7 @@ import highlight from 'highlight.js'
 import { createServer } from 'vite'
 import path from 'path'
 
-import { IDocuments, modifyRoute } from './gen-router'
+import { IDocuments, modifyRoute } from './genRouter'
 import { IFrame, IVitxSiteConfig } from './types'
 import { siteTemplateCommon } from './constants'
 

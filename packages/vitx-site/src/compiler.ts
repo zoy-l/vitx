@@ -2,9 +2,9 @@ import { existsSync, readdirSync } from 'fs'
 import { ViteDevServer } from 'vite'
 import { join } from 'path'
 
-import { createSiteServer } from './compile-site-server'
-import { getUserSiteConfig } from './get-user-config'
-import type { IDocuments } from './gen-router'
+import { createSiteServer } from './compileSiteServer'
+import { getUserSiteConfig } from './getUserConfig'
+import type { IDocuments } from './genRouter'
 import { IFrame } from './types'
 
 export async function compiler(options: { vue: boolean; react: boolean }) {

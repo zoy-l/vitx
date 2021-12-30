@@ -1,7 +1,7 @@
 import getConfig from 'vitx/lib/getUserConfig'
 
 import type { IVitxSiteConfig } from './types'
-import schema from './config-schema'
+import schema from './configSchema'
 
 const configFileNames = ['vitx.config.ts', 'vitx.config.js']
 
