@@ -8,7 +8,7 @@ import highlight from 'highlight.js'
 import { createServer } from 'vite'
 import path from 'path'
 
-import { IDocuments, modifyVueRoute, modifyReactRoute } from './gen-router'
+import { IDocuments, modifyRoute } from './gen-router'
 import { IFrame, IVitxSiteConfig } from './types'
 import { siteTemplateCommon } from './constants'
 
@@ -46,7 +46,8 @@ export function createSiteServer(options: {
         typographer: false,
         highlight: markdownHighlight
       }
-    })
+    }),
+    modifyRoute(documents, isVue, isReact)
   ]
 
   if (isVue) {
@@ -54,13 +55,12 @@ export function createSiteServer(options: {
       vitePluginVue({
         include: [/\.vue$/]
       }),
-      vitePluginJsx(),
-      modifyVueRoute(documents)
+      vitePluginJsx()
     )
   }
 
   if (isReact) {
-    plugins.push(vitePluginReact({}), modifyReactRoute(documents))
+    plugins.push(vitePluginReact({}))
   }
 
   return createServer({
