@@ -18,6 +18,7 @@
     "commander": "^8.3.0",
     "fast-glob": "^3.2.7",
     "highlight.js": "^11.3.1",
+    "react-router-dom": "^6.2.1",
     "vite": "^2.7.7",
     "vite-plugin-html": "^2.1.2",
     "vite-plugin-mdn": "1.0.0",

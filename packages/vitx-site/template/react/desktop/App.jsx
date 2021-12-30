@@ -1,5 +1,11 @@
 import React from 'react'
 
+import BuiltSite from './built'
+
 export default function App() {
-  return <div>hello vitx-react</div>
+  return (
+    <div>
+      <BuiltSite />
+    </div>
+  )
 }
