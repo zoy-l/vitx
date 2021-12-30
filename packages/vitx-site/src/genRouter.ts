@@ -34,7 +34,7 @@ export function modifyRoute(documents: IDocuments, isVue: boolean, isReact: bool
           isReact
             ? `
             import { Route, Routes, BrowserRouter } from 'react-router-dom'
-            import React, { Suspense, lazy } from 'react'
+            import React, { Suspense, lazy, Fragment } from 'react'
             `
             : ''
         )}
@@ -48,7 +48,7 @@ export function modifyRoute(documents: IDocuments, isVue: boolean, isReact: bool
           const { fallback = React.createElement('div', null), site: BuiltSite } = props
           const document = Object.keys(documents)
           return React.createElement(
-            Suspense, { fallback },
+            ${config.isProduction ? 'Fragment, null' : 'Suspense, { fallback }'},
             React.createElement(BrowserRouter, null, React.createElement(
                 BuiltSite, null, React.createElement(
                   Routes, null,
