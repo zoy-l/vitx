@@ -1,4 +1,7 @@
 import { createApp } from 'vue'
-import App from './App.vue'
+
+function App() {
+  return <div>hello</div>
+}
 
 createApp(App).mount('#vitx-app')

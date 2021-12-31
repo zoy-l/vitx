@@ -1,5 +1,8 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
+import BuiltSite from 'vitx-site-common/element'
 import documents from '@vitx-documents'
+import 'vitx-site-common/styles'
+import { createApp } from 'vue'
 
 function installRouters() {
   /** @type {{path:string, name:string}[]} */
@@ -30,7 +33,7 @@ function installRouters() {
   return routes
 }
 
-export const router = createRouter({
+const routers = createRouter({
   history: createWebHashHistory(),
   routes: installRouters(),
   scrollBehavior(to) {
@@ -41,4 +44,12 @@ export const router = createRouter({
   }
 })
 
-export default router
+function App() {
+  return (
+    <BuiltSite>
+      <router-view />
+    </BuiltSite>
+  )
+}
+
+createApp(App).use(routers).mount('#vitx-app')

@@ -1,4 +1,7 @@
 import { render } from 'react-dom'
-import App from './App'
+
+function App() {
+  return <div>hello</div>
+}
 
 render(<App />, document.getElementById('vitx-app'))
