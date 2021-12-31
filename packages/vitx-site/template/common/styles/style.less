@@ -136,7 +136,7 @@
     z-index: 1;
     background: #222;
     border-radius: 54px;
-    box-shadow: inset 0 0 0 2px #606467, inset 0 0 0 6px #e2e3e4;
+    box-shadow: inset 0 0 0 1px #606467, inset 0 0 0 3px #bcbcbd;
     height: @simulator-height;
     padding: 12px;
     width: @simulator-width;
@@ -165,35 +165,24 @@
     width: 124px;
     z-index: 199;
 
-    &::after,
-    &::before {
-      content: '';
-      height: 6px;
+    svg {
       position: absolute;
       top: 0;
-      width: 6px;
+      fill: #222;
     }
 
-    &::after {
-      background: radial-gradient(
-        circle at bottom left,
-        transparent 0,
-        transparent 75%,
-        #222 75%,
-        #222 100%
-      );
-      left: -6px;
+    svg:nth-child(2) {
+      left: 0;
+      transform: rotate(45deg);
+      margin-top: -4px;
+      margin-left: -4px;
     }
 
-    &::before {
-      background: radial-gradient(
-        circle at bottom right,
-        transparent 0,
-        transparent 75%,
-        #222 75%,
-        #222 100%
-      );
-      right: -6px;
+    svg:nth-child(3) {
+      right: 0;
+      transform: rotate(-45deg);
+      margin-top: -4px;
+      margin-right: -4px;
     }
 
     div {
@@ -231,27 +220,29 @@
   }
 
   &__action {
-    background: #606467;
+    background: #2c2c2c;
     height: 26px;
     left: -2px;
     position: absolute;
+    border-radius: 2px 0 0 2px;
     top: 92px;
     width: 10px;
     z-index: -1;
 
     div:last-child,
     div:first-child {
-      background: #606467;
+      background: #2c2c2c;
       content: '';
       height: 50px;
       left: 0;
       position: absolute;
       width: 10px;
+      border-radius: 2px 0 0 2px;
       cursor: pointer;
       transition: all 0.3s;
 
       &:hover {
-        transform: translateX(-20%);
+        transform: translateX(-4px);
       }
     }
 
@@ -266,17 +257,18 @@
 
   &__power {
     z-index: -1;
-    background: #606467;
+    background: #2c2c2c;
     height: 80px;
     position: absolute;
     right: -2px;
     top: 160px;
     width: 10px;
+    border-radius: 0 2px 2px 0;
     transition: all 0.3s;
     cursor: pointer;
 
     &:hover {
-      transform: translateX(20%);
+      transform: translateX(4px);
     }
   }
 }
