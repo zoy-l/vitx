@@ -1,13 +1,13 @@
 import BuiltContainer from './BuiltContainer'
 import BuiltHeader from './BuiltHeader'
-import BuiltNav from './BuiltNav'
+import BuiltAside from './BuiltAside'
 
-export default function BuiltSite(props) {
-  const { children } = props
+export default function BuiltSite(props, { slots }) {
+  const { children = slots.default?.() } = props
   return (
     <div>
       <BuiltHeader />
-      <BuiltNav />
+      <BuiltAside />
       <BuiltContainer>{children}</BuiltContainer>
     </div>
   )

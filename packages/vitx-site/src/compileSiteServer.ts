@@ -27,8 +27,10 @@ export function createSiteServer(options: {
   site: IVitxSiteConfig['site']
 }) {
   const { cwd, frame, documents, site } = options
-  const { title, description, logo } = site
+  const { title, description, logo, lazy } = site
 
+  const root = path.join(cwd, 'template')
+  const rootFrame = path.join(root, frame)
   const isVue = frame === IFrame.vue
   const isReact = frame === IFrame.react
 
@@ -37,7 +39,8 @@ export function createSiteServer(options: {
       data: {
         title,
         description,
-        logo
+        logo,
+        frame
       }
     }),
     vitePluginMdn({
@@ -47,7 +50,7 @@ export function createSiteServer(options: {
         highlight: markdownHighlight
       }
     }),
-    modifyRoute(documents, isVue, isReact)
+    modifyRoute({ documents, isVue, isReact, lazy })
   ]
 
   if (isVue) {
@@ -64,7 +67,7 @@ export function createSiteServer(options: {
   }
 
   return createServer({
-    root: path.join(cwd, 'template', frame),
+    root,
     plugins,
     server: {
       host: true
@@ -72,6 +75,14 @@ export function createSiteServer(options: {
     resolve: {
       alias: {
         'vitx-site-common': siteTemplateCommon
+      }
+    },
+    build: {
+      rollupOptions: {
+        input: {
+          main: path.join(rootFrame, 'index.html'),
+          mobile: path.join(rootFrame, 'mobile.html')
+        }
       }
     }
   })

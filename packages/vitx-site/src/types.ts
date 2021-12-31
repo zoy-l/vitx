@@ -12,7 +12,8 @@ export interface IVitxSiteConfig {
     defaultLang?: string
     title?: string
     description?: string
-    logo: string
+    logo?: string
+    lazy?: boolean
   }
   build?: IConfig
 }

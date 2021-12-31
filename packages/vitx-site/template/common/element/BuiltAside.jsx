@@ -1,4 +1,4 @@
-export default function BuiltNav() {
+export default function BuiltAside() {
   const navConfig = [
     {
       title: '开发指南',
@@ -12,7 +12,7 @@ export default function BuiltNav() {
   ]
 
   return (
-    <nav className="vitx-built-nav">
+    <aside className="vitx-built-nav">
       {navConfig.map((group, index) => {
         let links = null
 
@@ -33,6 +33,6 @@ export default function BuiltNav() {
           </div>
         )
       })}
-    </nav>
+    </aside>
   )
 }

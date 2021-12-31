@@ -1,11 +1,16 @@
-import { PluginOption, ResolvedConfig } from 'vite'
+import { PluginOption } from 'vite'
 
 export type IDocuments = { name: string; path: string }[]
 
-export function modifyRoute(documents: IDocuments, isVue: boolean, isReact: boolean): PluginOption {
+export function modifyRoute(options: {
+  documents: IDocuments
+  isReact: boolean
+  isVue: boolean
+  lazy: boolean
+}): PluginOption {
+  const { documents, isVue, isReact, lazy } = options
   const virtualModuleId = '@vitx-documents'
   const resolvedVirtualModuleId = `vitx:${virtualModuleId}`
-  let config: ResolvedConfig | undefined
 
   return {
     name: 'vite-plugin-vitx-route',
@@ -14,20 +19,17 @@ export function modifyRoute(documents: IDocuments, isVue: boolean, isReact: bool
         return resolvedVirtualModuleId
       }
     },
-    configResolved(_config) {
-      config = _config
-    },
     load(id) {
       if (id === resolvedVirtualModuleId) {
         return `
         ${documents.reduce(
           (memo, current) => {
-            if (config.isProduction) {
-              memo += `import ${current.name} from "${current.path}";\n`
-            } else {
+            if (lazy) {
               isVue && (memo += `const ${current.name} = () => import("${current.path}");\n`)
               isReact &&
                 (memo += `const ${current.name} = lazy(() => import("${current.path}"));\n`)
+            } else {
+              memo += `import ${current.name} from "${current.path}";\n`
             }
             return memo
           },
@@ -48,7 +50,7 @@ export function modifyRoute(documents: IDocuments, isVue: boolean, isReact: bool
           const { fallback = React.createElement('div', null), site: BuiltSite } = props
           const document = Object.keys(documents)
           return React.createElement(
-            ${config.isProduction ? 'Fragment, null' : 'Suspense, { fallback }'},
+            ${lazy ? 'Suspense, { fallback }' : 'Fragment, null'},
             React.createElement(BrowserRouter, null, React.createElement(
                 BuiltSite, null, React.createElement(
                   Routes, null,

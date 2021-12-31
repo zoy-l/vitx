@@ -1,20 +1,10 @@
 <script setup>
-import VitxSite from './built/index.vue'
+import BuiltSite from 'vitx-site-common/element'
 </script>
 
 <template>
-  <vitx-site>
+  <BuiltSite>
     <router-view />
-  </vitx-site>
+  </BuiltSite>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>

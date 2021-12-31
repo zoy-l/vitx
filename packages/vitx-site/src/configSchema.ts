@@ -4,7 +4,8 @@ import Joi from '@vitx/bundles/model/joi'
 export default Joi.object({
   name: Joi.string(),
   site: Joi.object({
-    title: Joi.string()
+    title: Joi.string(),
+    lazy: Joi.boolean()
   }),
   build: buildSchema
 })

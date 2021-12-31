@@ -1,6 +1,6 @@
 import 'vitx-site-common/styles'
-
 import { createApp } from 'vue'
+
 import routers from './router'
 
 import App from './App.vue'
