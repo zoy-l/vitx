@@ -1,5 +1,5 @@
 import type MarkdownIt from 'markdown-it';
-export interface Options {
+export interface IOptions {
     /**
      * Options passed to Markdown It
      */
@@ -30,4 +30,4 @@ export interface Options {
      */
     frame: 'vue' | 'react';
 }
-export declare type ResolvedOptions = Required<Options>;
+export declare type ResolvedOptions = Required<IOptions>;

@@ -8,5 +8,5 @@
     "moduleResolution": "node",
     "allowJs": true
   },
-  "exclude": ["bin/*", "lib/*", "template/**/*.js", "*.js"]
+  "exclude": ["bin/*", "lib/*", "template", "*.js"]
 }

@@ -7,7 +7,7 @@ import matter from 'gray-matter'
 
 import { basename } from 'path'
 
-import { Options, ResolvedOptions } from './types'
+import { IOptions, ResolvedOptions } from './types'
 
 function toArray<T>(n: T | T[]): T[] {
   if (!Array.isArray(n)) return [n]
@@ -20,7 +20,7 @@ export function parseId(id: string) {
   return id.slice(0, index)
 }
 
-function VitePluginMarkdown(options: Options): PluginOption {
+function vitePluginMarkdown(options: IOptions): PluginOption {
   const resolved = {
     markdownItOptions: {},
     markdownItUses: [],
@@ -139,4 +139,18 @@ function VitePluginMarkdown(options: Options): PluginOption {
   }
 }
 
-export default VitePluginMarkdown
+export function vitePluginMarkdownReact(options: Omit<IOptions, 'frame'>) {
+  return vitePluginMarkdown({
+    frame: 'react',
+    ...options
+  })
+}
+
+export function vitePluginMarkdownVue(options: Omit<IOptions, 'frame'>) {
+  return vitePluginMarkdown({
+    frame: 'vue',
+    ...options
+  })
+}
+
+export default vitePluginMarkdown

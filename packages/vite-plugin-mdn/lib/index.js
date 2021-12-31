@@ -3,6 +3,8 @@
 exports.__esModule = true;
 exports.default = void 0;
 exports.parseId = parseId;
+exports.vitePluginMarkdownReact = vitePluginMarkdownReact;
+exports.vitePluginMarkdownVue = vitePluginMarkdownVue;
 
 var _compilerSfc = require("@vue/compiler-sfc");
 
@@ -31,7 +33,7 @@ function parseId(id) {
   return id.slice(0, index);
 }
 
-function VitePluginMarkdown(options) {
+function vitePluginMarkdown(options) {
   var resolved = _extends({
     markdownItOptions: {},
     markdownItUses: [],
@@ -145,5 +147,17 @@ function VitePluginMarkdown(options) {
   };
 }
 
-var _default = VitePluginMarkdown;
+function vitePluginMarkdownReact(options) {
+  return vitePluginMarkdown(_extends({
+    frame: 'react'
+  }, options));
+}
+
+function vitePluginMarkdownVue(options) {
+  return vitePluginMarkdown(_extends({
+    frame: 'vue'
+  }, options));
+}
+
+var _default = vitePluginMarkdown;
 exports.default = _default;
