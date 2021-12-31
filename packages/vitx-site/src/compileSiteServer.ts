@@ -10,7 +10,6 @@ import path from 'path'
 
 import { IDocuments, modifyRoute } from './genRouter'
 import { IFrame, IVitxSiteConfig } from './types'
-import { siteTemplateCommon } from './constants'
 
 function markdownHighlight(code: string, lang: string) {
   if (lang && highlight.getLanguage(lang)) {
@@ -31,6 +30,10 @@ export function createSiteServer(options: {
 
   const root = path.join(cwd, 'template')
   const rootFrame = path.join(root, frame)
+  const vitxSiteCommon = path.join(root, 'common')
+  const mainHtml = path.join(rootFrame, 'index.html')
+  const mobileHtml = path.join(rootFrame, 'mobile.html')
+
   const isVue = frame === IFrame.vue
   const isReact = frame === IFrame.react
 
@@ -74,14 +77,14 @@ export function createSiteServer(options: {
     },
     resolve: {
       alias: {
-        'vitx-site-common': siteTemplateCommon
+        'vitx-site-common': vitxSiteCommon
       }
     },
     build: {
       rollupOptions: {
         input: {
-          main: path.join(rootFrame, 'index.html'),
-          mobile: path.join(rootFrame, 'mobile.html')
+          main: mainHtml,
+          mobile: mobileHtml
         }
       }
     }
