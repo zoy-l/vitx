@@ -2,27 +2,69 @@ import { PluginOption } from 'vite'
 
 export type IDocuments = { name: string; path: string }[]
 
-export function modifyRoute(options: {
+function createVueRoute() {
+  return `export default documents`
+}
+
+function createReactRoute(lazy: boolean) {
+  return `function BuiltRouter(props) {
+    const { fallback = React.createElement('div', null), site: BuiltSite } = props
+    const document = Object.keys(documents)
+    return React.createElement(
+      ${lazy ? 'Suspense, { fallback }' : 'Fragment, null'},
+      React.createElement(BrowserRouter, null, React.createElement(
+          BuiltSite, null, React.createElement(
+            Routes, null,
+            document.map((routeName) => {
+              const Element = documents[routeName]
+              return React.createElement(Route, {
+                key: routeName,
+                path: \`/\${routeName}\`,
+                element: React.createElement(Element, null)
+              })
+            })
+          )
+        )
+      )
+    )
+  }
+  export default BuiltRouter`
+}
+
+export function genRoute(options: {
   documents: IDocuments
+  demos: IDocuments
   isReact: boolean
   isVue: boolean
   lazy: boolean
 }): PluginOption {
-  const { documents, isVue, isReact, lazy } = options
-  const virtualModuleId = '@vitx-documents'
-  const resolvedVirtualModuleId = `vitx:${virtualModuleId}`
+  const { documents, isVue, isReact, lazy, demos } = options
+  const virtualDesktopModuleId = '@vitx-documents-desktop'
+  const virtualMobileModuleId = '@vitx-documents-mobile'
+  const resolvedMobileVirtualModuleId = `vitx:${virtualMobileModuleId}`
+  const resolvedDesktopVirtualModuleId = `vitx:${virtualDesktopModuleId}`
+
+  const files = {
+    [resolvedMobileVirtualModuleId]: demos,
+    [resolvedDesktopVirtualModuleId]: documents
+  }
 
   return {
     name: 'vite-plugin-vitx-route',
     resolveId(id) {
-      if (id === virtualModuleId) {
-        return resolvedVirtualModuleId
+      if (id === virtualDesktopModuleId) {
+        return resolvedDesktopVirtualModuleId
+      }
+
+      if (id === virtualMobileModuleId) {
+        return resolvedMobileVirtualModuleId
       }
     },
     load(id) {
-      if (id === resolvedVirtualModuleId) {
+      if (id === resolvedDesktopVirtualModuleId || id === resolvedMobileVirtualModuleId) {
+        // const isDemos = id === resolvedMobileVirtualModuleId
         return `
-        ${documents.reduce(
+        ${files[id].reduce(
           (memo, current) => {
             if (lazy) {
               isVue && (memo += `const ${current.name} = () => import("${current.path}");\n`)
@@ -41,35 +83,10 @@ export function modifyRoute(options: {
             : ''
         )}
         const documents = {
-          ${documents.map((item) => item.name).join(',')}
+          ${files[id].map((item) => item.name).join(',')}
         }
 
-        ${
-          isReact
-            ? `function BuiltRouter(props) {
-          const { fallback = React.createElement('div', null), site: BuiltSite } = props
-          const document = Object.keys(documents)
-          return React.createElement(
-            ${lazy ? 'Suspense, { fallback }' : 'Fragment, null'},
-            React.createElement(BrowserRouter, null, React.createElement(
-                BuiltSite, null, React.createElement(
-                  Routes, null,
-                  document.map((routeName) => {
-                    const Element = documents[routeName]
-                    return React.createElement(Route, {
-                      key: routeName,
-                      path: \`/\${routeName}\`,
-                      element: React.createElement(Element, null)
-                    })
-                  })
-                )
-              )
-            )
-          )
-        }
-        export default BuiltRouter`
-            : `export default documents`
-        }`
+        ${isReact ? createReactRoute(lazy) : createVueRoute()}`
       }
     }
   }

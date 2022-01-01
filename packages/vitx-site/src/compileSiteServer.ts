@@ -7,9 +7,19 @@ import type { PluginOption } from 'vite'
 import highlight from 'highlight.js'
 import { createServer } from 'vite'
 import path from 'path'
+import fs from 'fs'
 
-import { IDocuments, modifyRoute } from './genRouter'
+import { IDocuments, genRoute } from './genRouter'
 import { IFrame, IVitxSiteConfig } from './types'
+
+const docFileName = 'README.md'
+const docLangFileName = (lang: string) => `README.${lang}.md`
+const demoDirName = 'demo'
+const demoEntryFileName = 'index'
+const mainHtmlFileName = 'index.html'
+const mobileHtmlFileName = 'mobile.html'
+const commonDirName = 'common'
+const templateDirName = 'template'
 
 function markdownHighlight(code: string, lang: string) {
   if (lang && highlight.getLanguage(lang)) {
@@ -19,23 +29,82 @@ function markdownHighlight(code: string, lang: string) {
   return ''
 }
 
-export function createSiteServer(options: {
-  cwd: string
-  frame: IFrame
-  documents: IDocuments
-  site: IVitxSiteConfig['site']
+function getComponents({
+  components,
+  defaultLang,
+  locales,
+  entryPath
+}: {
+  defaultLang: IVitxSiteConfig['site']['defaultLang']
+  locales: IVitxSiteConfig['site']['locales']
+  components: string[]
+  entryPath: string
 }) {
-  const { cwd, frame, documents, site } = options
-  const { title, description, logo, lazy } = site
+  const documents: IDocuments = []
 
-  const root = path.join(cwd, 'template')
+  if (locales) {
+    const langs = Object.keys(locales)
+    langs.forEach((lang) => {
+      const fileName = lang === defaultLang ? docFileName : docLangFileName(lang)
+      components.forEach((component) => {
+        documents.push({
+          name: component,
+          path: path.join(entryPath, component, fileName)
+        })
+      })
+    })
+  } else {
+    components.forEach((component) => {
+      documents.push({
+        name: component,
+        path: path.join(entryPath, component, docFileName)
+      })
+    })
+  }
+
+  const getDemoEntryFile = (demoDirPath: string) => {
+    let indexFilePath: string
+    fs.readdirSync(demoDirPath).forEach((item) => {
+      const filePath = path.join(demoDirPath, item)
+      if (!fs.lstatSync(filePath).isDirectory() && item.split('.')[0] === demoEntryFileName) {
+        indexFilePath = filePath
+      }
+    })
+
+    return indexFilePath
+  }
+
+  const demos = components.map((component) => ({
+    component,
+    name: component,
+    path: getDemoEntryFile(path.join(entryPath, component, demoDirName))
+  }))
+
+  return { demos, documents }
+}
+
+export function createSiteServer(options: { cwd: string; frame: IFrame; config: IVitxSiteConfig }) {
+  const { cwd, frame, config } = options
+  const {
+    entry,
+    site: { title, description, logo, lazy, locales, defaultLang }
+  } = config
+
+  const root = path.join(cwd, templateDirName)
+  const entryPath = path.join(cwd, entry)
   const rootFrame = path.join(root, frame)
-  const vitxSiteCommon = path.join(root, 'common')
-  const mainHtml = path.join(rootFrame, 'index.html')
-  const mobileHtml = path.join(rootFrame, 'mobile.html')
+  const vitxSiteCommon = path.join(root, commonDirName)
+  const mainHtml = path.join(rootFrame, mainHtmlFileName)
+  const mobileHtml = path.join(rootFrame, mobileHtmlFileName)
 
   const isVue = frame === IFrame.vue
   const isReact = frame === IFrame.react
+
+  const components = fs
+    .readdirSync(entryPath)
+    .filter((item) => fs.lstatSync(path.join(entryPath, item)).isDirectory())
+
+  const { documents, demos } = getComponents({ components, entryPath, defaultLang, locales })
 
   const plugins: (PluginOption | PluginOption[])[] = [
     injectHtml({
@@ -53,7 +122,7 @@ export function createSiteServer(options: {
         highlight: markdownHighlight
       }
     }),
-    modifyRoute({ documents, isVue, isReact, lazy })
+    genRoute({ documents, isVue, isReact, lazy, demos })
   ]
 
   if (isVue) {

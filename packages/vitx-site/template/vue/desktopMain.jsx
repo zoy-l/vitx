@@ -1,6 +1,6 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import BuiltSite from 'vitx-site-common/element'
-import documents from '@vitx-documents'
+import documents from '@vitx-documents-desktop'
 import 'vitx-site-common/styles'
 import { createApp } from 'vue'
 

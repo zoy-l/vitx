@@ -1,13 +1,20 @@
 body {
-  min-width: 1100px;
   margin: 0;
-  overflow-x: auto;
   color: var(--vitx-built-black);
   font-size: 16px;
   font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, Segoe UI,
     Arial, Roboto, 'PingFang SC', 'miui', 'Hiragino Sans GB', 'Microsoft Yahei', sans-serif;
   background-color: var(--vitx-built-background-color);
   -webkit-font-smoothing: antialiased;
+}
+
+body[desktop] {
+  min-width: 1100px;
+  overflow-x: auto;
+}
+
+body[mobile] {
+  padding: 20px;
 }
 
 p {
@@ -37,6 +44,10 @@ a {
 
 .markdown-body {
   padding: var(--vitx-built-padding);
+}
+
+.markdown-body code {
+  line-height: 1;
 }
 
 .markdown-body ul li {

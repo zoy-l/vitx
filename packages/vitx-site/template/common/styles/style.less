@@ -8,6 +8,7 @@
   &__content {
     flex: 1;
     position: relative;
+    padding-right: calc(var(--vitx-built-padding) + var(--vitx-built-simulator-width));
   }
 }
 
@@ -151,9 +152,33 @@
     border-radius: 42px;
     height: 100%;
     width: 100%;
+    overflow: hidden;
+  }
+
+  &__header {
+    position: relative;
+    width: 100%;
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+
+    &-left,
+    &-right {
+      width: calc((100% - 124px) / 2);
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+
+    &-right {
+      padding-left: 8px;
+    }
+
+    &-left {
+      font-size: 14px;
+      font-weight: bold;
+      padding-left: 8px;
+    }
   }
 
   &__sensors {
@@ -274,6 +299,9 @@
 }
 
 .vitx-built-simulator {
+  position: fixed;
+  top: var(--vitx-built-header-height);
+  right: 0;
   margin: var(--vitx-built-padding);
   z-index: 1;
   box-sizing: border-box;

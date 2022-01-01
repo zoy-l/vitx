@@ -10,8 +10,43 @@
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, viewport-fit=cover"
     />
   </head>
-  <body ontouchstart>
+  <body desktop>
     <div id="vitx-app"></div>
     <script type="module" src="/<%= frame %>/desktopMain.jsx"></script>
+    <script>
+      function onReady(fn) {
+        var { readyState } = document
+        if (readyState === 'interactive' || readyState === 'complete') {
+          fn()
+        } else {
+          window.addEventListener('DOMContentLoaded', fn)
+        }
+      }
+
+      onReady(() => {
+        var startTime = new Date().getTime()
+        var count = 0
+
+        function repair(time) {
+          if (time === 0) {
+            return '00'
+          }
+          return time < 10 ? '0' + time : time
+        }
+
+        function fixed() {
+          count++
+          var date = new Date()
+          var offset = date.getTime() - (startTime + count * 1000)
+          var nextTime = 1000 - offset
+          if (nextTime < 0) nextTime = 0
+          setTimeout(fixed, nextTime)
+
+          document.getElementById('simulator').innerHTML =
+            repair(date.getHours()) + ':' + repair(date.getMinutes())
+        }
+        setTimeout(fixed, 1000)
+      })
+    </script>
   </body>
 </html>

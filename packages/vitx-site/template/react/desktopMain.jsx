@@ -1,5 +1,5 @@
+import BuiltRouter from '@vitx-documents-desktop'
 import BuiltSite from 'vitx-site-common/element'
-import BuiltRouter from '@vitx-documents'
 import { render } from 'react-dom'
 import 'vitx-site-common/styles'
 
