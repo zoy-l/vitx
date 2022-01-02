@@ -18,6 +18,8 @@
     "commander": "^8.3.0",
     "fast-glob": "^3.2.7",
     "highlight.js": "^11.3.1",
+    "markdown-it-anchor": "^8.4.1",
+    "markdown-it-toc-done-right": "^4.2.0",
     "react-router-dom": "^6.2.1",
     "vite": "^2.7.7",
     "vite-plugin-html": "^2.1.2",

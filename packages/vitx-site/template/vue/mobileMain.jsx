@@ -1,11 +1,16 @@
+/**
+ * @typedef {import('vue-router').RouteRecordRaw} RouteRecordRaw
+ */
+
 import { createRouter, createWebHistory } from 'vue-router'
 import documents from '@vitx-documents-mobile'
-import 'vitx-site-common/styles'
+import 'vitx-site-common/styles/mobile'
 import { createApp } from 'vue'
 
 function installRouters() {
   /** @type {{path:string, name:string}[]} */
   const docs = documents
+  /** @type {RouteRecordRaw[]} */
   const routes = []
 
   const document = Object.keys(docs)
@@ -13,9 +18,7 @@ function installRouters() {
   routes.push({
     name: 'notFound',
     path: '/:path(.*)+',
-    redirect: {
-      name: 'testmd'
-    }
+    redirect: { name: 'BuiltMobileHome' }
   })
 
   document.forEach((name) => {

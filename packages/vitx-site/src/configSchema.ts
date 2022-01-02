@@ -6,7 +6,8 @@ export default Joi.object({
   entry: Joi.string(),
   site: Joi.object({
     title: Joi.string(),
-    lazy: Joi.boolean()
+    lazy: Joi.boolean(),
+    nav: Joi.array()
   }),
   build: buildSchema
 })

@@ -1,19 +1,9 @@
-export default function BuiltAside() {
-  const navConfig = [
-    {
-      title: '开发指南',
-      items: [
-        {
-          path: 'home',
-          title: '介绍'
-        }
-      ]
-    }
-  ]
+export default function BuiltAside(props) {
+  const { nav } = props
 
   return (
     <aside className="vitx-built-nav">
-      {navConfig.map((group, index) => {
+      {nav.map((group, index) => {
         let links = null
 
         if (group.items) {

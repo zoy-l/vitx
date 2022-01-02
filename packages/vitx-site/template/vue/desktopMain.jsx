@@ -1,6 +1,6 @@
-import { createRouter, createWebHashHistory } from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
+import documents, { nav } from '@vitx-documents-desktop'
 import BuiltSite from 'vitx-site-common/element'
-import documents from '@vitx-documents-desktop'
 import 'vitx-site-common/styles'
 import { createApp } from 'vue'
 
@@ -34,7 +34,7 @@ function installRouters() {
 }
 
 const routers = createRouter({
-  history: createWebHashHistory(),
+  history: createWebHistory(),
   routes: installRouters(),
   scrollBehavior(to) {
     if (to.hash) {
@@ -46,7 +46,7 @@ const routers = createRouter({
 
 function App() {
   return (
-    <BuiltSite>
+    <BuiltSite nav={nav}>
       <router-view />
     </BuiltSite>
   )

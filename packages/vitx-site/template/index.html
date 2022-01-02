@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <title><%= title %></title>
     <meta name="description" content="<%= description %>" />
-    <!-- <link rel="icon" type="image/png" href="<%= logo %>" /> -->
+    <link rel="icon" type="image/png" href="<%= logo %>" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, viewport-fit=cover"
@@ -15,7 +15,7 @@
     <script type="module" src="/<%= frame %>/desktopMain.jsx"></script>
     <script>
       function onReady(fn) {
-        var { readyState } = document
+        const { readyState } = document
         if (readyState === 'interactive' || readyState === 'complete') {
           fn()
         } else {
@@ -24,8 +24,10 @@
       }
 
       onReady(() => {
-        var startTime = new Date().getTime()
-        var count = 0
+        const simulatorElement = document.getElementById('simulator')
+        const startTime = new Date().getTime()
+        const timeout = 1000
+        let count = 0
 
         function repair(time) {
           if (time === 0) {
@@ -36,16 +38,18 @@
 
         function fixed() {
           count++
-          var date = new Date()
-          var offset = date.getTime() - (startTime + count * 1000)
-          var nextTime = 1000 - offset
+          const date = new Date()
+          const offset = date.getTime() - (startTime + count * timeout)
+          let nextTime = timeout - offset
           if (nextTime < 0) nextTime = 0
           setTimeout(fixed, nextTime)
+          const currentTime = repair(date.getHours()) + ':' + repair(date.getMinutes())
 
-          document.getElementById('simulator').innerHTML =
-            repair(date.getHours()) + ':' + repair(date.getMinutes())
+          if (simulatorElement.innerHTML !== currentTime) {
+            simulatorElement.innerHTML = currentTime
+          }
         }
-        setTimeout(fixed, 1000)
+        setTimeout(fixed, timeout)
       })
     </script>
   </body>

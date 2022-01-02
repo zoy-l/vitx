@@ -14,6 +14,10 @@ export interface IVitxSiteConfig {
     description?: string
     logo?: string
     lazy?: boolean
+    nav?: {
+      title: string
+      item: { title: string; path: string }[]
+    }[]
   }
   build?: IConfig
 }

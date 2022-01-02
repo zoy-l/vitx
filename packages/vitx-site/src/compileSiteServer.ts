@@ -1,5 +1,7 @@
+import markdownItTocDoneRight from 'markdown-it-toc-done-right'
 import vitePluginJsx from '@vitejs/plugin-vue-jsx'
 import vitePluginReact from '@vitejs/plugin-react'
+import markdownItAnchor from 'markdown-it-anchor'
 import vitePluginVue from '@vitejs/plugin-vue'
 import { injectHtml } from 'vite-plugin-html'
 import vitePluginMdn from 'vite-plugin-mdn'
@@ -87,7 +89,7 @@ export function createSiteServer(options: { cwd: string; frame: IFrame; config: 
   const { cwd, frame, config } = options
   const {
     entry,
-    site: { title, description, logo, lazy, locales, defaultLang }
+    site: { title, description, logo, lazy, locales, defaultLang, nav }
   } = config
 
   const root = path.join(cwd, templateDirName)
@@ -120,9 +122,22 @@ export function createSiteServer(options: { cwd: string; frame: IFrame; config: 
       markdownItOptions: {
         typographer: false,
         highlight: markdownHighlight
+      },
+      markdownItSetup(md) {
+        md.use(markdownItAnchor, {
+          permalink: markdownItAnchor.permalink.ariaHidden({
+            placement: 'before',
+            symbol: '#'
+          })
+        }).use(markdownItTocDoneRight, { listType: 'ul' })
+      },
+      transforms: {
+        before(code) {
+          return `\${toc}\n${code}`
+        }
       }
     }),
-    genRoute({ documents, isVue, isReact, lazy, demos })
+    genRoute({ documents, isVue, isReact, lazy, demos, nav })
   ]
 
   if (isVue) {
