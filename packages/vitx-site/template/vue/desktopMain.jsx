@@ -35,13 +35,7 @@ function installRouters() {
 
 const routers = createRouter({
   history: createWebHistory(),
-  routes: installRouters(),
-  scrollBehavior(to) {
-    if (to.hash) {
-      return { el: to.hash }
-    }
-    return { top: 0 }
-  }
+  routes: installRouters()
 })
 
 function App() {

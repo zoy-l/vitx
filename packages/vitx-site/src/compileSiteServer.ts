@@ -128,8 +128,9 @@ export function createSiteServer(options: { cwd: string; frame: IFrame; config: 
           permalink: markdownItAnchor.permalink.ariaHidden({
             placement: 'before',
             symbol: '#'
-          })
-        }).use(markdownItTocDoneRight, { listType: 'ul' })
+          }),
+          level: 2
+        }).use(markdownItTocDoneRight, { listType: 'ul', level: 2 })
       },
       transforms: {
         before(code) {

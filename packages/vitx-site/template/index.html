@@ -50,6 +50,49 @@
           }
         }
         setTimeout(fixed, timeout)
+        const mainElement = document.querySelector('.vitx-built-container')
+
+        if (location.hash) {
+          document.getElementById(location.hash.slice(1)).scrollIntoView()
+        }
+
+        const anchors = document.getElementsByClassName('header-anchor')
+        const anchorsLocation = []
+        Object.keys(anchors).forEach((index) => {
+          anchorsLocation.push(anchors[index].offsetTop)
+        })
+        let timer
+        let oldHash = ''
+        let isClick = false
+        const aList = document.querySelectorAll(`.table-of-contents a`)
+        aList.forEach((element) => {
+          element.onclick = () => {
+            aList.forEach((el) => {
+              el.className = ''
+            })
+            element.className = 'active-anchor'
+          }
+        })
+
+        mainElement.addEventListener('scroll', (event) => {
+          clearTimeout(timer)
+          timer = setTimeout(() => {
+            let index = anchorsLocation.findIndex((item) => item >= event.target.scrollTop) - 1
+            if (index < 0) {
+              index = 0
+            }
+            let hash = anchors[index].getAttribute('href')
+            history.pushState(null, null, anchors[index].getAttribute('href'))
+
+            if (oldHash) {
+              document.querySelector(`.table-of-contents a[href='${oldHash}']`).className = ''
+            }
+
+            document.querySelector(`.table-of-contents a[href='${hash}']`).className =
+              'active-anchor'
+            oldHash = hash
+          }, 500)
+        })
       })
     </script>
   </body>
