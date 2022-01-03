@@ -1,6 +1,9 @@
-import { nav } from '@vitx-documents-desktop'
+import { config } from '@vitx-documents-desktop'
 
 function BuiltMobileHome() {
+  const {
+    site: { nav }
+  } = config
   return (
     <aside className="vitx-built-mobile-home">
       {nav.map((group, index) => {

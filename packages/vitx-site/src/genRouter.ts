@@ -18,7 +18,7 @@ function createReactRoute(lazy: boolean, isDemos: boolean) {
       React.createElement(BrowserRouter, ${
         isDemos ? `{ basename: '/mobile.html' }` : 'null'
       }, React.createElement(
-          BuiltSite || Fragment, null, React.createElement(
+          BuiltSite || Fragment, BuiltSite ? { config } : null, React.createElement(
             Routes, null,
             document.map((routeName) => {
               const Element = documents[routeName]
@@ -45,9 +45,9 @@ export function genRoute(options: {
   isReact: boolean
   isVue: boolean
   lazy: boolean
-  nav: IVitxSiteConfig['site']['nav']
+  config: IVitxSiteConfig
 }): PluginOption {
-  const { documents, isVue, isReact, lazy, demos, nav } = options
+  const { documents, isVue, isReact, lazy, demos, config } = options
   const virtualDesktopModuleId = '@vitx-documents-desktop'
   const virtualMobileModuleId = '@vitx-documents-mobile'
   const resolvedMobileVirtualModuleId = `vitx:${virtualMobileModuleId}`
@@ -99,7 +99,7 @@ export function genRoute(options: {
         const documents = {
           ${files[id].map((item) => item.name).join(',')}
         }
-        export const nav = ${JSON.stringify(nav)}
+        export const config = ${JSON.stringify(config)}
         ${isReact ? createReactRoute(lazy, isDemos) : createVueRoute()}`
       }
     }

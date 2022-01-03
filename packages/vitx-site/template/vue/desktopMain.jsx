@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import documents, { nav } from '@vitx-documents-desktop'
+import documents, { config } from '@vitx-documents-desktop'
 import BuiltSite from 'vitx-site-common/element'
 import 'vitx-site-common/styles'
 import { createApp } from 'vue'
@@ -46,7 +46,7 @@ const routers = createRouter({
 
 function App() {
   return (
-    <BuiltSite nav={nav}>
+    <BuiltSite config={config}>
       <router-view />
     </BuiltSite>
   )

@@ -89,7 +89,7 @@ export function createSiteServer(options: { cwd: string; frame: IFrame; config: 
   const { cwd, frame, config } = options
   const {
     entry,
-    site: { title, description, logo, lazy, locales, defaultLang, nav }
+    site: { title, description, logo, lazy, locales, defaultLang }
   } = config
 
   const root = path.join(cwd, templateDirName)
@@ -137,7 +137,7 @@ export function createSiteServer(options: { cwd: string; frame: IFrame; config: 
         }
       }
     }),
-    genRoute({ documents, isVue, isReact, lazy, demos, nav })
+    genRoute({ documents, isVue, isReact, lazy, demos, config })
   ]
 
   if (isVue) {

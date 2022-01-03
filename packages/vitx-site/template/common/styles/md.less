@@ -1,5 +1,5 @@
 .markdown-body {
-  padding: var(--vitx-built-padding) 80px;
+  padding: var(--vitx-built-padding) 20px var(--vitx-built-padding) 80px;
 }
 
 .markdown-body code {
@@ -95,13 +95,39 @@
 
 .table-of-contents {
   position: fixed;
-  right: var(--vitx-built-simulator-width);
-  width: 400px;
+  right: calc(var(--vitx-built-simulator-width) + 20px);
+  width: var(--vitx-built-directory-width);
+
+  a {
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    font-size: 12px;
+    padding: 0px 8px 0px 10px;
+    margin: 4px 0px 8px;
+    border-left: 1px solid transparent;
+    box-sizing: border-box;
+    font-weight: 500;
+    color: rgb(26, 32, 39);
+    transition: all 0.3s;
+
+    &:hover {
+      text-decoration: none;
+      border-left-color: rgb(178, 186, 194);
+      color: rgb(111, 126, 140);
+    }
+  }
+
   ul {
     padding-left: 10px;
+    margin-bottom: 0;
   }
+
   li {
     list-style: none !important;
+    & + li {
+      margin-top: 0;
+    }
   }
 }
 
