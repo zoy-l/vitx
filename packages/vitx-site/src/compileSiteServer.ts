@@ -130,7 +130,10 @@ export function createSiteServer(options: { cwd: string; frame: IFrame; config: 
             symbol: '#'
           }),
           level: 2
-        }).use(markdownItTocDoneRight, { listType: 'ul', level: 2 })
+        }).use(markdownItTocDoneRight, {
+          listType: 'ul',
+          level: 2
+        })
       },
       transforms: {
         before(code) {
