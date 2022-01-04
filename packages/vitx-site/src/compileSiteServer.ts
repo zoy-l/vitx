@@ -146,7 +146,7 @@ export function createSiteServer(options: { cwd: string; frame: IFrame; config: 
       },
       transforms: {
         before(code) {
-          return `\${toc}\n${code}`
+          return `<div class="markdown-body__content">\n\n${code}\n\n</div> \n\n\${toc}\n`
         }
       }
     }),

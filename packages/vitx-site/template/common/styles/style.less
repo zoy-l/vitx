@@ -9,14 +9,10 @@
     height: calc(100vh - var(--vitx-built-header-height));
     box-sizing: border-box;
     overflow: auto;
+    flex: 1;
 
     &__content {
       flex: 1;
-      position: relative;
-      padding-right: calc(
-        var(--vitx-built-padding) + var(--vitx-built-simulator-width) +
-          var(--vitx-built-directory-width)
-      );
     }
   }
 
@@ -294,24 +290,12 @@
   }
 
   &-simulator {
-    position: fixed;
-    top: var(--vitx-built-header-height);
-    right: 0;
+    position: sticky;
+    top: 0;
     padding: var(--vitx-built-padding);
-    margin-right: 10px;
     z-index: 1;
     overflow: hidden;
     border-radius: var(--vitx-built-border-radius);
-
-    @media (max-width: 1100px) {
-      right: auto;
-      left: 750px;
-    }
-
-    &-fixed {
-      position: fixed;
-      top: var(--vitx-built-padding);
-    }
 
     iframe {
       display: block;

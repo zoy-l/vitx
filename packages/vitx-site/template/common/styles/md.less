@@ -1,5 +1,10 @@
 .markdown-body {
-  padding: var(--vitx-built-padding) 20px var(--vitx-built-padding) 80px;
+  display: flex;
+  padding-left: 40px;
+
+  &__content {
+    flex: 1;
+  }
 }
 
 .markdown-body code {
@@ -94,10 +99,14 @@
 }
 
 .table-of-contents {
-  position: fixed;
-  right: calc(var(--vitx-built-simulator-width) + 20px);
-
+  position: sticky;
+  top: 0;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  padding-top: var(--vitx-built-padding);
+  padding-left: var(--vitx-built-padding);
   width: var(--vitx-built-directory-width);
+  height: calc(100vh - var(--vitx-built-header-height));
 
   a {
     text-decoration: none;

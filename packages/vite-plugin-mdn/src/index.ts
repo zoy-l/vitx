@@ -121,7 +121,7 @@ function vitePluginMarkdown(options: IOptions): PluginOption {
         import React from 'react'
         export default function ${componentName}(props){
           const html = ${converter.convert(code)}
-          return <div {...props}>{ html }</div>
+          return {...html,...{props:{...html.props,...props}}}
         }`
 
         const result = transformSync(content, { loader: 'jsx' })

@@ -55,8 +55,6 @@ You can even use Vue inside your markdown, for example
 <Counter :init="5" />
 ```
 
-<Counter :init='5'/>
-
 Note you need to register the components globally to use them in Markdown
 
 ```ts

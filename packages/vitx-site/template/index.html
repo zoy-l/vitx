@@ -58,7 +58,7 @@
 
         const aList = document.querySelectorAll(`.table-of-contents a`)
         aList.forEach((element, index) => {
-          element.onclick = () => {
+          element.onclick = (event) => {
             if (oldIndex) {
               aList[oldIndex].className = ''
             }
@@ -77,7 +77,7 @@
         mainElement.addEventListener('scroll', (event) => {
           clearTimeout(timer)
           timer = setTimeout(() => {
-            let index = anchorsLocation.findIndex((item) => item >= event.target.scrollTop + 10) - 1
+            let index = anchorsLocation.findIndex((item) => item >= event.target.scrollTop)
             if (index < 0) {
               index = 0
             }
