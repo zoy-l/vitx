@@ -8,7 +8,8 @@
     display: flex;
     height: calc(100vh - var(--vitx-built-header-height));
     box-sizing: border-box;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
     flex: 1;
 
     &__content {
@@ -296,6 +297,10 @@
     z-index: 1;
     overflow: hidden;
     border-radius: var(--vitx-built-border-radius);
+
+    @media (max-width: 1100px) {
+      display: none;
+    }
 
     iframe {
       display: block;
