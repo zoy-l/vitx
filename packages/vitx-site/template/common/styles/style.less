@@ -117,10 +117,9 @@
   }
 
   &-device {
-    margin-left: 20px;
     position: relative;
     height: @simulator-height;
-    width: @simulator-width;
+    margin: 0 auto;
 
     *,
     *::before,
@@ -298,11 +297,9 @@
     position: fixed;
     top: var(--vitx-built-header-height);
     right: 0;
-    margin: var(--vitx-built-padding);
+    padding: var(--vitx-built-padding);
+    margin-right: 10px;
     z-index: 1;
-    box-sizing: border-box;
-    width: var(--vitx-built-simulator-width);
-    min-width: var(--vitx-built-simulator-width);
     overflow: hidden;
     border-radius: var(--vitx-built-border-radius);
 

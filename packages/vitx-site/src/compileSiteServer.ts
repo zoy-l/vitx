@@ -68,6 +68,7 @@ function getComponents({
     let indexFilePath: string
     fs.readdirSync(demoDirPath).forEach((item) => {
       const filePath = path.join(demoDirPath, item)
+
       if (!fs.lstatSync(filePath).isDirectory() && item.split('.')[0] === demoEntryFileName) {
         indexFilePath = filePath
       }
@@ -76,11 +77,19 @@ function getComponents({
     return indexFilePath
   }
 
-  const demos = components.map((component) => ({
-    component,
-    name: component,
-    path: getDemoEntryFile(path.join(entryPath, component, demoDirName))
-  }))
+  const demos = components
+    .map((component) => {
+      const componentPath = path.join(entryPath, component, demoDirName)
+
+      return (
+        fs.existsSync(componentPath) && {
+          component,
+          name: component,
+          path: getDemoEntryFile(componentPath)
+        }
+      )
+    })
+    .filter(Boolean)
 
   return { demos, documents }
 }

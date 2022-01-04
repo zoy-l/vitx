@@ -54,22 +54,25 @@
 
         let timer
         let oldHash = ''
+        let oldIndex = null
 
         const aList = document.querySelectorAll(`.table-of-contents a`)
-        aList.forEach((element) => {
+        aList.forEach((element, index) => {
           element.onclick = () => {
-            aList.forEach((el) => {
-              el.className = ''
-            })
+            if (oldIndex) {
+              aList[oldIndex].className = ''
+            }
             element.className = 'active-anchor'
+            oldIndex = index
           }
         })
 
         const anchors = document.getElementsByClassName('header-anchor')
         const anchorsLocation = []
-        Object.keys(anchors).forEach((index) => {
-          anchorsLocation.push(anchors[index].offsetTop)
-        })
+
+        for (let i = 0; i < anchors.length; i++) {
+          anchorsLocation.push(anchors[i].offsetTop)
+        }
 
         mainElement.addEventListener('scroll', (event) => {
           clearTimeout(timer)
