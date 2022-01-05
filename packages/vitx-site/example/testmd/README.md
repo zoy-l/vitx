@@ -291,3 +291,52 @@ export default {
 - Default: `false`
 
 基于 [gulp-sourcemaps](https://github.com/gulp-sourcemaps/gulp-sourcemaps)
+
+#### output
+
+编译输出目录
+
+- Type: `string`
+- Default: `lib`
+
+#### lessOptions
+
+- Type: `{ modifyVars?: Record<string, any> paths?: string[] plugins?: any[] relativeUrls?: boolean }`
+- Default: `object`
+
+[gulp-less](https://github.com/gulp-community/gulp-less#readme)
+
+#### sourcemap
+
+- Type: `boolean`
+- Default: `false`
+
+基于 [gulp-sourcemaps](https://github.com/gulp-sourcemaps/gulp-sourcemaps)
+
+#### output
+
+编译输出目录
+
+- Type: `string`
+- Default: `lib`
+
+#### lessOptions
+
+- Type: `{ modifyVars?: Record<string, any> paths?: string[] plugins?: any[] relativeUrls?: boolean }`
+- Default: `object`
+
+[gulp-less](https://github.com/gulp-community/gulp-less#readme)
+
+#### sourcemap
+
+- Type: `boolean`
+- Default: `false`
+
+基于 [gulp-sourcemaps](https://github.com/gulp-sourcemaps/gulp-sourcemaps)
+
+#### lessOptions
+
+- Type: `{ modifyVars?: Record<string, any> paths?: string[] plugins?: any[] relativeUrls?: boolean }`
+- Default: `object`
+
+[gulp-less](https://github.com/gulp-community/gulp-less#readme)

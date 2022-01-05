@@ -1,6 +1,6 @@
 .markdown-body {
   display: flex;
-  padding-left: 40px;
+  padding-left: 34px;
 
   &__content {
     flex: 1;
@@ -105,12 +105,19 @@
 .table-of-contents {
   position: sticky;
   top: 0;
+  overflow: auto;
   flex-shrink: 0;
   box-sizing: border-box;
-  padding-top: var(--vitx-built-padding);
+  padding: var(--vitx-built-padding) 0;
   padding-left: var(--vitx-built-padding);
   width: var(--vitx-built-directory-width);
   height: calc(100vh - var(--vitx-built-header-height));
+  transition: width 0.3s;
+
+  &::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
 
   a {
     text-decoration: none;
@@ -150,7 +157,9 @@
   }
 
   @media (max-width: 1100px) {
-    display: none;
+    width: 0;
+    padding-left: 0;
+    overflow: hidden;
   }
 }
 
@@ -169,15 +178,4 @@ hue-5:   #e06c75
 hue-5-2: #be5046
 hue-6:   #d19a66
 hue-6-2: #e6c07b
-
-.hljs-attr,
-.hljs-variable,
-.hljs-template-variable,
-.hljs-type,
-.hljs-selector-class,
-.hljs-selector-attr,
-.hljs-selector-pseudo,
-.hljs-number {
-  color: #d19a66;
-}
 */
