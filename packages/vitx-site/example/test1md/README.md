@@ -108,7 +108,7 @@ export default {
   plugins: [
     Markdown({
       // default options passed to markdown-it
-      // see: https://markdown-it.github.io/markdown-it/
+      // see: https://markdown-it.github.io/markdown-it/ see: https://markdown-it.github.io/markdown-it/see: https://markdown-it.github.io/markdown-it/see: https://markdown-it.github.io/markdown-it/
       markdownItOptions: {
         html: true,
         linkify: true,

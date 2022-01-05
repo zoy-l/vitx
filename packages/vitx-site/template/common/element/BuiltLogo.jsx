@@ -1,6 +1,6 @@
 export default function BuiltLogo() {
   return (
-    <svg viewBox="0 0 1055 1024" width="200" height="200">
+    <svg viewBox="0 0 1055 1024" width="28" height="28">
       <path
         d="M522.333496 510.970484m-510.970484 0a510.970484 510.970484 0 1 0 1021.940968 0 510.970484 510.970484 0 1 0-1021.940968 0Z"
         opacity=".07"
