@@ -89,9 +89,7 @@ export default {
 
 会自动读取 `tsconfig.json` 的 `compilerOptions` 的配置进行编译 `ts` or `tsx`
 
-### Options
-
-#### moduleType
+### moduleType
 
 输出格式,打包方式等
 
@@ -100,21 +98,21 @@ export default {
 
 `all` 会同时输出 `cjs` 和 `esm` 的格式文件
 
-#### extraBabelPresets
+### extraBabelPresets
 
 配置额外的 Babel presets。
 
 - Type: `array`
 - Default: `[]`
 
-#### extraBabelPlugins
+### extraBabelPlugins
 
 添加 Babel Plugins
 
 - Type: `array`
 - Default: `[]`
 
-#### target
+### target
 
 node 库 or browser 库，只作用于语法层。
 
@@ -123,14 +121,14 @@ node 库 or browser 库，只作用于语法层。
 
 `node`，兼容到 node@6 `browser`，兼容到 `['last 2 versions', 'IE 10']`
 
-#### frame
+### frame
 
 支持`.vue`单文件编译及`vue jsx or tsx` (只支持 vue3) 支持`react jsx or tsx` 注意目前必须要指定框架
 
 - Type: `"vue" | "react"`
 - Default: ``
 
-#### alias
+### alias
 
 路径别名, 参考 `webpack` alias 参数, 支持大部分主流文件类型, 支持小程序
 
@@ -150,7 +148,7 @@ export default {
 }
 ```
 
-#### browserFiles
+### browserFiles
 
 target 为 `node` 时，配置例外文件走 `browser` target。
 
@@ -159,14 +157,14 @@ target 为 `node` 时，配置例外文件走 `browser` target。
 
 注：所有 `.tsx` 和 `.jsx` 文件始终走 `browser` target。
 
-#### nodeFiles
+### nodeFiles
 
 target 为 `browser` 时，配置例外文件走 `node` target。
 
 - Type: `[string]`
 - Default: `[]`
 
-#### runtimeHelpers
+### runtimeHelpers
 
 是否把 helper 方法提取到 `@babel/runtime` 里。
 
@@ -178,14 +176,14 @@ target 为 `browser` 时，配置例外文件走 `node` target。
 1. 配置了 `runtimeHelpers`，要在 dependencies 里安装 `@babel/runtime` 依赖
 2. runtimeHelpers 只对 esm 有效
 
-#### disableTypes
+### disableTypes
 
 是否禁用类型检测, 将不会生成 d.ts
 
 - Type: `boolean`
 - Default: `false`
 
-#### beforeReadWriteStream
+### beforeReadWriteStream
 
 编译中 hook, 在没有进行任何处理之前
 
@@ -211,7 +209,7 @@ export default {
 }
 ```
 
-#### afterReadWriteStream
+### afterReadWriteStream
 
 编译中 hook, 在进行编译处理之后
 
@@ -235,14 +233,14 @@ export default {
 }
 ```
 
-#### afterHook
+### afterHook
 
 编译中 hook, 在进行编译完成之后
 
 - Type: `function():void`
 - Default: `undefined`
 
-#### packages
+### packages
 
 在多目录构建中，有可能出现组件间有构建先后的需求 `packages` 允许你自定义 packages 目录下的构建顺序, 当使用`packages`的时候没有在`packages`里面的目录不会进行编译
 
@@ -259,84 +257,35 @@ export default {
 
 1. 子目录的配置文件会继承最外层的配置
 
-#### packageDirName
+### packageDirName
 
 - Type: `string`
 - Default: `packages`
 
-#### entry
+### entry
 
 编译监听目录
 
 - Type: `string`
 - Default: `src`
 
-#### output
+### output
 
 编译输出目录
 
 - Type: `string`
 - Default: `lib`
 
-#### lessOptions
+### lessOptions
 
 - Type: `{ modifyVars?: Record<string, any> paths?: string[] plugins?: any[] relativeUrls?: boolean }`
 - Default: `object`
 
 [gulp-less](https://github.com/gulp-community/gulp-less#readme)
 
-#### sourcemap
+### sourcemap
 
 - Type: `boolean`
 - Default: `false`
 
 基于 [gulp-sourcemaps](https://github.com/gulp-sourcemaps/gulp-sourcemaps)
-
-#### output
-
-编译输出目录
-
-- Type: `string`
-- Default: `lib`
-
-#### lessOptions
-
-- Type: `{ modifyVars?: Record<string, any> paths?: string[] plugins?: any[] relativeUrls?: boolean }`
-- Default: `object`
-
-[gulp-less](https://github.com/gulp-community/gulp-less#readme)
-
-#### sourcemap
-
-- Type: `boolean`
-- Default: `false`
-
-基于 [gulp-sourcemaps](https://github.com/gulp-sourcemaps/gulp-sourcemaps)
-
-#### output
-
-编译输出目录
-
-- Type: `string`
-- Default: `lib`
-
-#### lessOptions
-
-- Type: `{ modifyVars?: Record<string, any> paths?: string[] plugins?: any[] relativeUrls?: boolean }`
-- Default: `object`
-
-[gulp-less](https://github.com/gulp-community/gulp-less#readme)
-
-#### sourcemap
-
-- Type: `boolean`
-- Default: `false`
-
-基于 [gulp-sourcemaps](https://github.com/gulp-sourcemaps/gulp-sourcemaps)
-
-#### lessOptions
-
-- Type: `{ modifyVars?: Record<string, any> paths?: string[] plugins?: any[] relativeUrls?: boolean }`
-- Default: `object`
-
-[gulp-less](https://github.com/gulp-community/gulp-less#readme)

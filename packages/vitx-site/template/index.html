@@ -53,17 +53,25 @@
         const mainElement = document.querySelector('.vitx-built-container')
 
         let timer
-        let oldHash = ''
-        let oldIndex = null
+        let isClick = false
 
         const aList = document.querySelectorAll(`.table-of-contents a`)
+        const clearClassName = (index) => {
+          aList.forEach((element, key) => {
+            if (index === key) {
+              element.className = 'active-anchor'
+            } else {
+              element.className = ''
+            }
+          })
+        }
+
         aList.forEach((element, index) => {
           element.onclick = (event) => {
-            if (oldIndex) {
-              aList[oldIndex].className = ''
-            }
-            element.className = 'active-anchor'
-            oldIndex = index
+            console.log(mainElement.style.scrollBehavior)
+            if (!mainElement.style.scrollBehavior) mainElement.style = 'scroll-behavior: smooth;'
+            clearClassName(index)
+            isClick = true
           }
         })
 
@@ -75,21 +83,22 @@
         }
 
         mainElement.addEventListener('scroll', (event) => {
+          if (isClick) {
+            isClick = false
+            return
+          }
+
           clearTimeout(timer)
           timer = setTimeout(() => {
             let index = anchorsLocation.findIndex((item) => item >= event.target.scrollTop)
             if (index < 0) {
               index = 0
             }
+
             let hash = anchors[index].getAttribute('href')
 
             history.pushState(null, null, hash)
-            if (oldHash) {
-              document.querySelector(`.table-of-contents a[href='${oldHash}']`).className = ''
-            }
-            document.querySelector(`.table-of-contents a[href='${hash}']`).className =
-              'active-anchor'
-            oldHash = hash
+            clearClassName(index)
           }, 500)
         })
 

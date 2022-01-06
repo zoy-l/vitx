@@ -19,7 +19,7 @@
 
     &__content {
       transition: width 0.3s;
-      width: calc(100% - @simulator-width - var(--vitx-built-padding) * 2);
+      width: calc(100% - @simulator-width - var(--vitx-built-padding));
 
       @media (max-width: @max-width-simulator-media) {
         width: 100%;
@@ -40,8 +40,31 @@
     border-bottom: thin solid var(--vitx-built-border-color);
     background-color: var(--vitx-built-background-color);
 
+    svg[icon='navigation'] {
+      display: none;
+      width: 1em;
+      height: 1em;
+      vertical-align: middle;
+      margin-left: var(--vitx-built-padding);
+      border: 1px solid rgb(224, 227, 231);
+      border-radius: 10px;
+      fill: rgb(0, 127, 255);
+      padding: 8px;
+      cursor: pointer;
+      transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+
+      &:hover {
+        border-color: rgb(205, 210, 215);
+        background: rgb(243, 246, 249);
+      }
+
+      @media (max-width: 1100px) {
+        display: inline-block;
+      }
+    }
+
     &__logo {
-      display: block;
+      display: inline-block;
 
       img,
       span,
@@ -309,7 +332,7 @@
     flex-shrink: 0;
     position: sticky;
     top: 0;
-    padding: var(--vitx-built-padding);
+    padding-top: var(--vitx-built-padding);
     z-index: 1;
     overflow: hidden;
     border-radius: var(--vitx-built-border-radius);
