@@ -8,101 +8,98 @@
   &__content {
     width: calc(100% - var(--vitx-built-directory-width));
     transition: width 0.3s;
+
     @media (max-width: @max-width-directory-media) {
       width: 100%;
     }
   }
-}
 
-.markdown-body code {
-  line-height: 1;
-}
+  code {
+    font-family: monospace, Consolas, Menlo, Monaco, Andale Mono, Ubuntu Mono;
+  }
 
-.markdown-body ul li {
-  list-style: initial;
-}
+  ul li {
+    list-style: initial;
+  }
 
-.markdown-body h1 {
-  border: none;
-}
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    border: none;
+  }
 
-.markdown-body pre {
-  font-family: Courier, Menlo, Consolas, Liberation Mono, monospace;
-}
-
-.markdown-body .highlight pre,
-.markdown-body pre {
-  font-size: 95%;
-}
-
-.markdown-body .highlight pre,
-.markdown-body pre {
-  background-color: #282c34;
-  color: #abb2bf;
+  .highlight pre,
+  pre {
+    font-size: 95%;
+    background-color: #292d3e;
+    color: #abb2bf;
+    font-weight: 400;
+    -webkit-font-smoothing: subpixel-antialiased;
+  }
 }
 
 .hljs {
-  color: #abb2bf;
-  background: #282c34;
-}
+  &-comment,
+  &-quote {
+    color: #5c6370;
+    font-style: italic;
+  }
 
-.hljs-comment,
-.hljs-quote {
-  color: #5c6370;
-  font-style: italic;
-}
+  &-doctag,
+  &-keyword,
+  &-formula {
+    color: #88dcfe;
+  }
 
-.hljs-doctag,
-.hljs-keyword,
-.hljs-formula {
-  color: #c678dd;
-}
+  &-section,
+  &-name,
+  &-selector-tag,
+  &-deletion,
+  &-subst {
+    color: #e06c75;
+  }
 
-.hljs-section,
-.hljs-name,
-.hljs-selector-tag,
-.hljs-deletion,
-.hljs-subst {
-  color: #e06c75;
-}
+  &-literal {
+    color: #f697a6;
+  }
 
-.hljs-literal {
-  color: #56b6c2;
-}
+  &-string,
+  &-regexp,
+  &-addition,
+  &-attribute,
+  &-meta &-string {
+    color: #98c379;
+  }
 
-.hljs-string,
-.hljs-regexp,
-.hljs-addition,
-.hljs-attribute,
-.hljs-meta .hljs-string {
-  color: #98c379;
-}
+  &-symbol,
+  &-bullet,
+  &-link,
+  &-meta,
+  &-selector-id,
+  &-title {
+    color: #61aeee;
+  }
 
-.hljs-symbol,
-.hljs-bullet,
-.hljs-link,
-.hljs-meta,
-.hljs-selector-id,
-.hljs-title {
-  color: #61aeee;
-}
+  &-built_in,
+  &-title.class_,
+  &-class &-title {
+    color: #ffcb6b;
+  }
 
-.hljs-built_in,
-.hljs-title.class_,
-.hljs-class .hljs-title {
-  color: #e6c07b;
-}
+  &-emphasis {
+    font-style: italic;
+  }
 
-.hljs-emphasis {
-  font-style: italic;
-}
+  &-strong {
+    font-weight: bold;
+  }
 
-.hljs-strong {
-  font-weight: bold;
-}
-
-.hljs-link {
-  text-decoration: underline;
+  &-link {
+    text-decoration: underline;
+  }
 }
 
 .table-of-contents {
