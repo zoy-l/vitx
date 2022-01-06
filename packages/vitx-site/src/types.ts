@@ -9,6 +9,7 @@ export interface IVitxSiteConfig {
   entry?: string
   site?: {
     locales?: Record<string, any>
+    simulator?: boolean
     defaultLang?: string
     title?: string
     description?: string

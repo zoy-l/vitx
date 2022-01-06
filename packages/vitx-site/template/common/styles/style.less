@@ -21,6 +21,10 @@
       transition: width 0.3s;
       width: calc(100% - @simulator-width - var(--vitx-built-padding));
 
+      &[simulator='false'] {
+        width: 100%;
+      }
+
       @media (max-width: @max-width-simulator-media) {
         width: 100%;
       }
