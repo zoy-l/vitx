@@ -2,7 +2,7 @@ export default function BuiltAside(props) {
   const { nav } = props
 
   return (
-    <aside className="vitx-built-nav">
+    <aside className="vitx-built-nav" id="vitx-built-nav">
       {nav.map((group, index) => {
         let links = null
 
