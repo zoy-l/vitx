@@ -131,22 +131,18 @@ export function createSiteServer(options: { cwd: string; frame: IFrame; config: 
       frame,
       vueTransforms(code) {
         code += `
-        import anchorsLink, {removeListener} from '@vitx-documents-md';
+        import anchorsLink from '@vitx-documents-md';
           __script.mounted = function(){
             anchorsLink()
           };\n
-          __script.destroyed = function(){
-            removeListener()
-          }
         `
         return code
       },
       reactTransforms: {
-        import: `import anchorsLink, { removeListener } from '@vitx-documents-md';`,
+        import: `import anchorsLink from '@vitx-documents-md';`,
         content: `
         React.useEffect(()=>{
           anchorsLink()
-          return () => removeListener
         },[])
         `
       },

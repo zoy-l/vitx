@@ -108,16 +108,10 @@ export function commonScript({
 
       if (id === resolvedMdModuleId) {
         return `
-        let mainElement
         let timer
-
-        export function removeListener(){
-          clearTimeout(timer)
-          mainElemnet.removeEventListener('scroll')
-        }
-
         export default function anchorsLink(){
-          mainElement = document.querySelector('.vitx-built-container')
+          clearTimeout(timer)
+          const mainElement = document.querySelector('.vitx-built-container')
           let isClick = false
 
           const aList = document.querySelectorAll('.table-of-contents a')
@@ -146,15 +140,13 @@ export function commonScript({
             anchorsLocation.push(anchors[i].offsetTop)
           }
 
-          mainElement.addEventListener('scroll', (event) => {
+          mainElement.onscroll = (event) => {
             clearTimeout(timer)
             timer = setTimeout(() => {
               if (isClick) {
                 isClick = false
                 return
               }
-
-              console.log(1111)
 
               let index = anchorsLocation.findIndex((item) => item >= event.target.scrollTop + 20)
               if (index < 0) {
@@ -165,7 +157,7 @@ export function commonScript({
               history.pushState(history.state, null, hash)
               clearClassName(index)
             }, 500)
-          })
+          }
 
           if (location.hash) {
             document.getElementById(location.hash.slice(1)).scrollIntoView()
