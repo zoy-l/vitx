@@ -130,12 +130,15 @@ export function createSiteServer(options: { cwd: string; frame: IFrame; config: 
     vitePluginMdn({
       frame,
       vueTransforms(code) {
-        code += `import anchorsLink, {removeListener} from '@vitx-documents-md';\n__script.mounted = function(){
+        code += `
+        import anchorsLink, {removeListener} from '@vitx-documents-md';
+          __script.mounted = function(){
             anchorsLink()
-          };\n__script.destroyed = function(){
+          };\n
+          __script.destroyed = function(){
             removeListener()
-          }`
-
+          }
+        `
         return code
       },
       reactTransforms: {

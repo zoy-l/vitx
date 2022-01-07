@@ -147,13 +147,15 @@ export function commonScript({
           }
 
           mainElement.addEventListener('scroll', (event) => {
-            if (isClick) {
-              isClick = false
-              return
-            }
-
             clearTimeout(timer)
             timer = setTimeout(() => {
+              if (isClick) {
+                isClick = false
+                return
+              }
+
+              console.log(1111)
+
               let index = anchorsLocation.findIndex((item) => item >= event.target.scrollTop + 20)
               if (index < 0) {
                 index = 0
@@ -168,7 +170,9 @@ export function commonScript({
           if (location.hash) {
             document.getElementById(location.hash.slice(1)).scrollIntoView()
           }else{
+            mainElement.style = ''
             mainElement.scrollTop = 0
+            clearClassName(0)
           }
         }
         `
