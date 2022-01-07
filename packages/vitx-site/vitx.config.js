@@ -2,7 +2,7 @@ export default {
   entry: 'example',
   site: {
     title: 'hello vitx',
-    simulator: false,
+    simulator: true,
     nav: [
       {
         title: '开发指南',

@@ -110,24 +110,18 @@ export function commonScript({
         return `
         let timer
         export default function anchorsLink(){
-          clearTimeout(timer)
           const mainElement = document.querySelector('.vitx-built-container')
           let isClick = false
 
           const aList = document.querySelectorAll('.table-of-contents a')
           const clearClassName = (index) => {
             aList.forEach((element, key) => {
-              if (index === key) {
-                element.className = 'active-anchor'
-              } else {
-                element.className = ''
-              }
+              element.className = index === key ? 'active-anchor' : ''
             })
           }
 
           aList.forEach((element, index) => {
             element.onclick = (event) => {
-              if (!mainElement.style.scrollBehavior) mainElement.style = 'scroll-behavior: smooth;'
               clearClassName(index)
               isClick = true
             }
@@ -135,27 +129,60 @@ export function commonScript({
 
           const anchors = document.getElementsByClassName('header-anchor')
           const anchorsLocation = []
+          const anchorsHash = {}
 
           for (let i = 0; i < anchors.length; i++) {
-            anchorsLocation.push(anchors[i].offsetTop)
+            // Line height and padding offset
+            anchorsLocation.push(anchors[i].offsetTop - mainElement.offsetTop)
+            anchorsHash[anchors[i].hash] = i
           }
 
           mainElement.onscroll = (event) => {
             clearTimeout(timer)
             timer = setTimeout(() => {
+              // Click on the event to go to the browser native event
               if (isClick) {
                 isClick = false
                 return
               }
 
-              let index = anchorsLocation.findIndex((item) => item >= event.target.scrollTop + 20)
+              let index = -1
+
+              // Compatible processing with a for loop
+              for(let i = 0; i<anchorsLocation.length; i++){
+                if (event.target.scrollTop >= anchorsLocation[i]){
+                  index = i
+                }else{
+                  break;
+                }
+              }
+
+              // When less than 0, scroll to the top to clear the browser's anchor
               if (index < 0) {
-                index = 0
+                clearClassName(index)
+                history.pushState(history.state, null, location.pathname)
+                return
               }
 
               let hash = anchors[index].getAttribute('href')
+
+              // Scroll to the bottom
+              if (mainElement.clientHeight + mainElement.scrollTop === mainElement.scrollHeight){
+                // Whether to refresh the page
+                if (!mainElement.style.scrollBehavior && location.hash !== hash){
+                  index = anchorsHash[location.hash]
+                  hash = location.hash
+                }else{
+                  index = anchors.length - 1
+                  hash = anchors[index].getAttribute('href')
+                }
+              }
+
+
               history.pushState(history.state, null, hash)
               clearClassName(index)
+
+              if (!mainElement.style.scrollBehavior) mainElement.style = 'scroll-behavior: smooth;'
             }, 500)
           }
 
@@ -164,7 +191,6 @@ export function commonScript({
           }else{
             mainElement.style = ''
             mainElement.scrollTop = 0
-            clearClassName(0)
           }
         }
         `
