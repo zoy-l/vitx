@@ -1,6 +1,6 @@
 const vitePluginReact = require('@vitejs/plugin-react')
 const vitePluginVue = require('@vitejs/plugin-vue')
-const prism = require('markdown-it-prism')
+
 const { createServer } = require('vite')
 
 const Markdown = require('./lib').default
@@ -18,7 +18,7 @@ async function run() {
     plugins: [
       plugin[type](),
       Markdown({
-        markdownItUses: [prism],
+        markdownItUses: [],
         frame: type
       })
     ]

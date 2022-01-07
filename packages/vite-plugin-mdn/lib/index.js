@@ -39,7 +39,14 @@ function vitePluginMarkdown(options) {
     markdownItUses: [],
     markdownItSetup: function markdownItSetup() {},
     wrapperClasses: 'markdown-body',
-    transforms: {}
+    transforms: {},
+    vueTransforms: function vueTransforms(code) {
+      return code;
+    },
+    reactTransforms: {
+      import: '',
+      content: ''
+    }
   }, options != null ? options : {});
 
   var markdown = new _markdownIt.default(_extends({
@@ -110,6 +117,7 @@ function vitePluginMarkdown(options) {
           result += `\n__script.__hmrId = ${JSON.stringify(path)};`;
         }
 
+        result = resolved.vueTransforms(result);
         result += '\nexport default __script;';
         return result;
       }
@@ -128,8 +136,11 @@ function vitePluginMarkdown(options) {
         });
         var content = `
         import React from 'react'
+        ${resolved.reactTransforms.import}
+
         export default function ${componentName}(props){
           const html = ${converter.convert(code)}
+          ${resolved.reactTransforms.content}
           return {...html,...{props:{...html.props,...props}}}
         }`;
         var result = (0, _esBuild.transformSync)(content, {

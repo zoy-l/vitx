@@ -17,9 +17,7 @@
   "devDependencies": {
     "@types/htmltojsx": "^0.0.30",
     "@types/markdown-it": "^12.2.3",
-    "@vitejs/plugin-react": "^1.1.3",
-    "@vitejs/plugin-vue": "^2.0.1",
-    "markdown-it-prism": "^2.2.1",
-    "prismjs": "^1.25.0"
+    "@vitejs/plugin-react": "^1.1.4",
+    "@vitejs/plugin-vue": "^2.0.1"
   }
 }

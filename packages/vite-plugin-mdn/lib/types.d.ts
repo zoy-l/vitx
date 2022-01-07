@@ -29,5 +29,10 @@ export interface IOptions {
      * Define the framework
      */
     frame: 'vue' | 'react';
+    vueTransforms?: (code?: string) => string;
+    reactTransforms?: {
+        import?: string;
+        content?: string;
+    };
 }
 export declare type ResolvedOptions = Required<IOptions>;

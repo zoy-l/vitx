@@ -1,5 +1,13 @@
+import { useRouter } from '@vitx-documents-common-router'
+
 export default function BuiltAside(props) {
   const { nav } = props
+
+  const router = useRouter()
+
+  const onRouter = (path) => () => {
+    router(path)
+  }
 
   return (
     <aside className="vitx-built-nav" id="vitx-built-nav">
@@ -10,7 +18,7 @@ export default function BuiltAside(props) {
           links = group.items.map((item, groupIndex) => {
             return (
               <div key={groupIndex} className="vitx-built-nav__item">
-                <a href={item.link}>{item.title}</a>
+                <span onClick={onRouter(item.path)}>{item.title}</span>
               </div>
             )
           })

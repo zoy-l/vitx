@@ -13,6 +13,7 @@ import fs from 'fs'
 
 import { IDocuments, genRoute } from './genRouter'
 import { IFrame, IVitxSiteConfig } from './types'
+import { commonScript } from './commonScript'
 
 const docFileName = 'README.md'
 const docLangFileName = (lang: string) => `README.${lang}.md`
@@ -98,7 +99,7 @@ export function createSiteServer(options: { cwd: string; frame: IFrame; config: 
   const { cwd, frame, config } = options
   const {
     entry,
-    site: { title, description, logo, lazy, locales, defaultLang }
+    site: { title, description, logo, lazy, locales, defaultLang, simulator }
   } = config
 
   const root = path.join(cwd, templateDirName)
@@ -128,6 +129,24 @@ export function createSiteServer(options: { cwd: string; frame: IFrame; config: 
     }),
     vitePluginMdn({
       frame,
+      vueTransforms(code) {
+        code += `import anchorsLink, {removeListener} from '@vitx-documents-md';\n__script.mounted = function(){
+            anchorsLink()
+          };\n__script.destroyed = function(){
+            removeListener()
+          }`
+
+        return code
+      },
+      reactTransforms: {
+        import: `import anchorsLink, { removeListener } from '@vitx-documents-md';`,
+        content: `
+        React.useEffect(()=>{
+          anchorsLink()
+          return () => removeListener
+        },[])
+        `
+      },
       markdownItOptions: {
         typographer: false,
         highlight: markdownHighlight
@@ -150,7 +169,8 @@ export function createSiteServer(options: { cwd: string; frame: IFrame; config: 
         }
       }
     }),
-    genRoute({ documents, isVue, isReact, lazy, demos, config })
+    genRoute({ documents, isVue, isReact, lazy, demos, config }),
+    commonScript({ simulator, frame })
   ]
 
   if (isVue) {

@@ -27,6 +27,8 @@ function vitePluginMarkdown(options: IOptions): PluginOption {
     markdownItSetup: () => {},
     wrapperClasses: 'markdown-body',
     transforms: {},
+    vueTransforms: (code) => code,
+    reactTransforms: { import: '', content: '' },
     ...(options ?? {})
   } as ResolvedOptions
 
@@ -95,6 +97,8 @@ function vitePluginMarkdown(options: IOptions): PluginOption {
           result += `\n__script.__hmrId = ${JSON.stringify(path)};`
         }
 
+        result = resolved.vueTransforms(result)
+
         result += '\nexport default __script;'
 
         return result
@@ -119,8 +123,11 @@ function vitePluginMarkdown(options: IOptions): PluginOption {
 
         const content = `
         import React from 'react'
+        ${resolved.reactTransforms.import}
+
         export default function ${componentName}(props){
           const html = ${converter.convert(code)}
+          ${resolved.reactTransforms.content}
           return {...html,...{props:{...html.props,...props}}}
         }`
 
