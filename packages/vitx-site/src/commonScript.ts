@@ -114,7 +114,7 @@ export function commonScript({
           let isClick = false
 
           const aList = document.querySelectorAll('.table-of-contents a')
-          const clearClassName = (index) => {
+          const className = (index) => {
             aList.forEach((element, key) => {
               element.className = index === key ? 'active-anchor' : ''
             })
@@ -122,7 +122,7 @@ export function commonScript({
 
           aList.forEach((element, index) => {
             element.onclick = (event) => {
-              clearClassName(index)
+              className(index)
               isClick = true
             }
           })
@@ -159,7 +159,7 @@ export function commonScript({
 
               // When less than 0, scroll to the top to clear the browser's anchor
               if (index < 0) {
-                clearClassName(index)
+                className(index)
                 history.pushState(history.state, null, location.pathname)
                 return
               }
@@ -180,7 +180,7 @@ export function commonScript({
 
 
               history.pushState(history.state, null, hash)
-              clearClassName(index)
+              className(index)
 
               if (!mainElement.style.scrollBehavior) mainElement.style = 'scroll-behavior: smooth;'
             }, 500)
