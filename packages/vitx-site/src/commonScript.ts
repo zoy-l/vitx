@@ -1,46 +1,8 @@
 import { PluginOption } from 'vite'
 import { IFrame } from './types'
 
-const showTimer = `
-const simulatorElement = document.getElementById('simulator')
-const startTime = new Date().getTime()
-const timeout = 1000
-let count = 0
-
-function repair(time) {
-  if (time === 0) {
-    return '00'
-  }
-  return time < 10 ? '0' + time : time
-}
-
-function fixed() {
-  count++
-  const date = new Date()
-  const offset = date.getTime() - (startTime + count * timeout)
-  let nextTime = timeout - offset
-  if (nextTime < 0) nextTime = 0
-  setTimeout(fixed, nextTime)
-  const currentTime = repair(date.getHours()) + ':' + repair(date.getMinutes())
-
-  if (simulatorElement.innerHTML !== currentTime) {
-    simulatorElement.innerHTML = currentTime
-  }
-}
-setTimeout(fixed, timeout)
-`
-
-export function commonScript({
-  simulator,
-  frame
-}: {
-  simulator: boolean
-  frame: IFrame
-}): PluginOption {
-  const virtualCommonId = '/@vitx-documents-common-script'
-  const resolvedCommonModuleId = `vitx:${virtualCommonId}`
-
-  const virtualCommonRouterId = '@vitx-documents-common-router'
+export function commonScript(frame: IFrame): PluginOption {
+  const virtualCommonRouterId = '@vitx-documents-common'
   const resolvedCommonRouterModuleId = `vitx:${virtualCommonRouterId}`
 
   const virtualMdId = '@vitx-documents-md'
@@ -49,10 +11,6 @@ export function commonScript({
   return {
     name: 'vite-plugin-common-script',
     resolveId(id) {
-      if (id === virtualCommonId) {
-        return resolvedCommonModuleId
-      }
-
       if (id === virtualCommonRouterId) {
         return resolvedCommonRouterModuleId
       }
@@ -62,43 +20,35 @@ export function commonScript({
       }
     },
     load(id) {
-      if (id === resolvedCommonModuleId) {
-        return `
-        function onReady(fn) {
-          const { readyState } = document
-          if (readyState === 'interactive' || readyState === 'complete') {
-            fn()
-          } else {
-            window.addEventListener('DOMContentLoaded', fn)
-          }
-        }
-
-        onReady(() => {
-          ${simulator ? showTimer : ''}
-        })
-        `
-      }
-
       if (id === resolvedCommonRouterModuleId) {
         const react = `
           import { useNavigate } from 'react-router-dom'
+          import { useEffect } from 'react'
 
           function useRouter() {
             const router = useNavigate()
             return router
           }
-          export { useRouter }
+
+          function useMounted(fn){
+            return useEffect(fn, [])
+          }
+
+          export { useRouter, useMounted }
         `
 
         const vue = `
         import { useRouter as _useRouter } from 'vue-router'
+        import { nextTick } from 'vue'
 
         function useRouter() {
           const router = _useRouter()
           return router.push
         }
 
-        export { useRouter }
+        const useMounted = nextTick
+
+        export { useRouter, useMounted }
       `
 
         const router = { react, vue }
@@ -164,6 +114,7 @@ export function commonScript({
                 return
               }
 
+
               let hash = anchors[index].getAttribute('href')
 
               // Scroll to the bottom
@@ -178,12 +129,10 @@ export function commonScript({
                 }
               }
 
-
               history.pushState(history.state, null, hash)
               className(index)
+            }, 200)
 
-              if (!mainElement.style.scrollBehavior) mainElement.style = 'scroll-behavior: smooth;'
-            }, 500)
           }
 
           if (location.hash) {
@@ -192,6 +141,8 @@ export function commonScript({
             mainElement.style = ''
             mainElement.scrollTop = 0
           }
+
+          if (!mainElement.style.scrollBehavior) mainElement.style = 'scroll-behavior: smooth;'
         }
         `
       }

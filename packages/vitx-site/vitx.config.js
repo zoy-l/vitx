@@ -1,8 +1,8 @@
 export default {
-  entry: 'example',
+  componentEntry: 'example',
   site: {
     title: 'hello vitx',
-    simulator: true,
+    simulator: false,
     nav: [
       {
         title: '开发指南',

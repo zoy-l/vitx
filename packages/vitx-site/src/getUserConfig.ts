@@ -6,7 +6,8 @@ import schema from './configSchema'
 const configFileNames = ['vitx.config.ts', 'vitx.config.js']
 
 const defaultConfig: IVitxSiteConfig = {
-  entry: 'src'
+  componentEntry: 'src',
+  docEntry: 'docs'
 }
 
 export function getUserSiteConfig(cwd: string) {

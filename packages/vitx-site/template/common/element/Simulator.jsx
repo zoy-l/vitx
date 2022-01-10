@@ -1,3 +1,5 @@
+import { useMounted } from '@vitx-documents-common'
+
 function Sensor() {
   return (
     <svg viewBox="0 0 1024 1024" width="8" height="8">
@@ -43,6 +45,35 @@ function Signal() {
 
 export default function Simulator(props, { slots }) {
   const { children = slots.default?.() } = props
+
+  useMounted(() => {
+    const simulatorElement = document.getElementById('simulator')
+    const startTime = new Date().getTime()
+    const timeout = 1000
+    let count = 0
+
+    function repair(time) {
+      if (time === 0) {
+        return '00'
+      }
+      return time < 10 ? '0' + time : time
+    }
+
+    function fixed() {
+      count++
+      const date = new Date()
+      const offset = date.getTime() - (startTime + count * timeout)
+      let nextTime = timeout - offset
+      if (nextTime < 0) nextTime = 0
+      setTimeout(fixed, nextTime)
+      const currentTime = repair(date.getHours()) + ':' + repair(date.getMinutes())
+
+      if (simulatorElement.innerHTML !== currentTime) {
+        simulatorElement.innerHTML = currentTime
+      }
+    }
+    setTimeout(fixed, timeout)
+  })
 
   return (
     <div className="vitx-built-device">

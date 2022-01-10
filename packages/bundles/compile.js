@@ -171,9 +171,9 @@ const externals = {
 const dependencies = [
   ['@babel/types'],
   ['@babel/code-frame'],
-  ['@babel/parser'],
+  ['@babel/parser', 'self'],
   ['@babel/template'],
-  ['@babel/traverse'],
+  ['@babel/traverse', '@types/babel__traverse'],
   ['@babel/core', '@types/babel__core'],
   ['@babel/helper-plugin-utils'],
   ['@babel/plugin-transform-modules-commonjs'],

@@ -6,7 +6,8 @@ export enum IFrame {
 }
 
 export interface IVitxSiteConfig {
-  entry?: string
+  componentEntry?: string
+  docEntry?: string
   site?: {
     locales?: Record<string, any>
     simulator?: boolean

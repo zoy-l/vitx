@@ -3,7 +3,7 @@ import path from 'path'
 
 import type { IVitxSiteConfig } from './types'
 
-export type IDocuments = { name: string; path: string }[]
+export type IDocuments = { name: string; path: string; isComponent?: boolean }[]
 
 function createVueRoute() {
   return `export default documents`
@@ -99,6 +99,8 @@ export function genRoute(options: {
         const documents = {
           ${files[id].map((item) => item.name).join(',')}
         }
+
+        export const documentsDetails = ${JSON.stringify(files[id])}
         export const config = ${JSON.stringify(config)}
         ${isReact ? createReactRoute(lazy, isDemos) : createVueRoute()}`
       }

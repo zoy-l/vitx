@@ -1,4 +1,4 @@
-import { useRouter } from '@vitx-documents-common-router'
+import { useRouter } from '@vitx-documents-common'
 
 export default function BuiltAside(props) {
   const { nav } = props

@@ -3,7 +3,8 @@ import Joi from '@vitx/bundles/model/joi'
 
 export default Joi.object({
   name: Joi.string(),
-  entry: Joi.string(),
+  componentEntry: Joi.string(),
+  docEntry: Joi.string(),
   site: Joi.object({
     title: Joi.string(),
     lazy: Joi.boolean(),

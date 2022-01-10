@@ -33,15 +33,19 @@ function markdownHighlight(code: string, lang: string) {
 }
 
 function getComponents({
+  docs,
+  docEntryPath,
   components,
   defaultLang,
   locales,
-  entryPath
+  componentEntryPath
 }: {
   defaultLang: IVitxSiteConfig['site']['defaultLang']
   locales: IVitxSiteConfig['site']['locales']
   components: string[]
-  entryPath: string
+  componentEntryPath: string
+  docs: string[]
+  docEntryPath: string
 }) {
   const documents: IDocuments = []
 
@@ -52,7 +56,8 @@ function getComponents({
       components.forEach((component) => {
         documents.push({
           name: component,
-          path: path.join(entryPath, component, fileName)
+          path: path.join(componentEntryPath, component, fileName),
+          isComponent: true
         })
       })
     })
@@ -60,7 +65,15 @@ function getComponents({
     components.forEach((component) => {
       documents.push({
         name: component,
-        path: path.join(entryPath, component, docFileName)
+        path: path.join(componentEntryPath, component, docFileName),
+        isComponent: true
+      })
+    })
+
+    docs.forEach((doc) => {
+      documents.push({
+        name: path.basename(doc, path.extname(doc)),
+        path: path.join(docEntryPath, doc)
       })
     })
   }
@@ -80,7 +93,7 @@ function getComponents({
 
   const demos = components
     .map((component) => {
-      const componentPath = path.join(entryPath, component, demoDirName)
+      const componentPath = path.join(componentEntryPath, component, demoDirName)
 
       return (
         fs.existsSync(componentPath) && {
@@ -98,12 +111,14 @@ function getComponents({
 export function createSiteServer(options: { cwd: string; frame: IFrame; config: IVitxSiteConfig }) {
   const { cwd, frame, config } = options
   const {
-    entry,
-    site: { title, description, logo, lazy, locales, defaultLang, simulator }
+    componentEntry,
+    docEntry,
+    site: { title, description, logo, lazy, locales, defaultLang }
   } = config
 
-  const root = path.join(cwd, templateDirName)
-  const entryPath = path.join(cwd, entry)
+  const root = path.join(__dirname, '..', templateDirName)
+  const componentEntryPath = path.join(cwd, componentEntry)
+  const docEntryPath = path.join(cwd, docEntry)
   const rootFrame = path.join(root, frame)
   const vitxSiteCommon = path.join(root, commonDirName)
   const mainHtml = path.join(rootFrame, mainHtmlFileName)
@@ -112,11 +127,30 @@ export function createSiteServer(options: { cwd: string; frame: IFrame; config: 
   const isVue = frame === IFrame.vue
   const isReact = frame === IFrame.react
 
-  const components = fs
-    .readdirSync(entryPath)
-    .filter((item) => fs.lstatSync(path.join(entryPath, item)).isDirectory())
+  let components: string[] = []
+  let docs: string[] = []
 
-  const { documents, demos } = getComponents({ components, entryPath, defaultLang, locales })
+  if (fs.existsSync(componentEntryPath)) {
+    components = fs
+      .readdirSync(componentEntryPath)
+      .filter((item) => fs.lstatSync(path.join(componentEntryPath, item)).isDirectory())
+  }
+
+  if (fs.existsSync(docEntryPath)) {
+    const Re = isVue ? /\.(jsx|vue)/ : /\.(jsx)/
+    docs = fs.readdirSync(docEntryPath).filter((item) => {
+      return Re.test(item)
+    })
+  }
+
+  const { documents, demos } = getComponents({
+    docs,
+    docEntryPath,
+    components,
+    componentEntryPath,
+    defaultLang,
+    locales
+  })
 
   const plugins: (PluginOption | PluginOption[])[] = [
     injectHtml({
@@ -169,7 +203,7 @@ export function createSiteServer(options: { cwd: string; frame: IFrame; config: 
       }
     }),
     genRoute({ documents, isVue, isReact, lazy, demos, config }),
-    commonScript({ simulator, frame })
+    commonScript(frame)
   ]
 
   if (isVue) {
