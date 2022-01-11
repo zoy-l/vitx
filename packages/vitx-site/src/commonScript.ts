@@ -22,8 +22,8 @@ export function commonScript(frame: IFrame): PluginOption {
     load(id) {
       if (id === resolvedCommonRouterModuleId) {
         const react = `
-          import { useNavigate } from 'react-router-dom'
-          import { useEffect } from 'react'
+          import { useNavigate, Outlet } from 'react-router-dom'
+          import React, { useEffect } from 'react'
 
           function useRouter() {
             const router = useNavigate()
@@ -34,21 +34,31 @@ export function commonScript(frame: IFrame): PluginOption {
             return useEffect(fn, [])
           }
 
-          export { useRouter, useMounted }
+          function useProps(props, isRoute){
+            return { attrs:props, children: ()=> isRoute ? React.createElement(Outlet, null) : props.children }
+          }
+
+          export { useRouter, useMounted, useProps }
         `
 
         const vue = `
         import { useRouter as _useRouter } from 'vue-router'
-        import { nextTick } from 'vue'
+        import { nextTick, useAttrs, useSlots } from 'vue'
 
         function useRouter() {
           const router = _useRouter()
           return router.push
         }
 
+        function useProps(){
+          const attrs = useAttrs()
+          const slots = useSlots()
+          return { attrs, children:slots.default }
+        }
+
         const useMounted = nextTick
 
-        export { useRouter, useMounted }
+        export { useRouter, useMounted, useProps }
       `
 
         const router = { react, vue }
@@ -62,6 +72,8 @@ export function commonScript(frame: IFrame): PluginOption {
         export default function anchorsLink(){
           const mainElement = document.querySelector('.vitx-built-container')
           let isClick = false
+          // Synchronized scrolling
+          let clickIndex
 
           const aList = document.querySelectorAll('.table-of-contents a')
           const className = (index) => {
@@ -73,6 +85,7 @@ export function commonScript(frame: IFrame): PluginOption {
           aList.forEach((element, index) => {
             element.onclick = (event) => {
               className(index)
+              clickIndex = index
               isClick = true
             }
           })
@@ -90,12 +103,6 @@ export function commonScript(frame: IFrame): PluginOption {
           mainElement.onscroll = (event) => {
             clearTimeout(timer)
             timer = setTimeout(() => {
-              // Click on the event to go to the browser native event
-              if (isClick) {
-                isClick = false
-                return
-              }
-
               let index = -1
 
               // Compatible processing with a for loop
@@ -105,6 +112,12 @@ export function commonScript(frame: IFrame): PluginOption {
                 }else{
                   break;
                 }
+              }
+
+              // Click on the event to go to the browser native event
+              if (isClick && index === clickIndex) {
+                isClick = false
+                return
               }
 
               // When less than 0, scroll to the top to clear the browser's anchor

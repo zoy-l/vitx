@@ -12,26 +12,57 @@ function createVueRoute() {
 function createReactRoute(lazy: boolean, isDemos: boolean) {
   return `function BuiltRouter(props) {
     const { fallback = React.createElement('div', null), site: BuiltSite } = props
-    const document = Object.keys(documents)
+
+    const otherRoute = []
+    const componentsRoute = []
+
+    documentsDetails.forEach((item)=>{
+      if (item.isComponent){
+        componentsRoute.push(item)
+      }else{
+        otherRoute.push(item)
+      }
+    })
+
+    let ComponentsRoute = null
+
+    if (BuiltSite){
+      ComponentsRoute = React.createElement(Route, {
+        path: '/components',
+        key: 'builsite',
+        element: React.createElement(
+          BuiltSite,
+          { config }
+        )
+      }, componentsRoute.map(({ name }) => {
+        const Element = documents[name]
+        return React.createElement(Route, {
+          key: name,
+          path: name,
+          element: React.createElement(Element, null)
+        })
+      }))
+    }
+
+
     return React.createElement(
       ${lazy ? 'Suspense, { fallback }' : 'Fragment, null'},
       React.createElement(BrowserRouter, ${
         isDemos ? `{ basename: '/mobile.html' }` : 'null'
       }, React.createElement(
-          BuiltSite || Fragment, BuiltSite ? { config } : null, React.createElement(
-            Routes, null,
-            document.map((routeName) => {
-              const Element = documents[routeName]
-              if (routeName === 'BuiltMobileHome'){
-                routeName = ''
-              }
-              return React.createElement(Route, {
-                key: routeName,
-                path: \`/\${routeName}\`,
-                element: React.createElement(Element, null)
-              })
+          Routes, null,
+          [...otherRoute.map(({ name }) => {
+            const Element = documents[name]
+            if (name === 'BuiltMobileHome'){
+              name = ''
+            }
+
+            return React.createElement(Route, {
+              key: name,
+              path: \`/\${name}\`,
+              element: React.createElement(Element, null)
             })
-          )
+          }), ComponentsRoute]
         )
       )
     )

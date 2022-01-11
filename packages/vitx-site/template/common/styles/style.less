@@ -2,7 +2,8 @@
 
 @simulator-height: 714px;
 @simulator-width: 342px;
-@max-width-simulator-media: 880px;
+@max-width-simulator-media: 1100px;
+@max-width-nav-media: 800px;
 
 .vitx-built {
   &-container {
@@ -58,7 +59,7 @@
         background: rgb(243, 246, 249);
       }
 
-      @media (max-width: 1100px) {
+      @media (max-width: @max-width-nav-media) {
         display: inline-block;
       }
 
@@ -88,7 +89,7 @@
         color: var(--vitx-built-primary-color);
         font-size: 22px;
 
-        @media (max-width: @max-width-simulator-media) {
+        @media (max-width: @max-width-nav-media) {
           display: none;
         }
       }
@@ -115,7 +116,7 @@
     background-color: white;
     border-right: thin solid var(--vitx-built-border-color);
 
-    @media (max-width: 1100px) {
+    @media (max-width: @max-width-nav-media) {
       margin-left: calc(0px - var(--vitx-built-nav-width));
       z-index: 2;
     }
@@ -129,6 +130,16 @@
     }
 
     &__item {
+      border-radius: 6px;
+
+      &--active {
+        background-color: rgb(243, 246, 249);
+
+        span {
+          color: var(--vitx-built-primary-color) !important;
+        }
+      }
+
       > span {
         display: block;
         margin: 8px 0;
@@ -140,17 +151,9 @@
         transition: color 0.2s, background-color 0.2s;
         cursor: pointer;
 
-        &:hover,
-        &.active {
+        &:hover {
           color: #20262d;
           background-color: rgb(243, 246, 249);
-          border-radius: 6px;
-        }
-
-        &.active {
-          font-weight: 600;
-          background-color: #ebfff0;
-          border-radius: 999px;
         }
       }
     }

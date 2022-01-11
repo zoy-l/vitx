@@ -169,11 +169,12 @@ const externals = {
  * the second place is the d.ts path
  */
 const dependencies = [
-  ['@babel/types'],
+  ['@babel/types', 'self'],
   ['@babel/code-frame'],
   ['@babel/parser', 'self'],
   ['@babel/template'],
   ['@babel/traverse', '@types/babel__traverse'],
+  ['@babel/generator', '@types/babel__generator'],
   ['@babel/core', '@types/babel__core'],
   ['@babel/helper-plugin-utils'],
   ['@babel/plugin-transform-modules-commonjs'],

@@ -1,4 +1,4 @@
-import { useMounted } from '@vitx-documents-common'
+import { useMounted, useProps } from '@vitx-documents-common'
 
 function Sensor() {
   return (
@@ -43,8 +43,8 @@ function Signal() {
   )
 }
 
-export default function Simulator(props, { slots }) {
-  const { children = slots.default?.() } = props
+export default function Simulator(props) {
+  const { children } = useProps(props)
 
   useMounted(() => {
     const simulatorElement = document.getElementById('simulator')
@@ -94,7 +94,7 @@ export default function Simulator(props, { slots }) {
               <Battery />
             </div>
           </div>
-          {children}
+          {children()}
         </div>
       </div>
       <div className="vitx-built-device__stripe" />

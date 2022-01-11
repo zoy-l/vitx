@@ -14,6 +14,7 @@ import fs from 'fs'
 import { IDocuments, genRoute } from './genRouter'
 import { IFrame, IVitxSiteConfig } from './types'
 import { commonScript } from './commonScript'
+import smoothFC from './smoothFC'
 
 const docFileName = 'README.md'
 const docLangFileName = (lang: string) => `README.${lang}.md`
@@ -208,6 +209,7 @@ export function createSiteServer(options: { cwd: string; frame: IFrame; config: 
 
   if (isVue) {
     plugins.push(
+      smoothFC(),
       vitePluginVue({
         include: [/\.vue$/]
       }),
