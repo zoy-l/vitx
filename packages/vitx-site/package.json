@@ -23,8 +23,8 @@
     "react-router-dom": "^6.2.1",
     "vite": "^2.7.10",
     "vite-plugin-html": "^2.1.2",
-    "vite-plugin-mdn": "1.0.0",
-    "vitx": "2.0.6"
+    "vitx": "2.0.7",
+    "vite-plugin-mds": "^0.1.3"
   },
   "devDependencies": {
     "github-markdown-css": "^5.1.0",

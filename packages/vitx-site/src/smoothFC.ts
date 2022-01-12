@@ -5,7 +5,7 @@ import generator from '@vitx/bundles/model/@babel/generator'
 import traverse from '@vitx/bundles/model/@babel/traverse'
 import { parse } from '@vitx/bundles/model/@babel/parser'
 import * as t from '@vitx/bundles/model/@babel/types'
-import { parseId } from 'vite-plugin-mdn'
+import { parseId } from 'vite-plugin-mds'
 import { PluginOption } from 'vite'
 
 export default function smoothFunctionComponent(): PluginOption {

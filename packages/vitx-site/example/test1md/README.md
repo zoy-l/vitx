@@ -1,4 +1,4 @@
-# vite-plugin-mdn
+# vite-plugin-mds
 
 Markdown for Vite
 
@@ -12,7 +12,7 @@ Markdown for Vite
 Install
 
 ```bash
-npm i vite-plugin-mdn -D # yarn add vite-plugin-mdn -D
+npm i vite-plugin-mds -D # yarn add vite-plugin-mds -D
 ```
 
 Add it to `vite.config.js`
@@ -20,7 +20,7 @@ Add it to `vite.config.js`
 ```ts
 // vite.config.js
 import Vue from '@vitejs/plugin-vue'
-import { vitePluginMarkdownReact } from 'vite-plugin-mdn'
+import { vitePluginMarkdownReact } from 'vite-plugin-mds'
 
 export default {
   plugins: [Vue(), vitePluginMarkdownReact()]
@@ -30,7 +30,7 @@ export default {
 ```ts
 // vite.config.js
 import React from '@vitejs/plugin-react'
-import { vitePluginMarkdownVue } from 'vite-plugin-mdn'
+import { vitePluginMarkdownVue } from 'vite-plugin-mds'
 
 export default {
   plugins: [React(), vitePluginMarkdownVue()]
@@ -108,11 +108,11 @@ It will also be passed to the wrapper component's props if you have set `wrapper
 
 ## Options
 
-`vite-plugin-mdn` uses [`markdown-it`](https://github.com/markdown-it/markdown-it) under the hood, see [`markdown-it`'s docs](https://markdown-it.github.io/markdown-it/) for more details
+`vite-plugin-mds` uses [`markdown-it`](https://github.com/markdown-it/markdown-it) under the hood, see [`markdown-it`'s docs](https://markdown-it.github.io/markdown-it/) for more details
 
 ```ts
 // vite.config.js
-import Markdown from 'vite-plugin-mdn'
+import Markdown from 'vite-plugin-mds'
 
 export default {
   plugins: [
@@ -150,7 +150,7 @@ Or the pre-configured starter template [Vitesse](https://github.com/antfu/vitess
 ### Work with [vite-plugin-voie](https://github.com/vamplate/vite-plugin-voie)
 
 ```ts
-import Markdown from 'vite-plugin-mdn'
+import Markdown from 'vite-plugin-mds'
 import Voie from 'vite-plugin-voie'
 
 export default {
@@ -170,7 +170,7 @@ Put your markdown under `./src/pages/xx.md`, then you can access the page via ro
 `vite-plugin-components` allows you to do on-demand components auto importing without worrying about registration.
 
 ```ts
-import Markdown from 'vite-plugin-mdn'
+import Markdown from 'vite-plugin-mds'
 import ViteComponents from 'vite-plugin-components'
 
 export default {
