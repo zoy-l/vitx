@@ -11,8 +11,8 @@ import { createServer } from 'vite'
 import path from 'path'
 import fs from 'fs'
 
-import { IDocuments, genRoute } from './genRouter'
-import { IFrame, IVitxSiteConfig } from './types'
+import { genRoute, type IDocuments } from './genRouter'
+import { IFrame, type IVitxSiteConfig } from './types'
 import { commonScript } from './commonScript'
 import smoothFC from './smoothFC'
 

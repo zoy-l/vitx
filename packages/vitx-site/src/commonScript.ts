@@ -23,7 +23,7 @@ export function commonScript(frame: IFrame): PluginOption {
       if (id === resolvedCommonRouterModuleId) {
         const react = `
           import { useNavigate, Outlet } from 'react-router-dom'
-          import React, { useEffect } from 'react'
+          import React, { useEffect, useState } from 'react'
 
           function useRouter() {
             const router = useNavigate()
@@ -38,12 +38,12 @@ export function commonScript(frame: IFrame): PluginOption {
             return { attrs:props, children: ()=> isRoute ? React.createElement(Outlet, null) : props.children }
           }
 
-          export { useRouter, useMounted, useProps }
+          export { useRouter, useMounted, useProps, useState }
         `
 
         const vue = `
         import { useRouter as _useRouter } from 'vue-router'
-        import { nextTick, useAttrs, useSlots } from 'vue'
+        import { nextTick as useMounted, useAttrs, useSlots, reactive, ref } from 'vue'
 
         function useRouter() {
           const router = _useRouter()
@@ -56,9 +56,16 @@ export function commonScript(frame: IFrame): PluginOption {
           return { attrs, children:slots.default }
         }
 
-        const useMounted = nextTick
+        function useState(value){
+          const state = reactive(value)
+          return [state, (newValue)=>{
+            Object.keys(newValue).forEach((key)=>{
+              state[key] = newValue[key]
+            })
+          }]
+        }
 
-        export { useRouter, useMounted, useProps }
+        export { useRouter, useMounted, useProps, useState }
       `
 
         const router = { react, vue }

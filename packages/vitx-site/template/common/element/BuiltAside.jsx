@@ -1,4 +1,4 @@
-import { useRouter, useProps } from '@vitx-documents-common'
+import { useRouter, useProps, useState } from '@vitx-documents-common'
 
 export default function BuiltAside(props) {
   const {
@@ -6,8 +6,12 @@ export default function BuiltAside(props) {
   } = useProps(props)
 
   const router = useRouter()
+  const [value, setValue] = useState({
+    activePath: location.pathname
+  })
 
   const onRouter = (path) => () => {
+    setValue({ activePath: '/components/' + path })
     router(path)
   }
 
@@ -19,8 +23,12 @@ export default function BuiltAside(props) {
         if (group.items) {
           links = group.items.map((item, groupIndex) => {
             return (
-              <div key={groupIndex} className="vitx-built-nav__item">
-                <span onClick={onRouter(item.path, groupIndex)}>{item.title}</span>
+              <div
+                key={groupIndex}
+                className="vitx-built-nav__item"
+                active={`${`/components/${item.path}` === value.activePath}`}
+              >
+                <span onClick={onRouter(item.path)}>{item.title}</span>
               </div>
             )
           })
