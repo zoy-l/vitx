@@ -2,6 +2,7 @@ import { PluginOption } from 'vite'
 import path from 'path'
 
 import type { IVitxSiteConfig } from './types'
+import { parseName } from './utils'
 
 export type IDocuments = { name: string; path: string; isComponent?: boolean }[]
 
@@ -133,6 +134,7 @@ export function genRoute(options: {
 
         export const documentsDetails = ${JSON.stringify(files[id])}
         export const config = ${JSON.stringify(config)}
+        export const utils = { parseName:${parseName.toString()} }
         ${isReact ? createReactRoute(lazy, isDemos) : createVueRoute()}`
       }
     }

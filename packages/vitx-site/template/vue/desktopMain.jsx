@@ -1,4 +1,4 @@
-import documents, { config, documentsDetails } from '@vitx-documents-desktop'
+import documents, { config, documentsDetails, utils } from '@vitx-documents-desktop'
 import { createRouter, createWebHistory } from 'vue-router'
 import BuiltSite from 'vitx-site-common/element'
 import 'vitx-site-common/styles'
@@ -11,12 +11,15 @@ function Components() {
     </BuiltSite>
   )
 }
-Components.displayName = 'components'
 
 function installRouters() {
   /** @type {{path:string, name:string}[]} */
   const docs = documents
   const routes = []
+  const { locales } = config.site
+  const langs = Object.keys(locales)
+  const { parseName } = utils
+
   const componentsRoute = {
     path: '/components',
     component: Components,
@@ -31,27 +34,54 @@ function installRouters() {
     }
   })
 
-  documentsDetails.forEach(({ name, isComponent }) => {
-    if (isComponent) {
-      componentsRoute.children.push({
-        name,
-        path: name,
-        component: docs[name],
-        meta: { name }
-      })
-    } else {
-      routes.push({
-        name: `${name}`,
-        path: `/${name}`,
-        component: docs[name],
-        meta: {
-          name
-        }
-      })
-    }
-  })
+  if (locales) {
+    documentsDetails.forEach(({ name, isComponent }) => {
+      const { component, lang } = parseName(name)
+
+      if (isComponent) {
+        componentsRoute.children.push({
+          name,
+          path: `${lang}/${component}`,
+          component: docs[name],
+          meta: { lang, name: component }
+        })
+      } else {
+        routes.push({
+          name: `${component}`,
+          path: `/${lang}/${component}`,
+          component: docs[name],
+          meta: {
+            lang,
+            name: component
+          }
+        })
+      }
+    })
+  } else {
+    documentsDetails.forEach(({ name, isComponent }) => {
+      if (isComponent) {
+        componentsRoute.children.push({
+          name,
+          path: name,
+          component: docs[name],
+          meta: { name }
+        })
+      } else {
+        routes.push({
+          name: `${name}`,
+          path: `/${name}`,
+          component: docs[name],
+          meta: {
+            name
+          }
+        })
+      }
+    })
+  }
 
   routes.push(componentsRoute)
+
+  console.log(routes)
 
   return routes
 }

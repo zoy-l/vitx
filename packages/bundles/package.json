@@ -21,7 +21,7 @@
     "@babel/preset-env": "^7.16.8",
     "@babel/preset-react": "^7.16.7",
     "@babel/preset-typescript": "^7.16.7",
-    "@babel/register": "^7.16.8",
+    "@babel/register": "^7.16.9",
     "@types/babel__core": "^7.1.18",
     "@types/fs-extra": "^9.0.13",
     "@types/gulp-if": "^0.0.34",

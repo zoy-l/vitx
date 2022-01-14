@@ -9,7 +9,9 @@ export default Joi.object({
     title: Joi.string(),
     lazy: Joi.boolean(),
     nav: Joi.array(),
-    simulator: Joi.boolean()
+    simulator: Joi.boolean(),
+    defaultLang: Joi.string(),
+    locales: Joi.object()
   }),
   build: buildSchema
 })

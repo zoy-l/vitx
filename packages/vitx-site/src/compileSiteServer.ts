@@ -6,14 +6,15 @@ import vitePluginVue from '@vitejs/plugin-vue'
 import { injectHtml } from 'vite-plugin-html'
 import vitePluginMdn from 'vite-plugin-mds'
 import type { PluginOption } from 'vite'
-import highlight from 'highlight.js'
 import { createServer } from 'vite'
 import path from 'path'
 import fs from 'fs'
 
+import { mdBodyWrapper, vueAnchorsLink, reactAnchorsLink, markdownHighlight } from './transforms'
 import { genRoute, type IDocuments } from './genRouter'
 import { IFrame, type IVitxSiteConfig } from './types'
 import { commonScript } from './commonScript'
+import { formatName } from './utils'
 import smoothFC from './smoothFC'
 
 const docFileName = 'README.md'
@@ -24,14 +25,6 @@ const mainHtmlFileName = 'index.html'
 const mobileHtmlFileName = 'mobile.html'
 const commonDirName = 'common'
 const templateDirName = 'template'
-
-function markdownHighlight(code: string, lang: string) {
-  if (lang && highlight.getLanguage(lang)) {
-    return highlight.highlight(code, { language: lang, ignoreIllegals: true }).value
-  }
-
-  return ''
-}
 
 function getComponents({
   docs,
@@ -56,7 +49,7 @@ function getComponents({
       const fileName = lang === defaultLang ? docFileName : docLangFileName(lang)
       components.forEach((component) => {
         documents.push({
-          name: component,
+          name: formatName(component, lang),
           path: path.join(componentEntryPath, component, fileName),
           isComponent: true
         })
@@ -65,7 +58,7 @@ function getComponents({
   } else {
     components.forEach((component) => {
       documents.push({
-        name: component,
+        name: formatName(component),
         path: path.join(componentEntryPath, component, docFileName),
         isComponent: true
       })
@@ -73,7 +66,7 @@ function getComponents({
 
     docs.forEach((doc) => {
       documents.push({
-        name: path.basename(doc, path.extname(doc)),
+        name: formatName(path.basename(doc, path.extname(doc))),
         path: path.join(docEntryPath, doc)
       })
     })
@@ -99,7 +92,7 @@ function getComponents({
       return (
         fs.existsSync(componentPath) && {
           component,
-          name: component,
+          name: formatName(component),
           path: getDemoEntryFile(componentPath)
         }
       )
@@ -164,23 +157,8 @@ export function createSiteServer(options: { cwd: string; frame: IFrame; config: 
     }),
     vitePluginMdn({
       frame,
-      vueTransforms(code) {
-        code += `
-        import anchorsLink from '@vitx-documents-md';
-          __script.mounted = function(){
-            anchorsLink()
-          };\n
-        `
-        return code
-      },
-      reactTransforms: {
-        import: `import anchorsLink from '@vitx-documents-md';`,
-        content: `
-        React.useEffect(()=>{
-          anchorsLink()
-        },[])
-        `
-      },
+      vueTransforms: vueAnchorsLink,
+      reactTransforms: reactAnchorsLink,
       markdownItOptions: {
         typographer: false,
         highlight: markdownHighlight
@@ -198,9 +176,7 @@ export function createSiteServer(options: { cwd: string; frame: IFrame; config: 
         })
       },
       transforms: {
-        before(code) {
-          return `<div class="markdown-body__content">\n\n${code}\n\n</div> \n\n\${toc}\n`
-        }
+        before: mdBodyWrapper
       }
     }),
     genRoute({ documents, isVue, isReact, lazy, demos, config }),
@@ -218,7 +194,7 @@ export function createSiteServer(options: { cwd: string; frame: IFrame; config: 
   }
 
   if (isReact) {
-    plugins.push(vitePluginReact({}))
+    plugins.push(vitePluginReact())
   }
 
   return createServer({

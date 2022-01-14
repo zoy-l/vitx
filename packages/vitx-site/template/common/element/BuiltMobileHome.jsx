@@ -40,5 +40,4 @@ function BuiltMobileHome() {
   )
 }
 
-BuiltMobileHome.displayName = 'BuiltMobileHome'
 export default BuiltMobileHome

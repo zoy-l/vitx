@@ -5,21 +5,23 @@ export enum IFrame {
   react = 'react'
 }
 
+type INav = {
+  title: string
+  items: { title: string; path: string }[]
+}[]
+
 export interface IVitxSiteConfig {
   componentEntry?: string
   docEntry?: string
   site?: {
-    locales?: Record<string, any>
+    locales?: Record<string, INav>
     simulator?: boolean
     defaultLang?: string
     title?: string
     description?: string
     logo?: string
     lazy?: boolean
-    nav?: {
-      title: string
-      item: { title: string; path: string }[]
-    }[]
+    nav?: INav
   }
   build?: IConfig
 }

@@ -7,7 +7,10 @@ const configFileNames = ['vitx.config.ts', 'vitx.config.js']
 
 const defaultConfig: IVitxSiteConfig = {
   componentEntry: 'src',
-  docEntry: 'docs'
+  docEntry: 'docs',
+  site: {
+    defaultLang: 'en_US'
+  }
 }
 
 export function getUserSiteConfig(cwd: string) {
