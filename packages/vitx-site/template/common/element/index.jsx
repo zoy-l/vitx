@@ -9,14 +9,14 @@ export default function BuiltSite(props) {
     children
   } = useProps(props)
   const {
-    site: { nav, simulator }
+    site: { simulator }
   } = config
 
   return (
     <div>
       <BuiltHeader />
       <main className="vitx-built-main">
-        <BuiltAside nav={nav} />
+        <BuiltAside config={config} />
         <BuiltContainer simulator={simulator}>{children()}</BuiltContainer>
       </main>
     </div>

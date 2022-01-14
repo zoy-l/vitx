@@ -5,9 +5,9 @@ export default <IVitxSiteConfig>{
   site: {
     title: 'hello vitx',
     simulator: true,
-    defaultLang: 'en_US',
+    defaultLang: 'en-US',
     locales: {
-      zh_CN: [
+      'zh-CN': [
         {
           title: '开发指南',
           items: [
@@ -22,7 +22,7 @@ export default <IVitxSiteConfig>{
           ]
         }
       ],
-      en_US: [
+      'en-US': [
         {
           title: 'Development Guide',
           items: [

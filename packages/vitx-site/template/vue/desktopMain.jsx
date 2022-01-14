@@ -17,7 +17,7 @@ function installRouters() {
   const docs = documents
   const routes = []
   const { locales } = config.site
-  const langs = Object.keys(locales)
+  // const langs = Object.keys(locales)
   const { parseName } = utils
 
   const componentsRoute = {
