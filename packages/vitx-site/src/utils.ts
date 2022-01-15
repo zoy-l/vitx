@@ -42,3 +42,15 @@ export function parseName(name: string) {
     lang: ''
   }
 }
+
+export function formatCode(code: string) {
+  let prettier = { format: (...args: any[]) => args[0] }
+
+  try {
+    prettier = require('prettier')
+  } catch {
+    // empty
+  }
+
+  return prettier.format(code, { parser: 'babel' })
+}

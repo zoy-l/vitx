@@ -1,4 +1,4 @@
-import documents, { config, documentsDetails, utils } from '@vitx-documents-desktop'
+import { documents, config, documentsDetails, utils } from '@vitx-documents-desktop'
 import { createRouter, createWebHistory } from 'vue-router'
 import BuiltSite from 'vitx-site-common/element'
 import 'vitx-site-common/styles'
@@ -17,7 +17,6 @@ function installRouters() {
   const docs = documents
   const routes = []
   const { locales } = config.site
-  // const langs = Object.keys(locales)
   const { parseName } = utils
 
   const componentsRoute = {
@@ -47,7 +46,7 @@ function installRouters() {
         })
       } else {
         routes.push({
-          name: `${component}`,
+          name,
           path: `/${lang}/${component}`,
           component: docs[name],
           meta: {
@@ -80,8 +79,6 @@ function installRouters() {
   }
 
   routes.push(componentsRoute)
-
-  console.log(routes)
 
   return routes
 }

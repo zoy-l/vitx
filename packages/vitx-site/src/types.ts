@@ -5,7 +5,9 @@ export enum IFrame {
   react = 'react'
 }
 
-type INav = {
+export type IDocuments = { name: string; path: string; isComponent?: boolean }[]
+
+export type INav = {
   title: string
   items: { title: string; path: string }[]
 }[]

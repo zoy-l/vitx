@@ -17,14 +17,14 @@
     "@vitejs/plugin-vue-jsx": "^1.3.3",
     "babel-plugin-vue-fc": "^0.0.2",
     "commander": "^8.3.0",
-    "fast-glob": "^3.2.10",
+    "fast-glob": "^3.2.11",
     "highlight.js": "^11.4.0",
     "markdown-it-anchor": "^8.4.1",
     "markdown-it-toc-done-right": "^4.2.0",
     "react-router-dom": "^6.2.1",
-    "vite": "^2.7.10",
+    "vite": "^2.7.12",
     "vite-plugin-html": "^2.1.2",
-    "vite-plugin-mds": "^0.1.3",
+    "vite-plugin-mds": "^0.1.5",
     "vitx": "2.0.7"
   },
   "devDependencies": {

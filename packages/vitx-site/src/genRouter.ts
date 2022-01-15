@@ -1,75 +1,8 @@
 import { PluginOption } from 'vite'
 import path from 'path'
 
-import type { IVitxSiteConfig } from './types'
-import { parseName } from './utils'
-
-export type IDocuments = { name: string; path: string; isComponent?: boolean }[]
-
-function createVueRoute() {
-  return `export default documents`
-}
-
-function createReactRoute(lazy: boolean, isDemos: boolean) {
-  return `function BuiltRouter(props) {
-    const { fallback = React.createElement('div', null), site: BuiltSite } = props
-
-    const otherRoute = []
-    const componentsRoute = []
-
-    documentsDetails.forEach((item)=>{
-      if (item.isComponent){
-        componentsRoute.push(item)
-      }else{
-        otherRoute.push(item)
-      }
-    })
-
-    let ComponentsRoute = null
-
-    if (BuiltSite){
-      ComponentsRoute = React.createElement(Route, {
-        path: '/components',
-        key: 'builsite',
-        element: React.createElement(
-          BuiltSite,
-          { config }
-        )
-      }, componentsRoute.map(({ name }) => {
-        const Element = documents[name]
-        return React.createElement(Route, {
-          key: name,
-          path: name,
-          element: React.createElement(Element, null)
-        })
-      }))
-    }
-
-
-    return React.createElement(
-      ${lazy ? 'Suspense, { fallback }' : 'Fragment, null'},
-      React.createElement(BrowserRouter, ${
-        isDemos ? `{ basename: '/mobile.html' }` : 'null'
-      }, React.createElement(
-          Routes, null,
-          [...otherRoute.map(({ name }) => {
-            const Element = documents[name]
-            if (name === 'BuiltMobileHome'){
-              name = ''
-            }
-
-            return React.createElement(Route, {
-              key: name,
-              path: \`/\${name}\`,
-              element: React.createElement(Element, null)
-            })
-          }), ComponentsRoute]
-        )
-      )
-    )
-  }
-  export default BuiltRouter`
-}
+import type { IVitxSiteConfig, IDocuments } from './types'
+import { formatCode, parseName } from './utils'
 
 export function genRoute(options: {
   documents: IDocuments
@@ -108,8 +41,7 @@ export function genRoute(options: {
     },
     load(id) {
       if (id === resolvedDesktopVirtualModuleId || id === resolvedMobileVirtualModuleId) {
-        const isDemos = id === resolvedMobileVirtualModuleId
-        return `
+        return formatCode(`
         ${files[id].reduce(
           (memo, current) => {
             if (lazy) {
@@ -121,21 +53,16 @@ export function genRoute(options: {
             }
             return memo
           },
-          isReact
-            ? `
-            import { Route, Routes, BrowserRouter } from 'react-router-dom'
-            import React, { Suspense, lazy, Fragment } from 'react'
-            `
-            : ''
+          isReact ? `import { lazy } from 'react';` : ''
         )}
         const documents = {
           ${files[id].map((item) => item.name).join(',')}
         }
 
-        export const documentsDetails = ${JSON.stringify(files[id])}
-        export const config = ${JSON.stringify(config)}
-        export const utils = { parseName:${parseName.toString()} }
-        ${isReact ? createReactRoute(lazy, isDemos) : createVueRoute()}`
+        const documentsDetails = ${JSON.stringify(files[id])}
+        const config = ${JSON.stringify(config)}
+        const utils = { parseName:${parseName.toString()} }
+        export { documents, utils, config, documentsDetails }`)
       }
     }
   }

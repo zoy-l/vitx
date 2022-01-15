@@ -11,9 +11,9 @@ import path from 'path'
 import fs from 'fs'
 
 import { mdBodyWrapper, vueAnchorsLink, reactAnchorsLink, markdownHighlight } from './transforms'
-import { genRoute, type IDocuments } from './genRouter'
-import { IFrame, type IVitxSiteConfig } from './types'
+import { IFrame, type IVitxSiteConfig, type IDocuments } from './types'
 import { commonScript } from './commonScript'
+import { genRoute } from './genRouter'
 import { formatName } from './utils'
 import smoothFC from './smoothFC'
 
@@ -63,14 +63,15 @@ function getComponents({
         isComponent: true
       })
     })
-
-    docs.forEach((doc) => {
-      documents.push({
-        name: formatName(path.basename(doc, path.extname(doc))),
-        path: path.join(docEntryPath, doc)
-      })
-    })
   }
+
+  docs.forEach((doc) => {
+    const pairs = path.parse(doc).name.split('.')
+    documents.push({
+      name: formatName(pairs[0], pairs[1] ?? defaultLang),
+      path: path.join(docEntryPath, doc)
+    })
+  })
 
   const getDemoEntryFile = (demoDirPath: string) => {
     let indexFilePath: string
