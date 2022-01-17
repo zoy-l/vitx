@@ -1,10 +1,10 @@
-import { documents, config, documentsDetails, utils } from '@vitx-documents-desktop'
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, RouterView } from 'vue-router'
+import { documents, config, routes } from '@vitx-documents-desktop'
 import BuiltSite from 'vitx-site-common/element'
 import 'vitx-site-common/styles'
 import { createApp } from 'vue'
 
-function Components() {
+function BuiltSiteView() {
   return (
     <BuiltSite config={config}>
       <router-view />
@@ -13,74 +13,25 @@ function Components() {
 }
 
 function installRouters() {
-  /** @type {{path:string, name:string}[]} */
-  const docs = documents
-  const routes = []
-  const { locales } = config.site
-  const { parseName } = utils
-
-  const componentsRoute = {
-    path: '/components',
-    component: Components,
-    children: []
+  const doc = {
+    ...documents,
+    BuiltSite: BuiltSiteView
   }
 
-  routes.push({
-    name: 'notFound',
-    path: '/:path(.*)+',
-    redirect: {
-      name: 'home'
+  return routes.map((route) => {
+    route.component = doc[route.component]
+
+    if (route.children) {
+      route.children = route.children.map((child) => {
+        return {
+          ...child,
+          component: doc[child.component]
+        }
+      })
     }
+
+    return route
   })
-
-  if (locales) {
-    documentsDetails.forEach(({ name, isComponent }) => {
-      const { component, lang } = parseName(name)
-
-      if (isComponent) {
-        componentsRoute.children.push({
-          name,
-          path: `${lang}/${component}`,
-          component: docs[name],
-          meta: { lang, name: component }
-        })
-      } else {
-        routes.push({
-          name,
-          path: `/${lang}/${component}`,
-          component: docs[name],
-          meta: {
-            lang,
-            name: component
-          }
-        })
-      }
-    })
-  } else {
-    documentsDetails.forEach(({ name, isComponent }) => {
-      if (isComponent) {
-        componentsRoute.children.push({
-          name,
-          path: name,
-          component: docs[name],
-          meta: { name }
-        })
-      } else {
-        routes.push({
-          name: `${name}`,
-          path: `/${name}`,
-          component: docs[name],
-          meta: {
-            name
-          }
-        })
-      }
-    })
-  }
-
-  routes.push(componentsRoute)
-
-  return routes
 }
 
 const routers = createRouter({
@@ -88,8 +39,4 @@ const routers = createRouter({
   routes: installRouters()
 })
 
-function App() {
-  return <router-view />
-}
-
-createApp(App).use(routers).mount('#vitx-app')
+createApp(RouterView).use(routers).mount('#vitx-app')

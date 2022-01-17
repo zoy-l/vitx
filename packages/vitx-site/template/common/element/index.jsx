@@ -6,17 +6,19 @@ import BuiltAside from './BuiltAside'
 export default function BuiltSite(props) {
   const {
     attrs: { config },
-    children
+    children,
+    lang
   } = useProps(props)
+
   const {
-    site: { simulator }
+    components: { simulator }
   } = config
 
   return (
     <div>
       <BuiltHeader />
       <main className="vitx-built-main">
-        <BuiltAside config={config} />
+        <BuiltAside config={config} lang={lang} />
         <BuiltContainer simulator={simulator}>{children()}</BuiltContainer>
       </main>
     </div>

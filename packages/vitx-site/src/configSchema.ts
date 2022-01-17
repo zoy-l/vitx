@@ -8,10 +8,11 @@ export default Joi.object({
   site: Joi.object({
     title: Joi.string(),
     lazy: Joi.boolean(),
-    nav: Joi.array(),
-    simulator: Joi.boolean(),
-    defaultLang: Joi.string(),
-    locales: Joi.object()
+    defaultLang: Joi.string()
+  }),
+  components: Joi.object({
+    nav: Joi.any().allow(Joi.object(), Joi.array()),
+    simulator: Joi.boolean()
   }),
   build: buildSchema
 })

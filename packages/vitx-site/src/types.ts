@@ -12,18 +12,21 @@ export type INav = {
   items: { title: string; path: string }[]
 }[]
 
+export type INavs = Record<string, INav>
+
 export interface IVitxSiteConfig {
   componentEntry?: string
   docEntry?: string
   site?: {
-    locales?: Record<string, INav>
-    simulator?: boolean
     defaultLang?: string
     title?: string
     description?: string
     logo?: string
     lazy?: boolean
-    nav?: INav
+  }
+  components?: {
+    nav?: INavs | INav
+    simulator?: boolean
   }
   build?: IConfig
 }

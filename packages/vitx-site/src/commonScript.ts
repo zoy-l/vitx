@@ -35,14 +35,16 @@ export function commonScript(frame: IFrame): PluginOption {
           }
 
           function useProps(props, isRoute){
-            return { attrs:props, children: ()=> isRoute ? React.createElement(Outlet, null) : props.children }
+            const { meta = {}, lang:_lang } = props
+            const lang = _lang ?? meta[location.pathname]
+            return { attrs:props, children: ()=> isRoute ? React.createElement(Outlet, null) : props.children, lang }
           }
 
           export { useRouter, useMounted, useProps, useState }
         `
 
         const vue = `
-        import { useRouter as _useRouter } from 'vue-router'
+        import { useRouter as _useRouter, useRoute } from 'vue-router'
         import { nextTick as useMounted, useAttrs, useSlots, reactive, ref } from 'vue'
 
         function useRouter() {
@@ -51,9 +53,10 @@ export function commonScript(frame: IFrame): PluginOption {
         }
 
         function useProps(){
+          const route = useRoute()
           const attrs = useAttrs()
           const slots = useSlots()
-          return { attrs, children:slots.default }
+          return { attrs, children:slots.default, ...route.meta }
         }
 
         function useState(value){

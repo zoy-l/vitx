@@ -13,6 +13,7 @@ function App() {
 
   const otherRoute = []
   const componentsRoute = []
+  const meta = {}
 
   const RootElement = isLazy ? Suspense : Fragment
   const RootElementProps = isLazy ? { fallback: <Fragment /> } : {}
@@ -28,7 +29,7 @@ function App() {
     }
 
     if (item.isComponent) {
-      console.log(`${lang}/${component}`)
+      meta[`/components/${lang}/${component}`] = lang
       componentsRoute.push(<Route key={name} path={`${lang}/${component}`} element={<Element />} />)
     } else {
       otherRoute.push(
@@ -42,7 +43,10 @@ function App() {
       <BrowserRouter>
         <Routes>
           {otherRoute}
-          <Route element={<BuiltSite config={config} path="/components" key="builsite" />}>
+          <Route
+            path="/components"
+            element={<BuiltSite config={config} key="builsite" meta={meta} />}
+          >
             {componentsRoute}
           </Route>
           <Route path="*" element={<Navigate to={homePath} replace />} />

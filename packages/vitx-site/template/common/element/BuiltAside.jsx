@@ -1,15 +1,9 @@
 import { useRouter, useProps, useState } from '@vitx-documents-common'
-import { useRoute } from 'vue-router'
 
 export default function BuiltAside(props) {
-  const {
-    attrs: { config }
-  } = useProps(props)
-  const { nav, locales } = config.site
-  const route = useRoute()
-  const { lang } = route.meta
-
-  const asides = nav || locales[lang]
+  const { attrs, lang } = useProps(props)
+  const { nav } = attrs.config.components
+  const asides = Array.isArray(nav) ? nav : nav[lang]
 
   const router = useRouter()
   const [value, setValue] = useState({

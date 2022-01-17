@@ -4,9 +4,11 @@ export default <IVitxSiteConfig>{
   componentEntry: 'example',
   site: {
     title: 'hello vitx',
+    defaultLang: 'en-US'
+  },
+  components: {
     simulator: true,
-    defaultLang: 'en-US',
-    locales: {
+    nav: {
       'zh-CN': [
         {
           title: '开发指南',
