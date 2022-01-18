@@ -10,8 +10,10 @@ export default function BuiltAside(props) {
     activePath: location.pathname
   })
 
+  const basePath = lang ? `/components/${lang}/` : '/components/'
+
   const onRouter = (path) => () => {
-    setValue({ activePath: '/components/' + path })
+    setValue({ activePath: basePath + path })
     router(path)
   }
 

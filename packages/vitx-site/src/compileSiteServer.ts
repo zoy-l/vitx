@@ -69,7 +69,7 @@ export function createSiteServer(options: { cwd: string; frame: IFrame; config: 
         before: mdBodyWrapper
       }
     }),
-    genRoute({ isVue, isReact, config, cwd }),
+    genRoute({ isVue, isReact, config, cwd, frame }),
     commonScript(frame)
   ]
 

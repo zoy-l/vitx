@@ -2,29 +2,58 @@ import { PluginOption } from 'vite'
 import path from 'path'
 import fs from 'fs'
 
+import { IFrame, type IVitxSiteConfig, type IDocuments } from './types'
 import { formatCode, formatName, parseName } from './utils'
-import type { IVitxSiteConfig, IDocuments } from './types'
 
 const docFileName = 'README.md'
 const docLangFileName = (lang: string) => `README.${lang}.md`
 const demoEntryFileName = 'index'
 const demoDirName = 'demo'
 
+const reactDesktopApp = `
+   function Routes(){ return useRoutes(routes) };
+   function DesktopApp(){
+    const {
+      site: { lazy: isLazy }
+    } = config
+
+    const RootElement = isLazy ? Suspense : Fragment
+    const RootElementProps = isLazy ? { fallback: React.createElement(Fragment, null) } : {}
+
+    return React.createElement(RootElement, RootElementProps,
+      React.createElement(BrowserRouter, null,
+        React.createElement(Routes, null)
+      )
+    )
+   }
+   render(React.createElement(DesktopApp, null), document.getElementById('vitx-app'))
+  `
+
+const vueDesktopApp = `
+const routers = createRouter({
+  history: createWebHistory(),
+  routes: routes
+})
+
+createApp(RouterView).use(routers).mount('#vitx-app')
+`
+
 export function genRoute(options: {
   isReact: boolean
   isVue: boolean
   cwd: string
   config: IVitxSiteConfig
+  frame: IFrame
 }): PluginOption {
-  const { isVue, isReact, config, cwd } = options
+  const { isVue, isReact, config, cwd, frame } = options
   const {
     componentEntry,
     docEntry,
-    site: { defaultLang, lazy },
+    site: { defaultLang: dl, lazy },
     components: { nav }
   } = config
 
-  const virtualDesktopModuleId = '@vitx-documents-desktop'
+  const virtualDesktopModuleId = '/@vitx-documents-desktop'
   const virtualMobileModuleId = '@vitx-documents-mobile'
   const resolvedMobileVirtualModuleId = `vitx:${virtualMobileModuleId}`
   const resolvedDesktopVirtualModuleId = `vitx:${virtualDesktopModuleId}`
@@ -50,6 +79,7 @@ export function genRoute(options: {
 
   const documents: IDocuments = []
   const isSingleNav = Array.isArray(nav)
+  const defaultLang = isSingleNav ? '' : dl
   const langs = isSingleNav ? [null] : Object.keys(nav)
 
   langs.forEach((lang) => {
@@ -95,7 +125,6 @@ export function genRoute(options: {
 
       return (
         fs.existsSync(componentPath) && {
-          // component,
           name: formatName(component),
           path: getDemoEntryFile(componentPath)
         }
@@ -121,68 +150,120 @@ export function genRoute(options: {
     },
     load(id) {
       if (id === resolvedDesktopVirtualModuleId || id === resolvedMobileVirtualModuleId) {
-        return formatCode(`
-        ${files[id].reduce(
-          (memo, current) => {
-            if (lazy) {
-              isVue && (memo += `const ${current.name} = () => import("${current.path}");\n`)
-              isReact &&
-                (memo += `const ${current.name} = lazy(() => import("${current.path}"));\n`)
-            } else {
-              memo += `import ${current.name} from "${current.path}";\n`
-            }
-            return memo
-          },
-          isReact ? `import { lazy } from 'react';` : ''
-        )}
+        const frameImports = {
+          vue: `
+        import { createRouter, createWebHistory, RouterView } from 'vue-router';
+        import { createApp, h } from 'vue';`,
+          react: `
+        import React, { lazy, Fragment } from 'react';
+        import { render } from 'react-dom';
+        import { Navigate, useRoutes, BrowserRouter } from 'react-router-dom';`
+        }
+
+        const baseImports = files[id].reduce((memo, current) => {
+          if (lazy) {
+            isVue && (memo += `const ${current.name} = () => import("${current.path}");\n`)
+            isReact && (memo += `const ${current.name} = lazy(() => import("${current.path}"));\n`)
+          } else {
+            memo += `import ${current.name} from "${current.path}";\n`
+          }
+          return memo
+        }, frameImports[frame])
+
+        if (id === resolvedMobileVirtualModuleId) {
+          //
+          return formatCode(`
+          ${baseImports}
+
+          const demos = { ${files[id].map((item) => item.name).join(',')} }
+          `)
+        }
+
+        if (id === resolvedDesktopVirtualModuleId) {
+          const nodeName = { vue: 'component', react: 'element' }
+          const nodeValue = { vue: 'Element', react: 'React.createElement(Element, null)' }
+          const notMatch = {
+            vue: `
+          path: '/:path(.*)+',
+          redirect: homePath`,
+            react: `
+          path: '*',
+          element: React.createElement(Navigate, { to:homePath, replace:true})`
+          }
+          const routeApp = { vue: vueDesktopApp, react: reactDesktopApp }
+          const nodeSiteComponent = {
+            vue: `{ render(){ return h(BuiltSite, { config }, { default: ()=> h(RouterView)}) } }`,
+            react: `React.createElement(BuiltSite, { config, meta })`
+          }
+
+          return formatCode(
+            `
+          import BuiltSite from 'vitx-site-common/element';
+          import 'vitx-site-common/styles';
+
+        ${baseImports}
 
         ${parseName.toString()}
 
-        const documents = {
-          ${files[id].map((item) => item.name).join(',')}
-        }
+        const meta = {}
+        const routes = []
+        const config = ${JSON.stringify(config)}
+        const documents = { ${files[id].map((item) => item.name).join(',')} }
         const documentsDetails = ${JSON.stringify(files[id])}
 
-        const routes = [
-          {
-            name: 'notFound',
-            path: '/:path(.*)+',
-            redirect: {
-              name: 'home'
-            }
-          }
-        ]
+        let homePath = '/home'
+
         const componentsRouteRoot = {
           path: '/components',
-          component: 'BuiltSite',
+          ${nodeName[frame]}: ${nodeSiteComponent[frame]},
           children: []
         }
 
         documentsDetails.forEach(({ name, isComponent }) => {
-          const { component, lang } = parseName(name)
+          ${
+            isSingleNav
+              ? 'const component = name;const lang = null'
+              : `
+              const { component, lang } = parseName(name);
+              if('${defaultLang}' === lang) homePath = \`/${defaultLang}/home\``
+          }
+          const Element = documents[name]
+
+          ${
+            isSingleNav
+              ? `const basePath = \`\${component}\``
+              : `const basePath = \`\${lang}/\${component}\``
+          }
 
           if (isComponent) {
+            meta[\`/components/\${basePath}\`] = lang
             componentsRouteRoot.children.push({
               name,
-              path: \`\${lang}/\${component}\`,
-              component: name,
+              path:basePath,
+              ${nodeName[frame]}: ${nodeValue[frame]},
               meta: { lang, name: component },
             })
           } else {
+            const path = \`/\${basePath}\`
+            meta[path] = lang
             routes.push({
               name,
-              path: \`/\${lang}/\${component}\`,
-              component: name,
+              path,
+              ${nodeName[frame]}: ${nodeValue[frame]},
               meta: { lang, name: component }
             })
           }
         })
 
         routes.push(componentsRouteRoot)
-
-        const config = ${JSON.stringify(config)}
-        const utils = { parseName }
-        export { documents, utils, config, documentsDetails, routes }`)
+        routes.push({
+          name: 'notFound',
+          ${notMatch[frame]}
+        })
+        ${routeApp[frame]}
+        `
+          )
+        }
       }
     }
   }
