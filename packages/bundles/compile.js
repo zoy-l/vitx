@@ -61,7 +61,11 @@ async function compileBundles(name, options = {}) {
   let byte = 0
 
   if (embellish === name) {
-    const defaultOptions = { externals, minify: true, quiet: true }
+    const defaultOptions = {
+      externals,
+      minify: false,
+      quiet: true
+    }
     const { code, assets } = await ncc(
       require.resolve(name),
       Object.assign(defaultOptions, options)
@@ -135,9 +139,9 @@ async function run() {
     }
   }
 
-  getJestArgs()
+  totalSize += getJestArgs()
 
-  console.log(chalk.green(figures.tick + ' Package size: '), chalk.yellow(sizeFilter(totalSize)))
+  console.log(chalk.green(figures.tick + ' Package size:'), chalk.yellow(sizeFilter(totalSize)))
 }
 
 function getJestArgs() {
@@ -147,10 +151,12 @@ function getJestArgs() {
     join(outDirPath, 'jestArgs/index.js'),
     `module.exports = ${JSON.stringify(value.options)}`
   )
-
+  const { size } = fs.statSync(outDirPath)
   fs.outputFileSync(join(outDirPath, 'jestArgs/index.d.ts'), `export = import('.')`)
 
-  console.log('The extraction was successful jest-args')
+  console.log(chalk.green(figures.tick + ' Success:'), chalk.yellow('jest-args'), sizeFilter(size))
+
+  return size
 }
 
 /**
