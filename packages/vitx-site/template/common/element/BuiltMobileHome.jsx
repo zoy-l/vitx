@@ -1,12 +1,13 @@
-import { config } from '@vitx-documents-desktop'
+import { config } from '@vitx-documents-common'
 
 function BuiltMobileHome() {
-  const {
-    site: { nav }
-  } = config
+  const { nav } = config.components
+
+  const asides = Array.isArray(nav) ? nav : nav[window.top.lang]
+
   return (
     <aside className="vitx-built-mobile-home">
-      {nav.map((group, index) => {
+      {asides.map((group, index) => {
         let links = null
 
         if (group.items) {

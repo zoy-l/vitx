@@ -1,7 +1,15 @@
 import { PluginOption } from 'vite'
-import { IFrame } from './types'
 
-export function commonScript(frame: IFrame): PluginOption {
+import { IFrame, IVitxSiteConfig } from './types'
+
+export function commonScript({
+  frame,
+  config
+}: {
+  frame: IFrame
+  config: IVitxSiteConfig
+}): PluginOption {
+  const configJson = JSON.stringify(config)
   const virtualCommonRouterId = '@vitx-documents-common'
   const resolvedCommonRouterModuleId = `vitx:${virtualCommonRouterId}`
 
@@ -40,7 +48,9 @@ export function commonScript(frame: IFrame): PluginOption {
             return { attrs:props, children: ()=> isRoute ? React.createElement(Outlet, null) : props.children, lang }
           }
 
-          export { useRouter, useMounted, useProps, useState }
+          const config = ${configJson}
+
+          export { useRouter, useMounted, useProps, useState, config }
         `
 
         const vue = `
@@ -67,8 +77,9 @@ export function commonScript(frame: IFrame): PluginOption {
             })
           }]
         }
+        const config = ${configJson}
 
-        export { useRouter, useMounted, useProps, useState }
+        export { useRouter, useMounted, useProps, useState, config }
       `
 
         const router = { react, vue }

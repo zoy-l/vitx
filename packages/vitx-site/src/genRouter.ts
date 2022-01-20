@@ -29,7 +29,7 @@ const reactDesktopApp = `
    render(React.createElement(DesktopApp, null), document.getElementById('vitx-app'))
   `
 
-const vueDesktopApp = `
+const vueApp = `
 const routers = createRouter({
   history: createWebHistory(),
   routes: routes
@@ -54,7 +54,7 @@ export function genRoute(options: {
   } = config
 
   const virtualDesktopModuleId = '/@vitx-documents-desktop'
-  const virtualMobileModuleId = '@vitx-documents-mobile'
+  const virtualMobileModuleId = '/@vitx-documents-mobile'
   const resolvedMobileVirtualModuleId = `vitx:${virtualMobileModuleId}`
   const resolvedDesktopVirtualModuleId = `vitx:${virtualDesktopModuleId}`
 
@@ -111,7 +111,10 @@ export function genRoute(options: {
     fs.readdirSync(demoDirPath).forEach((item) => {
       const filePath = path.join(demoDirPath, item)
 
-      if (!fs.lstatSync(filePath).isDirectory() && item.split('.')[0] === demoEntryFileName) {
+      if (
+        !fs.lstatSync(filePath).isDirectory() &&
+        path.basename(item, path.extname(item)) === demoEntryFileName
+      ) {
         indexFilePath = filePath
       }
     })
@@ -160,6 +163,16 @@ export function genRoute(options: {
         import { Navigate, useRoutes, BrowserRouter } from 'react-router-dom';`
         }
 
+        const nodeName = { vue: 'component', react: 'element' }
+        const routeApp = { vue: vueApp, react: reactDesktopApp }
+        const commonContent = `
+        const meta = {}
+        const routes = []
+        const config = ${JSON.stringify(config)}
+        const documents = { ${files[id].map((item) => item.name).join(',')} }
+        const documentsDetails = ${JSON.stringify(files[id])}
+        `
+
         const baseImports = files[id].reduce((memo, current) => {
           if (lazy) {
             isVue && (memo += `const ${current.name} = () => import("${current.path}");\n`)
@@ -171,17 +184,30 @@ export function genRoute(options: {
         }, frameImports[frame])
 
         if (id === resolvedMobileVirtualModuleId) {
-          //
           return formatCode(`
-          ${baseImports}
+          import BuiltMobileHome from 'vitx-site-common/element/BuiltMobileHome'
+          import 'vitx-site-common/styles/mobile'
 
-          const demos = { ${files[id].map((item) => item.name).join(',')} }
+          ${baseImports}
+          ${commonContent}
+
+          routes.push({
+            name: 'notFound',
+            path: '/:path(.*)+',
+            redirect: { name: 'BuiltMobileHome' }
+          },{
+            name:'BuiltMobileHome',
+            path:'/mobile-home',
+            component:BuiltMobileHome,
+          })
+
+          ${routeApp[frame]}
           `)
         }
 
         if (id === resolvedDesktopVirtualModuleId) {
-          const nodeName = { vue: 'component', react: 'element' }
           const nodeValue = { vue: 'Element', react: 'React.createElement(Element, null)' }
+
           const notMatch = {
             vue: `
           path: '/:path(.*)+',
@@ -190,7 +216,7 @@ export function genRoute(options: {
           path: '*',
           element: React.createElement(Navigate, { to:homePath, replace:true})`
           }
-          const routeApp = { vue: vueDesktopApp, react: reactDesktopApp }
+
           const nodeSiteComponent = {
             vue: `{ render(){ return h(BuiltSite, { config }, { default: ()=> h(RouterView)}) } }`,
             react: `React.createElement(BuiltSite, { config, meta })`
@@ -205,11 +231,7 @@ export function genRoute(options: {
 
         ${parseName.toString()}
 
-        const meta = {}
-        const routes = []
-        const config = ${JSON.stringify(config)}
-        const documents = { ${files[id].map((item) => item.name).join(',')} }
-        const documentsDetails = ${JSON.stringify(files[id])}
+        ${commonContent}
 
         let homePath = '/home'
 

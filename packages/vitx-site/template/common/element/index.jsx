@@ -14,6 +14,8 @@ export default function BuiltSite(props) {
     components: { simulator }
   } = config
 
+  window.lang = lang
+
   return (
     <div>
       <BuiltHeader />

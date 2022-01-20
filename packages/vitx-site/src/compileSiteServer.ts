@@ -70,7 +70,7 @@ export function createSiteServer(options: { cwd: string; frame: IFrame; config: 
       }
     }),
     genRoute({ isVue, isReact, config, cwd, frame }),
-    commonScript(frame)
+    commonScript({ frame, config })
   ]
 
   if (isVue) {
