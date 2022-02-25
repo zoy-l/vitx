@@ -4,6 +4,8 @@
 
 [![lerna](https://img.shields.io/badge/support-lerna-blue)](https://lernajs.io/) [![GitHub license](https://img.shields.io/github/license/l-zoy/vitx)](https://github.com/l-zoy/vitx/blob/master/LICENSE) [![codecov](https://codecov.io/gh/l-zoy/vitx/branch/main/graph/badge.svg?token=W1ND9EDZEJ)](https://codecov.io/gh/l-zoy/vitx) [![<ORG_NAME>](https://circleci.com/gh/l-zoy/vitx.svg?style=svg)](https://app.circleci.com/pipelines/github/l-zoy/vitx)
 
+文档功能开发中
+
 ## Features
 
 - **支持** `typescript`
