@@ -2,7 +2,6 @@ import yargsParser from '@vitx/bundles/model/yargs-parser'
 import chalk from '@vitx/bundles/model/chalk'
 
 import { build } from './compile'
-import jestRun from './jestRun'
 
 const args = yargsParser(process.argv.slice(2), {
   alias: {
@@ -24,8 +23,6 @@ if (commands.includes(args._[0])) {
     const watch = args.w ?? args.watch
     const cwd = process.cwd()
     build({ cwd, watch }).catch(logError)
-  } else if (command === 'test') {
-    jestRun(args).catch(logError)
   } else {
     throw new Error(chalk.red(`Unknown command '${command}'`))
   }

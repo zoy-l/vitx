@@ -1,6 +1,5 @@
 import through2 from '@vitx/bundles/model/through2'
 import gulpIf from '@vitx/bundles/model/gulp-if'
-import type { Config } from '@jest/types'
 import { runCLI } from 'jest'
 
 export interface IVitxConfig {
@@ -141,15 +140,3 @@ export interface ITestArgs extends Partial<IArgsType<typeof runCLI>['0']> {
   e2e?: boolean
   package?: string
 }
-
-/**
- * Jest config Help type
- */
-export type IHandleConfig<T> = T extends Record<string, any>
-  ? { [key in keyof T]: T[key] | ((value: T[key]) => T[key]) }
-  : T
-
-/**
- * Jest config
- */
-export type IJestConfig = IHandleConfig<Config.InitialOptions>

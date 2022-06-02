@@ -48,7 +48,6 @@
     "gulp-sourcemaps": "^3.0.0",
     "gulp-typescript": "6.0.0-alpha.1",
     "hash-sum": "^2.0.0",
-    "jest-cli": "^27.4.7",
     "joi": "^17.5.0",
     "less": "4.1.2",
     "ora": "^5.4.1",

@@ -1,24 +1,43 @@
-import yargsParser from '@vitx/bundles/model/yargs-parser'
-import jestArgs from '@vitx/bundles/model/jestArgs'
 import type { Config } from '@jest/types'
+import yargsParser from 'yargs-parser'
 import { runCLI } from 'jest'
+import findUp from 'find-up'
 import assert from 'assert'
 import path from 'path'
 import fs from 'fs'
 
-import { registerBabel, isDefault } from './utils'
 import defaultConfig from './jestConfig'
-import { IJestConfig } from './types'
+import jestArgs from '../jestArgs'
 
-const jestConfig = ['jest.config.js', 'jest.config.ts']
+const jestConfig = ['jest.config.js']
 
-function mergeConfig(defaultConfig: Config.InitialOptions, config: IJestConfig) {
+/**
+ * Jest config Help type
+ */
+export type IHandleConfig<T> = T extends Record<string, any>
+  ? { [key in keyof T]: T[key] | ((value: T[key]) => T[key]) }
+  : T
+
+/**
+ * Jest config
+ */
+export type IJestConfig = IHandleConfig<Config.InitialOptions>
+
+export function isDefault(obj: any) {
+  return obj.default ?? obj
+}
+
+function mergeConfig(
+  defaultConfig: Config.InitialOptions,
+  config: IJestConfig,
+  args: yargsParser.Arguments
+) {
   const ret = { ...defaultConfig }
   if (!config) return
 
   Object.keys(config).forEach((key) => {
     const val = config[key]
-    ret[key] = typeof val === 'function' ? val(ret[key]) : val
+    ret[key] = typeof val === 'function' ? val(ret[key], args) : val
   })
 
   return ret
@@ -38,26 +57,19 @@ function formatArgs(args: yargsParser.Arguments) {
 }
 
 export default async function (args: yargsParser.Arguments) {
-  try {
-    require('babel-jest')
-  } catch (err) {
-    throw new Error('The corresponding version of `babel-jest` needs to be installed')
-  }
-
   process.env.NODE_ENV = 'test'
   const cwd = args.cwd ?? process.cwd()
 
   const userJestConfigFiles = jestConfig.map((configName) => path.join(cwd, configName))
-  const userJestConfig = userJestConfigFiles.find((configCwd) => fs.existsSync(configCwd))
-
-  if (userJestConfig) {
-    registerBabel(userJestConfig)
-  }
+  const userJestConfig =
+    userJestConfigFiles.find((configCwd) => fs.existsSync(configCwd)) ??
+    (await findUp(jestConfig[0]))
 
   const config = mergeConfig(
-    defaultConfig(cwd, args),
-    isDefault(userJestConfig ? require(userJestConfig) : {})
-  )
+    defaultConfig(cwd),
+    isDefault(userJestConfig ? require(userJestConfig) : {}),
+    args
+  )!
 
   const argsConfig = formatArgs(args)
 
