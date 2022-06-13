@@ -1,8 +1,7 @@
 import through2 from '@build-easy/bundles/model/through2'
 import gulpIf from '@build-easy/bundles/model/gulp-if'
-import { runCLI } from 'jest'
 
-export interface IVitxConfig {
+export interface BuildConfig {
   /**
    * Whether to inject css when compiling a single `.vue` file
    */
@@ -92,12 +91,12 @@ export interface IVitxConfig {
   /**
    * Entry default src
    */
-  entry: string
+  entry?: string
 
   /**
    * Output default lib
    */
-  output: string
+  output?: string
 
   /**
    * Path alias
@@ -123,20 +122,4 @@ export interface IVitxConfig {
 /**
  * The value of internal moduleType is always "esm" | "cjs"
  */
-export type IModes = Exclude<Required<IVitxConfig>['moduleType'], 'all'>
-
-/**
- * Jest run function Help type
- */
-export type IArgsType<T extends (...args: any[]) => any> = T extends (...args: infer U) => any
-  ? U
-  : never
-
-/**
- * Jest run function parameters
- */
-export interface ITestArgs extends Partial<IArgsType<typeof runCLI>['0']> {
-  debug?: boolean
-  e2e?: boolean
-  package?: string
-}
+export type Modes = Exclude<Required<BuildConfig>['moduleType'], 'all'>

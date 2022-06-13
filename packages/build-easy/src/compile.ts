@@ -21,14 +21,14 @@ import {
   logger
 } from './host'
 import getConfig, { IGetUserConfig } from './getUserConfig'
-import type { IModes, IVitxConfig } from './types'
+import type { Modes, BuildConfig } from './types'
 import schema from './configSchema'
 
-const configFileNames = ['.vitxrc.ts', '.vitxrc.js']
+const configFileNames = ['build.easy.ts', 'build.easy.js']
 const extSignals = ['SIGINT', 'SIGQUIT', 'SIGTERM']
 const cache = {}
 const getUserConfig = (cwd: IGetUserConfig['cwd']) =>
-  getConfig({ cwd, schema, configFileNames }) as IVitxConfig
+  getConfig({ cwd, schema, configFileNames }) as BuildConfig
 const defaultConfig = <const>{
   entry: 'src',
   output: 'lib',
@@ -38,7 +38,7 @@ const defaultConfig = <const>{
   packageDirName: 'packages'
 }
 
-function compile(watch: boolean, currentDirPath: string, mode: IModes, currentConfig: IVitxConfig) {
+function compile(watch: boolean, currentDirPath: string, mode: Modes, currentConfig: BuildConfig) {
   const {
     entry,
     output,
@@ -51,7 +51,7 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
     afterReadWriteStream,
     injectVueCss,
     disableTypes
-  } = currentConfig
+  } = currentConfig as Required<BuildConfig>
 
   const currentEntryPath = path.join(currentDirPath, entry)
   let currentOutputPath = path.join(currentDirPath, output)
@@ -76,7 +76,7 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
     patterns: string | string[]
     currentEntryDirPath: string
     currentOutputDirPath: string
-    mode: IModes
+    mode: Modes
   }) {
     const { patterns, currentEntryDirPath, currentOutputDirPath, mode } = options
 
@@ -162,15 +162,15 @@ function compile(watch: boolean, currentDirPath: string, mode: IModes, currentCo
 }
 
 /**
- * @param {{ cwd: string; watch?: boolean; userConfig?: IVitxConfig }} options - Node api startup parameters.
+ * @param {{ cwd: string; watch?: boolean; userConfig?: BuildConfig }} options - Node api startup parameters.
  * @param {string} options.cwd - Root directory.
  * @param {boolean} options.watch - Whether to enable monitoring.
- * @param {IVitxConfig} options.userConfig - User configuration
+ * @param {BuildConfig} options.userConfig - User configuration
  */
-export async function build(options: { cwd: string; watch?: boolean; userConfig?: IVitxConfig }) {
+export async function build(options: { cwd: string; watch?: boolean; userConfig?: BuildConfig }) {
   const config = { ...defaultConfig, ...getUserConfig(options.cwd) }
 
-  async function run(currentPath: string, currentConfig: IVitxConfig) {
+  async function run(currentPath: string, currentConfig: BuildConfig) {
     let modes = [currentConfig.moduleType]
 
     if (currentConfig.moduleType === 'all') {
@@ -181,7 +181,7 @@ export async function build(options: { cwd: string; watch?: boolean; userConfig?
     while (modes.length) {
       const mode = modes.shift()
 
-      await compile(!!options.watch, currentPath, mode as IModes, currentConfig)
+      await compile(!!options.watch, currentPath, mode as Modes, currentConfig)
     }
   }
 

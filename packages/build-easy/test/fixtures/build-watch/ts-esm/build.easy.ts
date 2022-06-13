@@ -1,5 +1,3 @@
-import { IConfig } from '../../../src'
-
 export default {
   moduleType: 'esm',
   target: 'browser',
@@ -20,4 +18,4 @@ export default {
       return path
     })
   }
-} as unknown as IConfig
+}

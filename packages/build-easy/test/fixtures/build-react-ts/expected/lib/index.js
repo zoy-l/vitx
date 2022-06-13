@@ -35,7 +35,7 @@ var __importDefault = this && this.__importDefault || function (mod) {
 };
 
 exports.__esModule = true;
-/*__vitx__jsx__file__*/
+/*__build-easy__jsx__file__*/
 
 var react_1 = __importDefault(require("react"));
 

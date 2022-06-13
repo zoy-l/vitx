@@ -1,6 +1,6 @@
 {
   "name": "build-easy",
-  "version": "2.0.9",
+  "version": "2.1.0",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
@@ -21,7 +21,7 @@
     "debug": "node --inspect-brk bin/build-easy.js build"
   },
   "dependencies": {
-    "@build-easy/bundles": "2.0.3"
+    "@build-easy/bundles": "2.0.4"
   },
   "peerDependencies": {
     "typescript": ">=4.0.0"

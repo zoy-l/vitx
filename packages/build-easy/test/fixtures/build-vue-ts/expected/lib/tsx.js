@@ -2,7 +2,7 @@
 
 import { createVNode as _createVNode, createTextVNode as _createTextVNode } from "vue";
 exports.__esModule = true;
-/*__vitx__jsx__file__*/
+/*__build-easy__jsx__file__*/
 
 exports["default"] = {
   data: function data() {

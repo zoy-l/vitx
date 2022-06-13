@@ -41,7 +41,7 @@ var __importStar = this && this.__importStar || function (mod) {
 };
 
 exports.__esModule = true;
-/*__vitx__jsx__file__*/
+/*__build-easy__jsx__file__*/
 
 var react_1 = __importStar(require("react"));
 

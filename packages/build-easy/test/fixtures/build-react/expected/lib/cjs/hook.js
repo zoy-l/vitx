@@ -5,7 +5,7 @@ exports.default = void 0;
 
 var _react = require("react");
 
-/*__vitx__jsx__file__*/
+/*__build-easy__jsx__file__*/
 function Foo() {
   var _useState = (0, _react.useState)('hello build-easy!'),
       state = _useState[0],

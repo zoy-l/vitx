@@ -21,15 +21,15 @@ import Vinyl from '@build-easy/bundles/model/vinyl'
 import Stream from 'stream'
 import path from 'path'
 
-import type { IVitxConfig, IModes } from './types'
+import type { BuildConfig, Modes } from './types'
 import getTSConfig from './getTypescriptConifg'
 import getBabelConfig from './getBabelConifg'
 import replaceAll from './alias'
 
 const empty = () => {}
-const jsxIdent = '__vitx__jsx__file__'
+const jsxIdent = '__build-easy__jsx__file__'
 
-export function logger(output: string, mode: IModes) {
+export function logger(output: string, mode: Modes) {
   return through.obj((file, _, cb) => {
     if (!/d.ts/.test(file.path)) {
       const ext = path.extname(file.path) || '/DIR'
@@ -55,7 +55,7 @@ export function applyHook(func: any, args: any): NodeJS.ReadWriteStream {
   return typeof func === 'function' ? func(args) : through.obj()
 }
 
-export function modifySourcemap(sourcemap: IVitxConfig['sourcemap']) {
+export function modifySourcemap(sourcemap: BuildConfig['sourcemap']) {
   return gulpIf((file) => !!sourcemap && !file.path.endsWith('.d.ts'), sourcemaps.write('.'))
 }
 
@@ -70,7 +70,7 @@ export function enablefileCache(cache: Record<string, string>) {
   })
 }
 
-export function enableSourcemap(sourcemap: IVitxConfig['sourcemap']) {
+export function enableSourcemap(sourcemap: BuildConfig['sourcemap']) {
   return gulpIf(() => !!sourcemap, sourcemaps.init())
 }
 
@@ -78,15 +78,15 @@ export function enablePlumber(watch: boolean | undefined) {
   return gulpIf(!!watch, gulpPlumber(empty))
 }
 
-export function applyBeforeHook(hook: IVitxConfig['beforeReadWriteStream']) {
+export function applyBeforeHook(hook: BuildConfig['beforeReadWriteStream']) {
   return applyHook(hook, { through, gulpIf })
 }
 
-export function applyAfterHook(hook: IVitxConfig['afterReadWriteStream']) {
+export function applyAfterHook(hook: BuildConfig['afterReadWriteStream']) {
   return applyHook(hook, { through, gulpIf })
 }
 
-export function compileLess(lessOptions: IVitxConfig['lessOptions']) {
+export function compileLess(lessOptions: BuildConfig['lessOptions']) {
   return gulpIf((file) => file.path.endsWith('.less'), less(lessOptions))
 }
 
@@ -112,7 +112,7 @@ export function compileDeclaration(currentDirPath: string, disableTypes?: boolea
   return through.obj((file, _, cb) => cb(null, file))
 }
 
-export function compileAlias(alias: IVitxConfig['alias']) {
+export function compileAlias(alias: BuildConfig['alias']) {
   return through.obj((file, _, cb) => {
     const _alias = { ...alias }
 
@@ -134,7 +134,7 @@ export function compileAlias(alias: IVitxConfig['alias']) {
   })
 }
 
-export function compileVueSfc(injectCss: IVitxConfig['injectVueCss']) {
+export function compileVueSfc(injectCss: BuildConfig['injectVueCss']) {
   const EXT_REGEXP = /\.\w+$/
   const RENDER_FN = '__vue_render__'
   const VUEIDS = '__vue_sfc__'
@@ -254,8 +254,8 @@ export function compileVueSfc(injectCss: IVitxConfig['injectVueCss']) {
 }
 
 export function compileJsOrTs(
-  config: IVitxConfig,
-  options: { currentEntryDirPath: string; mode: IModes }
+  config: BuildConfig,
+  options: { currentEntryDirPath: string; mode: Modes }
 ) {
   return gulpIf(
     (file: { path: string }) => isTransform(/\.(t|j)sx?$/, file.path),
@@ -265,10 +265,9 @@ export function compileJsOrTs(
 
       let isBrowser = target === 'browser'
 
-      if (
-        /\.(t|j)sx$/.test(file.path) ||
-        /\/*__vitx__jsx__file__\*\//.test(file.contents.toString())
-      ) {
+      const ident = new RegExp(`/*${jsxIdent}*/`)
+
+      if (/\.(t|j)sx$/.test(file.path) || ident.test(file.contents.toString())) {
         isBrowser = true
       } else {
         const currentFilePath = path.relative(currentEntryDirPath, file.path)

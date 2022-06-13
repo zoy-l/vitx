@@ -1,9 +1,9 @@
-import type { IVitxConfig, IModes } from './types'
+import type { BuildConfig, Modes } from './types'
 
 export default function getBabelConfig(
-  vitxConfig: Omit<IVitxConfig, 'entry' | 'output'>,
+  buildConfig: Omit<BuildConfig, 'entry' | 'output'>,
   isBrowser: boolean,
-  moduleType: IModes
+  moduleType: Modes
 ): { plugins: string[]; presets: string[] } {
   const {
     nodeVersion,
@@ -12,7 +12,7 @@ export default function getBabelConfig(
     extraBabelPresets = [],
     disableTypes,
     frame
-  } = vitxConfig
+  } = buildConfig
 
   const vue = frame === 'vue'
   const react = frame === 'react'

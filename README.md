@@ -72,7 +72,7 @@ export default <IJestConfig>{
 
 ## Config
 
-新建 `.vitxrc.js` or `.vitxrc.ts` 文件进行配置。
+新建 `build.easy.js` or `build.easy.ts` 文件进行配置。
 
 ```js
 import { IConfig } from 'build-easy'

@@ -1,4 +1,4 @@
-/*__vitx__jsx__file__*/
+/*__build-easy__jsx__file__*/
 import { useState } from 'react';
 
 function Foo() {

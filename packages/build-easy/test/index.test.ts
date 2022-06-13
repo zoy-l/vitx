@@ -48,7 +48,7 @@ function moveEsLibToDist(cwd: string) {
   }
 }
 
-export const configFileNames = <const>['.vitxrc.ts', '.vitxrc.js']
+export const configFileNames = <const>['build.easy.ts', 'build.easy.js']
 const extras = [
   'config-error',
   'build-watch',
