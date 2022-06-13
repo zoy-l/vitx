@@ -1,4 +1,6 @@
-class Com extends React.Component {
+import React from 'react'
+
+export default class Com extends React.Component {
   constructor(props) {
     super(props)
   }

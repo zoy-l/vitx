@@ -39,7 +39,9 @@ exports.__esModule = true;
 
 var react_1 = __importDefault(require("react"));
 
-var Com = function (_super) {
+var Com =
+/** @class */
+function (_super) {
   __extends(Com, _super);
 
   function Com(props) {

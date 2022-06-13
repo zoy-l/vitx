@@ -3,6 +3,8 @@ function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.crea
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 /*__vitx__jsx__file__*/
+import React from 'react';
+
 var Com = /*#__PURE__*/function (_React$Component) {
   _inheritsLoose(Com, _React$Component);
 
@@ -18,3 +20,5 @@ var Com = /*#__PURE__*/function (_React$Component) {
 
   return Com;
 }(React.Component);
+
+export { Com as default };

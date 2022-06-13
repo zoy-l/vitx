@@ -1,3 +1,4 @@
 export default {
-  frame: 'react'
+  frame: 'react',
+  moduleType: 'all'
 }

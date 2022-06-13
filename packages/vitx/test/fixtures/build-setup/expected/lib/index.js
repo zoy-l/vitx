@@ -1,6 +1,7 @@
-import { unref as _unref, toDisplayString as _toDisplayString, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue";
+import { toDisplayString as _toDisplayString, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue";
 import { onMounted, reactive } from 'vue';
 var __vue_sfc__ = {
+  __name: 'index',
   setup: function setup(__props) {
     onMounted(function () {
       console.log('hello vitx!');
@@ -10,7 +11,7 @@ var __vue_sfc__ = {
       count: count
     });
     return function (_ctx, _cache) {
-      return _openBlock(), _createElementBlock("section", null, _toDisplayString(_unref(obj)), 1
+      return _openBlock(), _createElementBlock("section", null, _toDisplayString(obj), 1
       /* TEXT */
       );
     };

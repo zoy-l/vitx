@@ -13,8 +13,8 @@
   "license": "MIT",
   "description": "library build tool.",
   "scripts": {
-    "compile": "node --trace-deprecation -r ./compile.js ./src/cli.ts build",
-    "compile:watch": "node -r ./compile.js ./src/cli.ts build --watch",
+    "compile": "node --trace-deprecation -r ./compile.js ./src/cli.ts",
+    "compile:watch": "node -r ./compile.js ./src/cli.ts --watch",
     "clearCache": "node ./lib/cli.js test --clearCache",
     "debug": "node --inspect-brk bin/vitx.js build"
   },
@@ -22,18 +22,10 @@
     "@vitx/bundles": "2.0.3"
   },
   "peerDependencies": {
-    "typescript": "4.x.x",
-    "jest": "26.x.x",
-    "babel-jest": "26.x.x"
+    "typescript": ">=4.0.0"
   },
   "peerDependenciesMeta": {
     "typescript": {
-      "optional": true
-    },
-    "jest": {
-      "optional": true
-    },
-    "babel-jest": {
       "optional": true
     }
   },

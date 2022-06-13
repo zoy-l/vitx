@@ -57,6 +57,7 @@ const extras = [
   'build-entry',
   'build-output'
 ]
+
 describe('vitx build', () => {
   const root = path.join(__dirname, './fixtures')
 
@@ -79,7 +80,7 @@ describe('vitx build', () => {
 
             const configFile = configFileNames.map((configName) => path.join(cwd, configName))
             const userConfig = configFile.find((configPath) => fs.existsSync(configPath))
-            const config = isDefault(require(userConfig))
+            const config = userConfig ? isDefault(require(userConfig)) : {}
 
             if (config.packages) {
               const packageDirName = config.packageDirName ?? 'packages'
