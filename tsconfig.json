@@ -16,9 +16,9 @@
   },
   "include": [
     "packages/**/src",
-    "packages/vitx/src/index.test.ts",
-    "packages/vitx/test/fixtures/build-vue-ts/tsx.tsx",
-    "packages/vitx-site/tsconfig.json"
+    "packages/build-easy/src/index.test.tsest.ts",
+    "packages/build-easy/test/fixtures/build-vue-ts/tsx.tsxsx.tsx",
+    "packages/build-easy-site/tsconfig.json"
   ],
   "exclude": ["./node_modules", "./packages/**/node_modules", "./packages/**/fixtures"]
 }

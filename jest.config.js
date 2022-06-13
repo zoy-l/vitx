@@ -1,10 +1,6 @@
 module.exports = {
   collectCoverageFrom(memo) {
-    return memo.concat([
-      '!packages/vitx/src/cli.ts',
-      '!packages/vitx/src/utils.ts',
-      '!packages/bundles'
-    ])
+    return memo.concat(['!<rootDir>/src/cli.ts', '!<rootDir>/src/utils.ts'])
   },
   transform: {
     '^.+\\.(j|t)sx?$': [

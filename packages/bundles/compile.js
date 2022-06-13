@@ -83,13 +83,13 @@ async function compileBundles(name, options = {}) {
         fs.outputFileSync(join(outPath, '..', fileName), assets[fileName].source)
       })
     }
-    externals[name] = `@vitx/bundles/${outDir}/${name}`
+    externals[name] = `@build-easy/bundles/${outDir}/${name}`
   } else {
     fs.outputFileSync(join(outDirPath, packageName, 'index.js'), fs.readFileSync(packagePath))
 
     const { size } = fs.statSync(packagePath)
     byte = size
-    externals[packageName] = `@vitx/bundles/${outDir}/${packageName}`
+    externals[packageName] = `@build-easy/bundles/${outDir}/${packageName}`
   }
 
   totalSize += byte

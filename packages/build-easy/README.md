@@ -18,6 +18,7 @@
 - **支持** 支持`vue` 和 `react` 文件编译
 - **支持** 支持`less`编译
 - **支持** 支持路径别名`alias`
+- **支持** `jest`
 
 ## Installation
 

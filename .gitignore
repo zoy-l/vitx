@@ -4,6 +4,6 @@ coverage
 actualed
 
 
-/packages/vitx-site/lib
+
 /packages/bundles/model
-/packages/vitx/lib
+/packages/build-easy/lib

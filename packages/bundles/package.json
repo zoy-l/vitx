@@ -1,6 +1,6 @@
 {
-  "name": "@vitx/bundles",
-  "version": "2.0.3",
+  "name": "@build-easy/bundles",
+  "version": "2.0.4",
   "main": "index.js",
   "types": "index.d.ts",
   "license": "MIT",
