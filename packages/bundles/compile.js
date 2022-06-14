@@ -212,7 +212,8 @@ const dependencies = [
   ['joi', 'self'],
   ['figures', 'self'],
   ['ora', 'self'],
-  ['@vue/compiler-sfc', 'self']
+  ['@vue/compiler-sfc', 'self'],
+  ['find-up', 'self']
 ]
 
 run()

@@ -1,6 +1,7 @@
 import chokidar from '@build-easy/bundles/model/chokidar'
 import vinylFs from '@build-easy/bundles/model/vinyl-fs'
 import figures from '@build-easy/bundles/model/figures'
+import findUp from '@build-easy/bundles/model/find-up'
 import rimraf from '@build-easy/bundles/model/rimraf'
 import chalk from '@build-easy/bundles/model/chalk'
 import path from 'path'
@@ -195,7 +196,27 @@ function compile(options: {
  * @param {BuildConfig} options.userConfig - User configuration
  */
 export async function build(options: { cwd: string; watch?: boolean; userConfig?: BuildConfig }) {
-  const config = { ...defaultConfig, ...getUserConfig(options.cwd) }
+  let userConfig = getUserConfig(options.cwd)
+
+  if (userConfig && !Object.keys(userConfig).length) {
+    let rootConfigPath
+
+    for (let i = 0; i < configFileNames.length; i++) {
+      rootConfigPath = await findUp(configFileNames[i])
+
+      if (rootConfigPath) {
+        rootConfigPath = path.join(rootConfigPath, '..')
+        break
+      }
+    }
+
+    if (rootConfigPath) {
+      userConfig = getUserConfig(rootConfigPath)
+      delete userConfig.packages
+    }
+  }
+
+  const config = { ...defaultConfig, ...userConfig }
 
   if (config.packages) {
     const packagesPaths = config.packages

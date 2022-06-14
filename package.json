@@ -17,7 +17,7 @@
     "@typescript-eslint/parser": "^5.27.1",
     "@vercel/ncc": "^0.34.0",
     "eslint": "^8.17.0",
-    "eslint-config-iroot": "^1.4.3",
+    "eslint-config-iroot": "^1.4.4",
     "husky": "^7.0.4",
     "jest": "^28.1.1",
     "jest-easy": "^1.0.1",
@@ -35,6 +35,8 @@
     "postinstall": "yarn clear:modules && yarn build:bundles-models && yarn build:build-easy",
     "build:bundles-models": "cd ./packages/bundles && yarn compile",
     "build:build-easy": "cd ./packages/build-easy && yarn compile",
-    "lint": "eslint --fix --ext .ts,.js packages/"
+    "lint": "eslint --fix --ext .ts,.js packages/",
+    "test:coverage": "cd ./packages/build-easy && yarn test:coverage",
+    "test": "cd ./packages/build-easy && yarn test"
   }
 }
