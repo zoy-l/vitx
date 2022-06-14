@@ -1,6 +1,7 @@
 import Joi from '@build-easy/bundles/model/joi'
 
 export default Joi.object({
+  patterns: Joi.func(),
   injectVueCss: Joi.boolean(),
   packageDirName: Joi.string(),
   packages: Joi.array().items(Joi.string()),
@@ -16,7 +17,7 @@ export default Joi.object({
   entry: Joi.string(),
   output: Joi.string(),
   lessOptions: Joi.object(),
-  disableTypes: Joi.boolean(),
+  tsCompilerOptions: Joi.object(),
   beforeReadWriteStream: Joi.func(),
   afterReadWriteStream: Joi.func(),
   mountedReadWriteStream: Joi.func(),

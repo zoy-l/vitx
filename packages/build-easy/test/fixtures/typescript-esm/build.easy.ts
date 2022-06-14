@@ -1,5 +1,5 @@
 export default {
   moduleType: 'esm',
-  target: 'browser',
-  disableTypes: true
+  target: 'browser'
+  // disableTypes: true
 }

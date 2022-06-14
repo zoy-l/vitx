@@ -1,4 +1,4 @@
-interface IOpts {
+export interface IOpts {
   foo: boolean
 }
 

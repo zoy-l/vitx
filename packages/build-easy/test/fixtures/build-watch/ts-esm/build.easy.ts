@@ -17,5 +17,8 @@ export default {
     return sourcesMap((path: any) => {
       return path
     })
+  },
+  tsCompilerOptions: {
+    declaration: true
   }
 }

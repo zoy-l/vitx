@@ -10,7 +10,6 @@ export default function getBabelConfig(
     runtimeHelpers,
     extraBabelPlugins = [],
     extraBabelPresets = [],
-    disableTypes,
     frame
   } = buildConfig
 
@@ -40,7 +39,7 @@ export default function getBabelConfig(
 
   return {
     presets: [
-      disableTypes && require.resolve('@build-easy/bundles/model/@babel/preset-typescript'),
+      require.resolve('@build-easy/bundles/model/@babel/preset-typescript'),
       [
         require.resolve('@build-easy/bundles/model/@babel/preset-env'),
         {

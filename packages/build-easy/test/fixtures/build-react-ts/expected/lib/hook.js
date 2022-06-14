@@ -1,6 +1,6 @@
 "use strict";
 
-var __createBinding = this && this.__createBinding || (Object.create ? function (o, m, k, k2) {
+var __createBinding = void 0 && (void 0).__createBinding || (Object.create ? function (o, m, k, k2) {
   if (k2 === undefined) k2 = k;
   var desc = Object.getOwnPropertyDescriptor(m, k);
 
@@ -19,7 +19,7 @@ var __createBinding = this && this.__createBinding || (Object.create ? function 
   o[k2] = m[k];
 });
 
-var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? function (o, v) {
+var __setModuleDefault = void 0 && (void 0).__setModuleDefault || (Object.create ? function (o, v) {
   Object.defineProperty(o, "default", {
     enumerable: true,
     value: v
@@ -28,7 +28,7 @@ var __setModuleDefault = this && this.__setModuleDefault || (Object.create ? fun
   o["default"] = v;
 });
 
-var __importStar = this && this.__importStar || function (mod) {
+var __importStar = void 0 && (void 0).__importStar || function (mod) {
   if (mod && mod.__esModule) return mod;
   var result = {};
   if (mod != null) for (var k in mod) {

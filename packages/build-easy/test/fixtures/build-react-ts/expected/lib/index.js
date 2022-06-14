@@ -1,6 +1,6 @@
 "use strict";
 
-var __extends = this && this.__extends || function () {
+var __extends = void 0 && (void 0).__extends || function () {
   var _extendStatics = function extendStatics(d, b) {
     _extendStatics = Object.setPrototypeOf || {
       __proto__: []
@@ -28,7 +28,7 @@ var __extends = this && this.__extends || function () {
   };
 }();
 
-var __importDefault = this && this.__importDefault || function (mod) {
+var __importDefault = void 0 && (void 0).__importDefault || function (mod) {
   return mod && mod.__esModule ? mod : {
     "default": mod
   };

@@ -5,6 +5,7 @@
     "no-restricted-syntax": "off",
     "global-require": "off",
     "import/no-dynamic-require": "off",
-    "no-await-in-loop": "off"
+    "no-await-in-loop": "off",
+    "no-inner-declarations": "off"
   }
 }

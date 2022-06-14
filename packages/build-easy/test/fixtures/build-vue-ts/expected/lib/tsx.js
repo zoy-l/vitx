@@ -1,10 +1,7 @@
-"use strict";
-
 import { createVNode as _createVNode, createTextVNode as _createTextVNode } from "vue";
-exports.__esModule = true;
-/*__build-easy__jsx__file__*/
 
-exports["default"] = {
+/*__build-easy__jsx__file__*/
+export default {
   data: function data() {
     return {
       msg: 123

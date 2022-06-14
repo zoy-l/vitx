@@ -3,6 +3,10 @@ import gulpIf from '@build-easy/bundles/model/gulp-if'
 
 export interface BuildConfig {
   /**
+   * Search file mode
+   */
+  patterns?: (patterns: string[], cwd: string) => string[]
+  /**
    * Whether to inject css when compiling a single `.vue` file
    */
   injectVueCss?: boolean
@@ -60,7 +64,7 @@ export interface BuildConfig {
   /**
    * Whether to prohibit the generation of d.ts
    */
-  disableTypes?: boolean
+  tsCompilerOptions?: Record<string, any>
 
   /**
    * Life cycle hooks, run before compiling files

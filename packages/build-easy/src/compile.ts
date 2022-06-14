@@ -50,7 +50,8 @@ function compile(watch: boolean, currentDirPath: string, mode: Modes, currentCon
     beforeReadWriteStream,
     afterReadWriteStream,
     injectVueCss,
-    disableTypes
+    tsCompilerOptions,
+    patterns: inputPatterns
   } = currentConfig as Required<BuildConfig>
 
   const currentEntryPath = path.join(currentDirPath, entry)
@@ -62,15 +63,23 @@ function compile(watch: boolean, currentDirPath: string, mode: Modes, currentCon
 
   rimraf.sync(currentOutputPath)
 
-  const patterns = [
+  let patterns = [
     path.join(currentEntryPath, '**/*'),
     `!${path.join(currentEntryPath, '**/*.mdx')}`,
     `!${path.join(currentEntryPath, '**/*.md')}`,
     `!${path.join(currentEntryPath, '**/demos{,/**}')}`,
+    `!${path.join(currentEntryPath, '**/demo{,/**}')}`,
     `!${path.join(currentEntryPath, '**/fixtures{,/**}')}`,
+    `!${path.join(currentEntryPath, '**/__snapshots__{,/**}')}`,
     `!${path.join(currentEntryPath, '**/__test__{,/**}')}`,
-    `!${path.join(currentEntryPath, '**/*.+(test|e2e|spec).+(js|jsx|ts|tsx)')}`
+    `!${path.join(currentEntryPath, '**/__tests__{,/**}')}`,
+    `!${path.join(currentEntryPath, '**/*.+(test|e2e|spec).+(js|jsx|ts|tsx)')}`,
+    `!${path.join(currentEntryPath, '**/*.snap')}`
   ]
+
+  if (inputPatterns) {
+    patterns = inputPatterns(patterns, currentEntryPath)
+  }
 
   function createStream(options: {
     patterns: string | string[]
@@ -85,15 +94,15 @@ function compile(watch: boolean, currentDirPath: string, mode: Modes, currentCon
       .pipe(enableSourcemap(sourcemap))
       .pipe(enablePlumber(watch))
       .pipe(enablefileCache(cache))
-      .pipe(compileVueSfc(injectVueCss))
-      .pipe(compileLess(lessOptions))
       .pipe(applyBeforeHook(beforeReadWriteStream))
       .pipe(compileAlias(alias))
-      .pipe(compileDeclaration(currentDirPath, disableTypes))
+      .pipe(compileVueSfc(injectVueCss))
+      .pipe(compileDeclaration(tsCompilerOptions))
       .pipe(compileJsOrTs(currentConfig, { currentEntryDirPath, mode }))
+      .pipe(compileLess(lessOptions))
       .pipe(applyAfterHook(afterReadWriteStream))
       .pipe(modifySourcemap(sourcemap))
-      .pipe(logger(output, mode))
+      .pipe(logger(output, mode, currentEntryDirPath))
       .pipe(vinylFs.dest(currentOutputDirPath))
   }
 
@@ -170,21 +179,6 @@ function compile(watch: boolean, currentDirPath: string, mode: Modes, currentCon
 export async function build(options: { cwd: string; watch?: boolean; userConfig?: BuildConfig }) {
   const config = { ...defaultConfig, ...getUserConfig(options.cwd) }
 
-  async function run(currentPath: string, currentConfig: BuildConfig) {
-    let modes = [currentConfig.moduleType]
-
-    if (currentConfig.moduleType === 'all') {
-      rimraf.sync(currentConfig.output!)
-      modes = ['cjs', 'esm']
-    }
-
-    while (modes.length) {
-      const mode = modes.shift()
-
-      await compile(!!options.watch, currentPath, mode as Modes, currentConfig)
-    }
-  }
-
   if (config.packages) {
     const packagesPaths = config.packages
       .map((dir) => path.join(options.cwd, config.packageDirName!, dir))
@@ -199,9 +193,24 @@ export async function build(options: { cwd: string; watch?: boolean; userConfig?
         `${chalk.blue(figures.info, 'Package:')} ${chalk.red(path.basename(packagePath))}`
       )
 
-      await run(packagePath, { ...config, ...packageConfig })
+      await run(!!options.watch, packagePath, { ...config, ...packageConfig })
     }
   } else {
-    await run(options.cwd, config)
+    await run(!!options.watch, options.cwd, config)
+  }
+}
+
+async function run(watch: boolean, currentPath: string, currentConfig: BuildConfig) {
+  let modes = [currentConfig.moduleType]
+
+  if (currentConfig.moduleType === 'all') {
+    rimraf.sync(currentConfig.output!)
+    modes = ['cjs', 'esm']
+  }
+
+  while (modes.length) {
+    const mode = modes.shift()
+
+    await compile(watch, currentPath, mode as Modes, currentConfig)
   }
 }

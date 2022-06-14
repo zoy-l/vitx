@@ -9,6 +9,7 @@ import {
   BabelFileResult,
   transformSync as babelTransformSync
 } from '@build-easy/bundles/model/@babel/core'
+import gulpTypescript from '@build-easy/bundles/model/gulp-typescript'
 import sourcemaps from '@build-easy/bundles/model/gulp-sourcemaps'
 import gulpPlumber from '@build-easy/bundles/model/gulp-plumber'
 import through from '@build-easy/bundles/model/through2'
@@ -20,17 +21,17 @@ import chalk from '@build-easy/bundles/model/chalk'
 import Vinyl from '@build-easy/bundles/model/vinyl'
 import Stream from 'stream'
 import path from 'path'
-
 import type { BuildConfig, Modes } from './types'
-import getTSConfig from './getTypescriptConifg'
 import getBabelConfig from './getBabelConifg'
 import replaceAll from './alias'
 
 const empty = () => {}
 const jsxIdent = '__build-easy__jsx__file__'
 
-export function logger(output: string, mode: Modes) {
+export function logger(output: string, mode: Modes, currentEntryDirPath: string) {
   return through.obj((file, _, cb) => {
+    console.log(file.path)
+
     if (!/d.ts/.test(file.path)) {
       const ext = path.extname(file.path) || '/DIR'
 
@@ -39,7 +40,8 @@ export function logger(output: string, mode: Modes) {
         chalk.yellow(
           `Success ${(/.(j|t)s$/.test(file.path) ? mode : ext.slice(1)).toUpperCase()}:`
         ),
-        `${output}/${path.basename(file.path)}`
+        file.path.replace(currentEntryDirPath, 'src'),
+        `-> ${output}/${path.basename(file.path)}`
       )
     }
 
@@ -90,22 +92,21 @@ export function compileLess(lessOptions: BuildConfig['lessOptions']) {
   return gulpIf((file) => file.path.endsWith('.less'), less(lessOptions))
 }
 
-export function compileDeclaration(currentDirPath: string, disableTypes?: boolean) {
-  const { tsConfig, gulpTs } = getTSConfig(currentDirPath)
-
+export function compileDeclaration(tsCompilerOptions?: Record<string, any>) {
   // typescript may not be installed
-  if (tsConfig) {
-    tsConfig.compilerOptions.declaration = !disableTypes
-
+  if (tsCompilerOptions && tsCompilerOptions.declaration) {
     return gulpIf(
       (file: { path: string }) => {
-        return tsConfig.compilerOptions.declaration && isTransform(/\.tsx?$/, file.path)
+        return isTransform(/\.tsx?$/, file.path)
       },
-      gulpTs!(tsConfig.compilerOptions, {
-        error: (err: { message: string }) => {
-          console.log(`${chalk.red('➜ [Error]: ')}${err.message}`)
+      gulpTypescript(
+        { ...tsCompilerOptions, emitDeclarationOnly: true },
+        {
+          error: (err: { message: string }) => {
+            console.log(`${chalk.red('➜ [Error]: ')}${err.message}`)
+          }
         }
-      })
+      )
     )
   }
 
