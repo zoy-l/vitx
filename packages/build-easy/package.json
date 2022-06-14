@@ -1,6 +1,6 @@
 {
   "name": "build-easy",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
@@ -18,7 +18,8 @@
     "clearCache": "node ./lib/cli.js test --clearCache",
     "test": "jest-easy",
     "test:coverage": "jest-easy --coverage",
-    "debug": "node --inspect-brk bin/build-easy.js build"
+    "debug": "node --inspect-brk bin/build-easy.js build",
+    "testss": "node --trace-deprecation -r ./compile.js ./test.ts ./src/alias.ts"
   },
   "dependencies": {
     "@build-easy/bundles": "2.0.4"

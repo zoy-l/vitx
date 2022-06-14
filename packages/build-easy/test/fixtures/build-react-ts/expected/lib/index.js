@@ -1,61 +1,35 @@
 "use strict";
 
-var __extends = void 0 && (void 0).__extends || function () {
-  var _extendStatics = function extendStatics(d, b) {
-    _extendStatics = Object.setPrototypeOf || {
-      __proto__: []
-    } instanceof Array && function (d, b) {
-      d.__proto__ = b;
-    } || function (d, b) {
-      for (var p in b) {
-        if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-      }
-    };
-
-    return _extendStatics(d, b);
-  };
-
-  return function (d, b) {
-    if (typeof b !== "function" && b !== null) throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
-
-    _extendStatics(d, b);
-
-    function __() {
-      this.constructor = d;
-    }
-
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-  };
-}();
-
-var __importDefault = void 0 && (void 0).__importDefault || function (mod) {
-  return mod && mod.__esModule ? mod : {
-    "default": mod
-  };
-};
-
 exports.__esModule = true;
-/*__build-easy__jsx__file__*/
+exports.default = void 0;
 
-var react_1 = __importDefault(require("react"));
+var _react = _interopRequireDefault(require("react"));
 
-var Com =
-/** @class */
-function (_super) {
-  __extends(Com, _super);
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _inheritsLoose(subClass, superClass) { subClass.prototype = Object.create(superClass.prototype); subClass.prototype.constructor = subClass; _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+var Com = /*#__PURE__*/function (_React$Component) {
+  _inheritsLoose(Com, _React$Component);
 
   function Com(props) {
-    var _this = _super.call(this, props) || this;
+    var _this;
 
+    _this = _React$Component.call(this, props) || this;
+    _this.state = void 0;
     _this.state = {};
     return _this;
   }
 
-  Com.prototype.render = function () {
-    return react_1["default"].createElement("div", null, "hello build-easy!");
+  var _proto = Com.prototype;
+
+  _proto.render = function render() {
+    return /*#__PURE__*/_react.default.createElement("div", null, "hello build-easy!");
   };
 
   return Com;
-}(react_1["default"].Component);
+}(_react.default.Component);
 
-exports["default"] = Com;
+exports.default = Com;

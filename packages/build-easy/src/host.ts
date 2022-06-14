@@ -30,8 +30,6 @@ const jsxIdent = '__build-easy__jsx__file__'
 
 export function logger(output: string, mode: Modes, currentEntryDirPath: string) {
   return through.obj((file, _, cb) => {
-    console.log(file.path)
-
     if (!/d.ts/.test(file.path)) {
       const ext = path.extname(file.path) || '/DIR'
 
@@ -94,23 +92,29 @@ export function compileLess(lessOptions: BuildConfig['lessOptions']) {
 
 export function compileDeclaration(tsCompilerOptions?: Record<string, any>) {
   // typescript may not be installed
-  if (tsCompilerOptions && tsCompilerOptions.declaration) {
-    return gulpIf(
-      (file: { path: string }) => {
-        return isTransform(/\.tsx?$/, file.path)
+  return gulpIf(
+    (file: { path: string }) => {
+      return isTransform(/\.tsx?$/, file.path)
+    },
+    gulpTypescript(
+      {
+        allowSyntheticDefaultImports: true,
+        declaration: true,
+        moduleResolution: 'node',
+        ...tsCompilerOptions,
+        emitDeclarationOnly: true
       },
-      gulpTypescript(
-        { ...tsCompilerOptions, emitDeclarationOnly: true },
-        {
-          error: (err: { message: string }) => {
-            console.log(`${chalk.red('➜ [Error]: ')}${err.message}`)
-          }
+      {
+        error: (err: { message: string }) => {
+          console.log(`${chalk.red('➜ [Error]: ')}${err.message}`)
         }
-      )
-    )
-  }
-
-  return through.obj((file, _, cb) => cb(null, file))
+      }
+    ),
+    // No files are output except d.ts
+    through.obj((__, _, cb) => {
+      cb()
+    })
+  )
 }
 
 export function compileAlias(alias: BuildConfig['alias']) {

@@ -38,7 +38,15 @@ const defaultConfig = <const>{
   packageDirName: 'packages'
 }
 
-function compile(watch: boolean, currentDirPath: string, mode: Modes, currentConfig: BuildConfig) {
+function compile(options: {
+  watch: boolean
+  currentDirPath: string
+  mode: Modes
+  currentConfig: BuildConfig
+  dts?: boolean
+  dtsOutDir?: string
+}) {
+  const { watch, currentDirPath, mode, currentConfig, dts, dtsOutDir } = options
   const {
     entry,
     output,
@@ -50,7 +58,7 @@ function compile(watch: boolean, currentDirPath: string, mode: Modes, currentCon
     beforeReadWriteStream,
     afterReadWriteStream,
     injectVueCss,
-    tsCompilerOptions,
+    tsCompilerOptions = {},
     patterns: inputPatterns
   } = currentConfig as Required<BuildConfig>
 
@@ -61,7 +69,7 @@ function compile(watch: boolean, currentDirPath: string, mode: Modes, currentCon
     currentOutputPath = path.join(currentOutputPath, mode)
   }
 
-  rimraf.sync(currentOutputPath)
+  !dts && rimraf.sync(currentOutputPath)
 
   let patterns = [
     path.join(currentEntryPath, '**/*'),
@@ -89,6 +97,17 @@ function compile(watch: boolean, currentDirPath: string, mode: Modes, currentCon
   }) {
     const { patterns, currentEntryDirPath, currentOutputDirPath, mode } = options
 
+    if (dts) {
+      return vinylFs
+        .src(patterns, { base: currentEntryDirPath, allowEmpty: true })
+        .pipe(enablePlumber(watch))
+        .pipe(applyBeforeHook(beforeReadWriteStream))
+        .pipe(compileAlias(alias))
+        .pipe(compileVueSfc(injectVueCss))
+        .pipe(compileDeclaration(tsCompilerOptions))
+        .pipe(vinylFs.dest(dtsOutDir || currentOutputDirPath))
+    }
+
     return vinylFs
       .src(patterns, { base: currentEntryDirPath, allowEmpty: true })
       .pipe(enableSourcemap(sourcemap))
@@ -97,7 +116,6 @@ function compile(watch: boolean, currentDirPath: string, mode: Modes, currentCon
       .pipe(applyBeforeHook(beforeReadWriteStream))
       .pipe(compileAlias(alias))
       .pipe(compileVueSfc(injectVueCss))
-      .pipe(compileDeclaration(tsCompilerOptions))
       .pipe(compileJsOrTs(currentConfig, { currentEntryDirPath, mode }))
       .pipe(compileLess(lessOptions))
       .pipe(applyAfterHook(afterReadWriteStream))
@@ -200,7 +218,7 @@ export async function build(options: { cwd: string; watch?: boolean; userConfig?
   }
 }
 
-async function run(watch: boolean, currentPath: string, currentConfig: BuildConfig) {
+async function run(watch: boolean, currentDirPath: string, currentConfig: BuildConfig) {
   let modes = [currentConfig.moduleType]
 
   if (currentConfig.moduleType === 'all') {
@@ -209,8 +227,18 @@ async function run(watch: boolean, currentPath: string, currentConfig: BuildConf
   }
 
   while (modes.length) {
-    const mode = modes.shift()
+    const mode = modes.shift() as Modes
 
-    await compile(watch, currentPath, mode as Modes, currentConfig)
+    await compile({ watch, currentDirPath, mode, currentConfig })
   }
+
+  let dtsOutDir = ''
+
+  if (currentConfig.moduleType === 'all') {
+    dtsOutDir = path.join(currentDirPath, currentConfig.output!, 'types')
+  }
+
+  // generate d.ts
+  // the mode here doesn't actually work
+  await compile({ watch, currentDirPath, mode: 'esm', currentConfig, dts: true, dtsOutDir })
 }
