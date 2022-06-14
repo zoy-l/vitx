@@ -1,6 +1,6 @@
 {
   "name": "build-easy",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "files": [
@@ -22,7 +22,7 @@
     "testss": "node --trace-deprecation -r ./compile.js ./test.ts ./src/alias.ts"
   },
   "dependencies": {
-    "@build-easy/bundles": "2.0.4"
+    "@build-easy/bundles": "2.0.5"
   },
   "peerDependencies": {
     "typescript": ">=4.0.0"
