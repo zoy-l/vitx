@@ -1,5 +1,11 @@
 import { build } from './compile'
+import { BuildConfig } from './types'
 
-export { BuildConfig } from './types'
-export { isDefault } from './utils'
+export * from './types'
+export * from './utils'
+
+export function defineConfig(config: BuildConfig) {
+  return config
+}
+
 export default build

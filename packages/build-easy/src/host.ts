@@ -34,7 +34,7 @@ export function logger(output: string) {
     if (!/d.ts/.test(file.path) && ext) {
       console.log(
         chalk.green(figures.tick),
-        chalk.yellow(`Success ${ext.slice(1).toUpperCase()}:`),
+        chalk.green(`Success ${ext.slice(1).toUpperCase()}:`),
         path.join(path.basename(file.cwd), output, file.path.replace(file.base, ''))
       )
     }

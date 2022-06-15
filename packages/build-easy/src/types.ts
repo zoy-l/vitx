@@ -122,8 +122,3 @@ export interface BuildConfig {
    */
   sourcemap?: boolean
 }
-
-/**
- * The value of internal moduleType is always "esm" | "cjs"
- */
-export type Modes = Exclude<Required<BuildConfig>['moduleType'], 'all'>
