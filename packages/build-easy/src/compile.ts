@@ -54,7 +54,7 @@ function compile(options: { watch: boolean; currentDirPath: string; currentConfi
     beforeReadWriteStream,
     afterReadWriteStream,
     injectVueCss,
-    tsCompilerOptions = {},
+    tsCompilerOptions,
     patterns: inputPatterns
   } = currentConfig as Required<BuildConfig>
 

@@ -148,7 +148,7 @@ export function compileDeclaration(tsCompilerOptions?: Record<string, any>) {
   // typescript may not be installed
   return gulpIf(
     (file: { path: string }) => {
-      return isTransform(/\.tsx?$/, file.path)
+      return !!tsCompilerOptions && isTransform(/\.tsx?$/, file.path)
     },
     gulpTypescript(
       {
