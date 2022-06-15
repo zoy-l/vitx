@@ -21,25 +21,21 @@ import chalk from '@build-easy/bundles/model/chalk'
 import Vinyl from '@build-easy/bundles/model/vinyl'
 import Stream from 'stream'
 import path from 'path'
-import type { BuildConfig, Modes } from './types'
+import type { BuildConfig } from './types'
 import getBabelConfig from './getBabelConifg'
 import replaceAll from './alias'
 
 const empty = () => {}
 const jsxIdent = '__build-easy__jsx__file__'
 
-export function logger(output: string, mode: Modes, currentEntryDirPath: string) {
+export function logger(output: string) {
   return through.obj((file, _, cb) => {
-    if (!/d.ts/.test(file.path)) {
-      const ext = path.extname(file.path) || '/DIR'
-
+    const ext = path.extname(file.path)
+    if (!/d.ts/.test(file.path) && ext) {
       console.log(
         chalk.green(figures.tick),
-        chalk.yellow(
-          `Success ${(/.(j|t)s$/.test(file.path) ? mode : ext.slice(1)).toUpperCase()}:`
-        ),
-        file.path.replace(currentEntryDirPath, 'src'),
-        `-> ${output}/${path.basename(file.path)}`
+        chalk.yellow(`Success ${ext.slice(1).toUpperCase()}:`),
+        path.join(path.basename(file.cwd), output, file.path.replace(file.base, ''))
       )
     }
 
@@ -90,6 +86,64 @@ export function compileLess(lessOptions: BuildConfig['lessOptions']) {
   return gulpIf((file) => file.path.endsWith('.less'), less(lessOptions))
 }
 
+export function hackSaveFile() {
+  return gulpIf(
+    (file: { path: string }) => {
+      return isTransform(/\.tsx?$/, file.path)
+    },
+    through.obj(function (file, _, cb) {
+      this.push(
+        new Vinyl({
+          cwd: file.cwd,
+          base: file.base,
+          contents: file.contents,
+          path: file.path + 'backup'
+        })
+      )
+
+      cb(null, file)
+    })
+  )
+}
+
+export function hackGetFile(moduleType: string) {
+  return through.obj(function (file, _, cb) {
+    if (isTransform(/\.tsx?backup$/, file.path)) {
+      file.path = file.path.replace('backup', '')
+
+      return cb(null, file)
+    }
+
+    if (moduleType === 'all' && !/\.jsx?$/.test(file.path)) {
+      if (/\.d\.ts$/.test(file.path)) {
+        file.path = path.join(file.path, '..', 'types', file.basename)
+        return cb(null, file)
+      }
+
+      const esmFile = {
+        path: path.join(file.path, '..', 'esm', file.basename),
+        base: file.base,
+        contents: file.contents,
+        cwd: file.cwd
+      }
+
+      const cjsFile = {
+        path: path.join(file.path, '..', 'cjs', file.basename),
+        base: file.base,
+        contents: file.contents,
+        cwd: file.cwd
+      }
+
+      this.push(new Vinyl(esmFile))
+      this.push(new Vinyl(cjsFile))
+
+      cb()
+    } else {
+      cb(null, file)
+    }
+  })
+}
+
 export function compileDeclaration(tsCompilerOptions?: Record<string, any>) {
   // typescript may not be installed
   return gulpIf(
@@ -109,12 +163,10 @@ export function compileDeclaration(tsCompilerOptions?: Record<string, any>) {
           console.log(`${chalk.red('➜ [Error]: ')}${err.message}`)
         }
       }
-    ),
-    // No files are output except d.ts
-    through.obj((__, _, cb) => {
-      cb()
-    })
+    )
   )
+
+  // No files are output except d.ts
 }
 
 export function compileAlias(alias: BuildConfig['alias']) {
@@ -258,15 +310,13 @@ export function compileVueSfc(injectCss: BuildConfig['injectVueCss']) {
   )
 }
 
-export function compileJsOrTs(
-  config: BuildConfig,
-  options: { currentEntryDirPath: string; mode: Modes }
-) {
+export function compileJsOrTs(config: BuildConfig, currentEntryDirPath: string) {
   return gulpIf(
     (file: { path: string }) => isTransform(/\.(t|j)sx?$/, file.path),
-    through.obj((file, _, cb) => {
-      const { sourcemap, target, nodeFiles, browserFiles } = config
-      const { currentEntryDirPath, mode } = options
+    through.obj(function (this: Stream.Transform, file, _, cb) {
+      const { sourcemap, target, nodeFiles, browserFiles, moduleType } = config
+
+      const vinylSourcemapsApply = require('@build-easy/bundles/model/vinyl-sourcemaps-apply')
 
       let isBrowser = target === 'browser'
 
@@ -286,7 +336,61 @@ export function compileJsOrTs(
         }
       }
 
-      const babelConfig = getBabelConfig(config, isBrowser, mode)
+      const replaceExtname = (file: string) => file.replace(path.extname(file), '.js')
+
+      if (moduleType === 'all') {
+        const babelConfigCjs = getBabelConfig(config, isBrowser, 'cjs')
+        const babelFileResultCjs = babelTransformSync(file.contents, {
+          ...babelConfigCjs,
+          filename: file.path,
+          configFile: false,
+          sourceMaps: sourcemap
+        })!
+
+        if (file.sourceMap && sourcemap) {
+          if (!Object.prototype.hasOwnProperty.call(babelFileResultCjs.map, 'file')) {
+            babelFileResultCjs.map!.file = file.sourceMap.file
+          }
+          vinylSourcemapsApply(file, babelFileResultCjs.map)
+        }
+
+        this.push(
+          new Vinyl({
+            contents: Buffer.from(babelFileResultCjs.code ?? ''),
+            cwd: file.cwd,
+            base: file.base,
+            path: path.join(file.path, '..', 'cjs', replaceExtname(file.basename))
+          })
+        )
+
+        const babelConfigEsm = getBabelConfig(config, isBrowser, 'esm')
+        const babelFileResultEsm = babelTransformSync(file.contents, {
+          ...babelConfigEsm,
+          filename: file.path,
+          configFile: false,
+          sourceMaps: sourcemap
+        })!
+
+        if (file.sourceMap && sourcemap) {
+          if (!Object.prototype.hasOwnProperty.call(babelFileResultEsm.map, 'file')) {
+            babelFileResultEsm.map!.file = file.sourceMap.file
+          }
+          vinylSourcemapsApply(file, babelFileResultEsm.map)
+        }
+
+        this.push(
+          new Vinyl({
+            contents: Buffer.from(babelFileResultEsm.code ?? ''),
+            cwd: file.cwd,
+            base: file.base,
+            path: path.join(file.path, '..', 'esm', replaceExtname(file.basename))
+          })
+        )
+
+        return cb()
+      }
+
+      const babelConfig = getBabelConfig(config, isBrowser, moduleType)
       const babelFileResult: BabelFileResult = babelTransformSync(file.contents, {
         ...babelConfig,
         filename: file.path,
@@ -294,14 +398,13 @@ export function compileJsOrTs(
         sourceMaps: sourcemap
       })!
 
-      const replaceExtname = (file: string) => file.replace(path.extname(file), '.js')
       file.contents = Buffer.from(babelFileResult.code ?? '')
 
       if (file.sourceMap && sourcemap) {
         if (!Object.prototype.hasOwnProperty.call(babelFileResult.map, 'file')) {
           babelFileResult.map!.file = file.sourceMap.file
         }
-        require('@build-easy/bundles/model/vinyl-sourcemaps-apply')(file, babelFileResult.map)
+        vinylSourcemapsApply(file, babelFileResult.map)
       }
 
       file.path = replaceExtname(file.path)

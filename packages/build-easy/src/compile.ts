@@ -19,10 +19,12 @@ import {
   applyBeforeHook,
   applyAfterHook,
   modifySourcemap,
-  logger
+  logger,
+  hackGetFile,
+  hackSaveFile
 } from './host'
 import getConfig, { IGetUserConfig } from './getUserConfig'
-import type { Modes, BuildConfig } from './types'
+import type { BuildConfig } from './types'
 import schema from './configSchema'
 
 const configFileNames = ['build.easy.ts', 'build.easy.js']
@@ -39,21 +41,14 @@ const defaultConfig = <const>{
   packageDirName: 'packages'
 }
 
-function compile(options: {
-  watch: boolean
-  currentDirPath: string
-  mode: Modes
-  currentConfig: BuildConfig
-  dts?: boolean
-  dtsOutDir?: string
-}) {
-  const { watch, currentDirPath, mode, currentConfig, dts, dtsOutDir } = options
+function compile(options: { watch: boolean; currentDirPath: string; currentConfig: BuildConfig }) {
+  const { watch, currentDirPath, currentConfig } = options
   const {
     entry,
     output,
-    moduleType,
     sourcemap,
     lessOptions,
+    moduleType,
     alias,
     afterHook,
     beforeReadWriteStream,
@@ -64,13 +59,9 @@ function compile(options: {
   } = currentConfig as Required<BuildConfig>
 
   const currentEntryPath = path.join(currentDirPath, entry)
-  let currentOutputPath = path.join(currentDirPath, output)
+  const currentOutputPath = path.join(currentDirPath, output)
 
-  if (moduleType === 'all') {
-    currentOutputPath = path.join(currentOutputPath, mode)
-  }
-
-  !dts && rimraf.sync(currentOutputPath)
+  rimraf.sync(currentOutputPath)
 
   let patterns = [
     path.join(currentEntryPath, '**/*'),
@@ -94,20 +85,8 @@ function compile(options: {
     patterns: string | string[]
     currentEntryDirPath: string
     currentOutputDirPath: string
-    mode: Modes
   }) {
-    const { patterns, currentEntryDirPath, currentOutputDirPath, mode } = options
-
-    if (dts) {
-      return vinylFs
-        .src(patterns, { base: currentEntryDirPath, allowEmpty: true })
-        .pipe(enablePlumber(watch))
-        .pipe(applyBeforeHook(beforeReadWriteStream))
-        .pipe(compileAlias(alias))
-        .pipe(compileVueSfc(injectVueCss))
-        .pipe(compileDeclaration(tsCompilerOptions))
-        .pipe(vinylFs.dest(dtsOutDir || currentOutputDirPath))
-    }
+    const { patterns, currentEntryDirPath, currentOutputDirPath } = options
 
     return vinylFs
       .src(patterns, { base: currentEntryDirPath, allowEmpty: true })
@@ -117,11 +96,14 @@ function compile(options: {
       .pipe(applyBeforeHook(beforeReadWriteStream))
       .pipe(compileAlias(alias))
       .pipe(compileVueSfc(injectVueCss))
-      .pipe(compileJsOrTs(currentConfig, { currentEntryDirPath, mode }))
       .pipe(compileLess(lessOptions))
+      .pipe(hackSaveFile())
+      .pipe(compileDeclaration(tsCompilerOptions))
+      .pipe(hackGetFile(moduleType))
+      .pipe(compileJsOrTs(currentConfig, currentEntryDirPath))
       .pipe(applyAfterHook(afterReadWriteStream))
       .pipe(modifySourcemap(sourcemap))
-      .pipe(logger(output, mode, currentEntryDirPath))
+      .pipe(logger(output))
       .pipe(vinylFs.dest(currentOutputDirPath))
   }
 
@@ -129,8 +111,7 @@ function compile(options: {
     const streamOptions = {
       patterns,
       currentEntryDirPath: currentEntryPath,
-      currentOutputDirPath: currentOutputPath,
-      mode
+      currentOutputDirPath: currentOutputPath
     }
     createStream(streamOptions).on('end', () => {
       afterHook && afterHook()
@@ -232,34 +213,13 @@ export async function build(options: { cwd: string; watch?: boolean; userConfig?
         `${chalk.blue(figures.info, 'Package:')} ${chalk.red(path.basename(packagePath))}`
       )
 
-      await run(!!options.watch, packagePath, { ...config, ...packageConfig })
+      await compile({
+        watch: !!options.watch,
+        currentDirPath: packagePath,
+        currentConfig: { ...config, ...packageConfig }
+      })
     }
   } else {
-    await run(!!options.watch, options.cwd, config)
+    await compile({ watch: !!options.watch, currentDirPath: options.cwd, currentConfig: config })
   }
-}
-
-async function run(watch: boolean, currentDirPath: string, currentConfig: BuildConfig) {
-  let modes = [currentConfig.moduleType]
-
-  if (currentConfig.moduleType === 'all') {
-    rimraf.sync(currentConfig.output!)
-    modes = ['cjs', 'esm']
-  }
-
-  while (modes.length) {
-    const mode = modes.shift() as Modes
-
-    await compile({ watch, currentDirPath, mode, currentConfig })
-  }
-
-  let dtsOutDir = ''
-
-  if (currentConfig.moduleType === 'all') {
-    dtsOutDir = path.join(currentDirPath, currentConfig.output!, 'types')
-  }
-
-  // generate d.ts
-  // the mode here doesn't actually work
-  await compile({ watch, currentDirPath, mode: 'esm', currentConfig, dts: true, dtsOutDir })
 }

@@ -1,3 +1,4 @@
 export default {
-  frame: 'vue'
+  frame: 'vue',
+  moduleType: 'all'
 }

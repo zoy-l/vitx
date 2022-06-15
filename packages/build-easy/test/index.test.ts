@@ -42,6 +42,7 @@ function assertBuildResult(cwd: string) {
 function moveEsLibToDist(cwd: string) {
   const absDirPath = path.join(cwd, 'lib')
   const absActualedPath = getPathActualed(cwd)
+
   if (fs.existsSync(absDirPath)) {
     mkdirSync(absActualedPath)
     renameSync(absDirPath, path.join(absActualedPath, 'lib'))

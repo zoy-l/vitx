@@ -1,9 +1,9 @@
-import type { BuildConfig, Modes } from './types'
+import type { BuildConfig } from './types'
 
 export default function getBabelConfig(
   buildConfig: Omit<BuildConfig, 'entry' | 'output'>,
   isBrowser: boolean,
-  moduleType: Modes
+  moduleType: BuildConfig['moduleType']
 ): { plugins: string[]; presets: string[] } {
   const {
     nodeVersion,
