@@ -54,7 +54,6 @@ function compile(options: { watch: boolean; currentDirPath: string; currentConfi
     beforeReadWriteStream,
     afterReadWriteStream,
     injectVueCss,
-    tsCompilerOptions,
     patterns: inputPatterns
   } = currentConfig as Required<BuildConfig>
 
@@ -98,12 +97,12 @@ function compile(options: { watch: boolean; currentDirPath: string; currentConfi
       .pipe(compileVueSfc(injectVueCss))
       .pipe(compileLess(lessOptions))
       .pipe(hackSaveFile())
-      .pipe(compileDeclaration(tsCompilerOptions))
-      .pipe(hackGetFile(moduleType))
+      .pipe(compileDeclaration(currentDirPath))
+      .pipe(hackGetFile(moduleType, output))
       .pipe(compileJsOrTs(currentConfig, currentEntryDirPath))
       .pipe(applyAfterHook(afterReadWriteStream))
       .pipe(modifySourcemap(sourcemap))
-      .pipe(logger(output))
+      .pipe(logger())
       .pipe(vinylFs.dest(currentOutputDirPath))
   }
 

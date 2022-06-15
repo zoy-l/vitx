@@ -14,11 +14,6 @@
     "suppressImplicitAnyIndexErrors": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": [
-    "packages/**/src",
-    "packages/build-easy/src/index.test.tsest.ts",
-    "packages/build-easy/test/fixtures/build-vue-ts/tsx.tsxsx.tsx",
-    "packages/build-easy-site/tsconfig.json"
-  ],
+  "include": ["packages/**/src"],
   "exclude": ["./node_modules", "./packages/**/node_modules", "./packages/**/fixtures"]
 }

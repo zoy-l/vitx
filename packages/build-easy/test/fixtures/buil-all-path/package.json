@@ -1,0 +1,12 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "build-easy"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

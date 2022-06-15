@@ -21,6 +21,7 @@ import chalk from '@build-easy/bundles/model/chalk'
 import Vinyl from '@build-easy/bundles/model/vinyl'
 import Stream from 'stream'
 import path from 'path'
+import fs from 'fs'
 import type { BuildConfig } from './types'
 import getBabelConfig from './getBabelConifg'
 import replaceAll from './alias'
@@ -28,14 +29,14 @@ import replaceAll from './alias'
 const empty = () => {}
 const jsxIdent = '__build-easy__jsx__file__'
 
-export function logger(output: string) {
+export function logger() {
   return through.obj((file, _, cb) => {
     const ext = path.extname(file.path)
     if (!/d.ts/.test(file.path) && ext) {
       console.log(
         chalk.green(figures.tick),
         chalk.green(`Success ${ext.slice(1).toUpperCase()}:`),
-        path.join(path.basename(file.cwd), output, file.path.replace(file.base, ''))
+        path.join(path.basename(file.cwd), file.path.replace(file.cwd, ''))
       )
     }
 
@@ -106,7 +107,7 @@ export function hackSaveFile() {
   )
 }
 
-export function hackGetFile(moduleType: string) {
+export function hackGetFile(moduleType: string, output: string) {
   return through.obj(function (file, _, cb) {
     if (isTransform(/\.tsx?backup$/, file.path)) {
       file.path = file.path.replace('backup', '')
@@ -114,21 +115,21 @@ export function hackGetFile(moduleType: string) {
       return cb(null, file)
     }
 
-    if (moduleType === 'all' && !/\.jsx?$/.test(file.path)) {
-      if (/\.d\.ts$/.test(file.path)) {
-        file.path = path.join(file.path, '..', 'types', file.basename)
-        return cb(null, file)
-      }
+    if (moduleType === 'all' && /\.d\.ts$/.test(file.path)) {
+      file.path = path.join(file.cwd, output, 'types', file.path.replace(file.base, ''))
+      return cb(null, file)
+    }
 
+    if (moduleType === 'all' && !/\.(j|t)sx?$/.test(file.path)) {
       const esmFile = {
-        path: path.join(file.path, '..', 'esm', file.basename),
+        path: path.join(file.cwd, output, 'esm', file.path.replace(file.base, '')),
         base: file.base,
         contents: file.contents,
         cwd: file.cwd
       }
 
       const cjsFile = {
-        path: path.join(file.path, '..', 'cjs', file.basename),
+        path: path.join(file.cwd, output, 'cjs', file.path.replace(file.base, '')),
         base: file.base,
         contents: file.contents,
         cwd: file.cwd
@@ -144,26 +145,30 @@ export function hackGetFile(moduleType: string) {
   })
 }
 
-export function compileDeclaration(tsCompilerOptions?: Record<string, any>) {
+export function compileDeclaration(currentDirPath: string) {
+  const tsconfigPath = path.join(currentDirPath, 'tsconfig.json')
+  const isTsconfig = fs.existsSync(tsconfigPath)
+
+  const ts = isTsconfig
+    ? gulpTypescript.createProject(tsconfigPath, {
+        declaration: true,
+        emitDeclarationOnly: true,
+        moduleResolution: 'node'
+      })
+    : () =>
+        through.obj((file, _, cb) => {
+          cb(null, file)
+        })
   // typescript may not be installed
   return gulpIf(
     (file: { path: string }) => {
-      return !!tsCompilerOptions && isTransform(/\.tsx?$/, file.path)
+      return isTransform(/\.tsx?$/, file.path) && isTsconfig
     },
-    gulpTypescript(
-      {
-        allowSyntheticDefaultImports: true,
-        declaration: true,
-        moduleResolution: 'node',
-        ...tsCompilerOptions,
-        emitDeclarationOnly: true
-      },
-      {
-        error: (err: { message: string }) => {
-          console.log(`${chalk.red('➜ [Error]: ')}${err.message}`)
-        }
+    ts({
+      error: (err: { message: string }) => {
+        console.log(`${chalk.red('➜ [Error]: ')}${err.message}`)
       }
-    )
+    })
   )
 
   // No files are output except d.ts
@@ -314,7 +319,7 @@ export function compileJsOrTs(config: BuildConfig, currentEntryDirPath: string) 
   return gulpIf(
     (file: { path: string }) => isTransform(/\.(t|j)sx?$/, file.path),
     through.obj(function (this: Stream.Transform, file, _, cb) {
-      const { sourcemap, target, nodeFiles, browserFiles, moduleType } = config
+      const { sourcemap, target, nodeFiles, browserFiles, moduleType, output } = config
 
       const vinylSourcemapsApply = require('@build-easy/bundles/model/vinyl-sourcemaps-apply')
 
@@ -359,7 +364,12 @@ export function compileJsOrTs(config: BuildConfig, currentEntryDirPath: string) 
             contents: Buffer.from(babelFileResultCjs.code ?? ''),
             cwd: file.cwd,
             base: file.base,
-            path: path.join(file.path, '..', 'cjs', replaceExtname(file.basename))
+            path: path.join(
+              file.cwd,
+              output!,
+              'cjs',
+              replaceExtname(file.path.replace(file.base, ''))
+            )
           })
         )
 
@@ -383,7 +393,12 @@ export function compileJsOrTs(config: BuildConfig, currentEntryDirPath: string) 
             contents: Buffer.from(babelFileResultEsm.code ?? ''),
             cwd: file.cwd,
             base: file.base,
-            path: path.join(file.path, '..', 'esm', replaceExtname(file.basename))
+            path: path.join(
+              file.cwd,
+              output!,
+              'esm',
+              replaceExtname(file.path.replace(file.base, ''))
+            )
           })
         )
 
