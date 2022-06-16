@@ -2,6 +2,10 @@ import through2 from '@build-easy/bundles/model/through2'
 import gulpIf from '@build-easy/bundles/model/gulp-if'
 
 export interface BuildConfig {
+  babelConfigTransform?: (config: { presets: any[]; plugins: any[] }) => {
+    presets: any[]
+    plugins: any[]
+  }
   /**
    * Search file mode
    */

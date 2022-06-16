@@ -1,6 +1,7 @@
 import Joi from '@build-easy/bundles/model/joi'
 
 export default Joi.object({
+  babelConfigTransform: Joi.func(),
   patterns: Joi.func(),
   injectVueCss: Joi.boolean(),
   packageDirName: Joi.string(),

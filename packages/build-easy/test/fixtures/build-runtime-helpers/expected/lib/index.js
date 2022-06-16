@@ -1,11 +1,16 @@
-import _extends from "@babel/runtime/helpers/esm/extends";
+import _objectSpread from "@babel/runtime/helpers/esm/objectSpread2";
+import _classCallCheck from "@babel/runtime/helpers/esm/classCallCheck";
+import _createClass from "@babel/runtime/helpers/esm/createClass";
 
 var A = /*#__PURE__*/function () {
-  function A() {}
+  function A() {
+    _classCallCheck(this, A);
+  }
 
-  var _proto = A.prototype;
-
-  _proto.foo = function foo() {};
+  _createClass(A, [{
+    key: "foo",
+    value: function foo() {}
+  }]);
 
   return A;
 }();
@@ -13,4 +18,4 @@ var A = /*#__PURE__*/function () {
 new A().foo();
 var a = {};
 
-var b = _extends({}, a);
+var b = _objectSpread({}, a);

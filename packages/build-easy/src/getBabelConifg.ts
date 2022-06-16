@@ -8,6 +8,7 @@ export default function getBabelConfig(
   const {
     nodeVersion,
     runtimeHelpers,
+    babelConfigTransform = (config) => config,
     extraBabelPlugins = [],
     extraBabelPresets = [],
     frame
@@ -17,7 +18,6 @@ export default function getBabelConfig(
   const react = frame === 'react'
 
   const defaultEnvConfig = {
-    loose: true,
     exclude: [
       'transform-member-expression-literals',
       'transform-reserved-words',
@@ -37,7 +37,7 @@ export default function getBabelConfig(
   // Setting this to false will preserve ES modules.
   const modules = moduleType === 'esm' ? false : 'cjs'
 
-  return {
+  const babelConfig = {
     presets: [
       require.resolve('@build-easy/bundles/model/@babel/preset-typescript'),
       [
@@ -111,4 +111,6 @@ export default function getBabelConfig(
       ...extraBabelPlugins
     ].filter(Boolean)
   }
+
+  return babelConfigTransform(babelConfig)
 }
