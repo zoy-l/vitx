@@ -30,7 +30,7 @@
     "packages/*"
   ],
   "scripts": {
-    "update:deps": "yarn upgrade-interactive --latest --registry=https://registry.npm.taobao.org/",
+    "update:deps": "yarn upgrade-interactive --latest",
     "clear:modules": "node ./scripts/removeSubNodeModules.js",
     "postinstall": "yarn clear:modules && yarn build:bundles-models && yarn build:build-easy",
     "build:bundles-models": "cd ./packages/bundles && yarn compile",

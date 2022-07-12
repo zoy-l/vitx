@@ -41,8 +41,13 @@ const defaultConfig = <const>{
   packageDirName: 'packages'
 }
 
-function compile(options: { watch: boolean; currentDirPath: string; currentConfig: BuildConfig }) {
-  const { watch, currentDirPath, currentConfig } = options
+function compile(options: {
+  watch: boolean
+  currentDirPath: string
+  currentConfig: BuildConfig
+  cwd: string
+}) {
+  const { watch, currentDirPath, currentConfig, cwd } = options
   const {
     entry,
     output,
@@ -97,7 +102,7 @@ function compile(options: { watch: boolean; currentDirPath: string; currentConfi
       .pipe(compileVueSfc(injectVueCss))
       .pipe(compileLess(lessOptions))
       .pipe(hackSaveFile())
-      .pipe(compileDeclaration(currentDirPath))
+      .pipe(compileDeclaration(currentDirPath, cwd))
       .pipe(hackGetFile(moduleType, output))
       .pipe(compileJsOrTs(currentConfig, currentEntryDirPath))
       .pipe(applyAfterHook(afterReadWriteStream))
@@ -213,12 +218,18 @@ export async function build(options: { cwd: string; watch?: boolean; userConfig?
       )
 
       await compile({
+        cwd: options.cwd,
         watch: !!options.watch,
         currentDirPath: packagePath,
         currentConfig: { ...config, ...packageConfig }
       })
     }
   } else {
-    await compile({ watch: !!options.watch, currentDirPath: options.cwd, currentConfig: config })
+    await compile({
+      watch: !!options.watch,
+      currentDirPath: options.cwd,
+      currentConfig: config,
+      cwd: options.cwd
+    })
   }
 }
