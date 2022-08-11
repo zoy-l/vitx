@@ -145,12 +145,13 @@ export function hackGetFile(moduleType: string, output: string) {
   })
 }
 
-export function compileDeclaration(currentDirPath: string) {
+export function compileDeclaration(currentDirPath: string, tsCompilerOptions: Record<string, any>) {
   const tsconfigPath = path.join(currentDirPath, 'tsconfig.json')
   const isTsconfig = fs.existsSync(tsconfigPath)
 
   const ts = isTsconfig
     ? gulpTypescript.createProject(tsconfigPath, {
+        ...tsCompilerOptions,
         declaration: true,
         emitDeclarationOnly: true,
         moduleResolution: 'node'

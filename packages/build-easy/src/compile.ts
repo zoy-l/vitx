@@ -54,7 +54,8 @@ function compile(options: { watch: boolean; currentDirPath: string; currentConfi
     beforeReadWriteStream,
     afterReadWriteStream,
     injectVueCss,
-    patterns: inputPatterns
+    patterns: inputPatterns,
+    tsCompilerOptions
   } = currentConfig as Required<BuildConfig>
 
   const currentEntryPath = path.join(currentDirPath, entry)
@@ -97,7 +98,7 @@ function compile(options: { watch: boolean; currentDirPath: string; currentConfi
       .pipe(compileVueSfc(injectVueCss))
       .pipe(compileLess(lessOptions))
       .pipe(hackSaveFile())
-      .pipe(compileDeclaration(currentDirPath))
+      .pipe(compileDeclaration(currentDirPath, tsCompilerOptions))
       .pipe(hackGetFile(moduleType, output))
       .pipe(compileJsOrTs(currentConfig, currentEntryDirPath))
       .pipe(applyAfterHook(afterReadWriteStream))
