@@ -13,7 +13,7 @@ const wait = () =>
   new Promise((resolve) => {
     setTimeout(resolve, 1500)
   })
-jest.setTimeout(100000)
+jest.setTimeout(30000)
 
 const getPathActualed = (cwd: string) => path.join(cwd, 'actualed')
 
@@ -102,6 +102,7 @@ describe('build-easy build', () => {
               assertBuildResult(cwd)
               done()
             } catch (err) {
+              console.log(err)
               done(err)
             }
           })

@@ -98,7 +98,8 @@ export function hackSaveFile() {
           cwd: file.cwd,
           base: file.base,
           contents: file.contents,
-          path: file.path + 'backup'
+          path: file.path + 'backup',
+          sourceMap: file.sourceMap
         })
       )
 
@@ -145,9 +146,18 @@ export function hackGetFile(moduleType: string, output: string) {
   })
 }
 
-export function compileDeclaration(currentDirPath: string, tsCompilerOptions: Record<string, any>) {
-  const tsconfigPath = path.join(currentDirPath, 'tsconfig.json')
-  const isTsconfig = fs.existsSync(tsconfigPath)
+export function compileDeclaration(
+  currentDirPath: string,
+  cwd: string,
+  tsCompilerOptions: Record<string, any>
+) {
+  let tsconfigPath = path.join(currentDirPath, 'tsconfig.json')
+  let isTsconfig = fs.existsSync(tsconfigPath)
+
+  if (cwd !== currentDirPath && !isTsconfig) {
+    tsconfigPath = path.join(cwd, 'tsconfig.json')
+    isTsconfig = fs.existsSync(tsconfigPath)
+  }
 
   const ts = isTsconfig
     ? gulpTypescript.createProject(tsconfigPath, {
@@ -354,7 +364,7 @@ export function compileJsOrTs(config: BuildConfig, currentEntryDirPath: string) 
         })!
 
         if (file.sourceMap && sourcemap) {
-          if (!Object.prototype.hasOwnProperty.call(babelFileResultCjs.map, 'file')) {
+          if (!babelFileResultCjs.map!.file) {
             babelFileResultCjs.map!.file = file.sourceMap.file
           }
           vinylSourcemapsApply(file, babelFileResultCjs.map)
@@ -383,7 +393,7 @@ export function compileJsOrTs(config: BuildConfig, currentEntryDirPath: string) 
         })!
 
         if (file.sourceMap && sourcemap) {
-          if (!Object.prototype.hasOwnProperty.call(babelFileResultEsm.map, 'file')) {
+          if (!babelFileResultEsm.map!.file) {
             babelFileResultEsm.map!.file = file.sourceMap.file
           }
           vinylSourcemapsApply(file, babelFileResultEsm.map)
@@ -417,9 +427,10 @@ export function compileJsOrTs(config: BuildConfig, currentEntryDirPath: string) 
       file.contents = Buffer.from(babelFileResult.code ?? '')
 
       if (file.sourceMap && sourcemap) {
-        if (!Object.prototype.hasOwnProperty.call(babelFileResult.map, 'file')) {
+        if (!babelFileResult.map!.file) {
           babelFileResult.map!.file = file.sourceMap.file
         }
+
         vinylSourcemapsApply(file, babelFileResult.map)
       }
 
